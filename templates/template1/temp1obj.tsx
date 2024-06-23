@@ -1,15 +1,12 @@
 import { ResumeTemplate } from "@/types/templateTypes";
 
 export const temp1Obj  : ResumeTemplate = {
-    id : "template1",
     isTemplate: true,
     userId: "admin",
     sections : [
 
         {   
-            id : "header",
             type : "header",
-            order : 0,
             content: {
                 firstName: "Aditya",
                 lastName: "Srivastava",
@@ -23,9 +20,7 @@ export const temp1Obj  : ResumeTemplate = {
         },
 
         {
-            id : "skills",
             type : "skills",
-            order : 1,
             content: {
                 skills: ["HTML", "CSS", "JavaScript", "React", "Node.js"],
             },
@@ -35,9 +30,7 @@ export const temp1Obj  : ResumeTemplate = {
         },
 
         {
-            id : "projects",
             type : "projects",
-            order : 2,
             content: {
                 projects: [
                     {
@@ -57,9 +50,7 @@ export const temp1Obj  : ResumeTemplate = {
         },
 
         {
-            id : "experience",
             type : "experience",
-            order : 3,
             content: {
                 experience: [
                     {
@@ -82,9 +73,7 @@ export const temp1Obj  : ResumeTemplate = {
             },
         },
         {
-            id : "education",
             type : "education",
-            order : 4,
             content: {
                 education: [
                     {
