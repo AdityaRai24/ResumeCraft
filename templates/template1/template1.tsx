@@ -1,15 +1,24 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { temp1Obj as obj } from "@/templates/template1/temp1obj";
+import { ResumeTemplate } from "@/types/templateTypes";
 import { GitBranch, Github, Globe } from "lucide-react";
 import Link from "next/link";
 
-const Template1 = ({ size }: { size: "preview" | "full" }) => {
+interface TemplateType {
+  size: string;
+  obj: ResumeTemplate;
+  isLive?: boolean;
+}
+
+const Template1 = ({ size, obj, isLive }: TemplateType) => {
   const isPreview = size === "preview";
 
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className="w-full overflow-hidden">
-      <div className="transform scale-[0.4] origin-top-left w-full h-full">
+      <div className={cn("transform origin-top-left w-full h-full",
+        isLive && "scale-[0.5]",
+        isPreview && !isLive && "scale-[0.4]"
+      )}>
         {children}
       </div>
     </div>
@@ -25,27 +34,37 @@ const Template1 = ({ size }: { size: "preview" | "full" }) => {
   const content = (
     <div
       className={cn(
-        "bg-[white] py-8",
+        "bg-[white] py-8 mr-8 mb-2",
         isPreview &&
-          "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 w-[900px] h-[1050px] shadow-2xl border border-primary "
+          "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10  shadow-2xl border border-primary ",
+        isLive && "w-[800px] h-[1150px]",
+        isPreview && !isLive && "w-[900px] h-[1050px]"
       )}
     >
       <div className={cn("mx-auto")}>
         {/* HEADER */}
         <div className="border-b border-blue-500">
-          <h1
-            className={cn(
-              "text-4xl text-center font-extrabold",
-              obj?.globalStyles?.primaryTextColor
-            )}
-          >
-            ADITYA RAI
-          </h1>
-          <div className="flex items-center justify-center gap-2 flex-wrap py-1">
-            <h1>adityarai407@gmail.com</h1>
-            <h1>+91 8369703972</h1>
-            <h1>github.com/AdityaRai-24</h1>
-          </div>
+          {obj?.sections?.map((item) => {
+            if (item?.type === "header") {
+              return (
+                <>
+                  <h1
+                    className={cn(
+                      "text-4xl text-center font-extrabold",
+                      obj?.globalStyles?.primaryTextColor
+                    )}
+                  >
+                    {item?.content?.firstName} {item?.content?.lastName}
+                  </h1>
+                  <div className="flex items-center justify-center gap-2 flex-wrap py-1">
+                    <h1>{item?.content?.email}</h1>
+                    <h1>{item?.content?.phone}</h1>
+                    <h1>{item?.content?.github}</h1>
+                  </div>
+                </>
+              );
+            }
+          })}
         </div>
 
         {/* SUMMARY */}
@@ -232,7 +251,6 @@ const Template1 = ({ size }: { size: "preview" | "full" }) => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

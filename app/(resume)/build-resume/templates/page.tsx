@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import ChooseTemplates from "@/components/ChooseTemplates";
 import {
   Select,
   SelectContent,
@@ -6,9 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Template1 from "@/templates/template1/template1";
-import { Edit, Eye } from "lucide-react";
-import Link from "next/link";
 
 const page = () => {
   return (
@@ -67,67 +64,7 @@ const page = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-6  mt-5">
-            <div className="relative group inline-block w-[360px] h-[420px]">
-              <Template1 size="preview" />
-              <div className="absolute inset-0 w-full h-full p-10  flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity  duration-300 bg-black bg-opacity-50">
-                <Button className="py-2 px-5 flex items-center justify-center gap-2 ">
-                  <p>Preview</p> <Eye />
-                </Button>
-                <Button
-                  variant={"secondary"}
-                  className="py-2 px-5 flex items-center justify-center gap-2"
-                >
-                  <Link href={"/build-resume/123456"}>Select</Link> <Edit />
-                </Button>
-              </div>
-            </div>
-
-            <div className="relative group inline-block w-[360px] h-[420px]">
-              <Template1 size="preview" />
-              <div className="absolute inset-0 w-full h-full p-10  flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity  duration-300 bg-black bg-opacity-50">
-                <Button className="py-2 px-5 flex items-center justify-center gap-2 ">
-                  <p>Preview</p> <Eye />
-                </Button>
-                <Button
-                  variant={"secondary"}
-                  className="py-2 px-5 flex items-center justify-center gap-2"
-                >
-                  <p>Select</p> <Edit />
-                </Button>
-              </div>
-            </div>
-
-            <div className="relative group inline-block w-[360px] h-[420px]">
-              <Template1 size="preview" />
-              <div className="absolute inset-0 w-full h-full p-10  flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity  duration-300 bg-black bg-opacity-50">
-                <Button className="py-2 px-5 flex items-center justify-center gap-2 ">
-                  <p>Preview</p> <Eye />
-                </Button>
-                <Button
-                  variant={"secondary"}
-                  className="py-2 px-5 flex items-center justify-center gap-2"
-                >
-                  <p>Select</p> <Edit />
-                </Button>
-              </div>
-            </div>
-
-            <div className="relative group inline-block w-[360px] h-[420px]">
-              <Template1 size="preview" />
-              <div className="absolute inset-0 w-full h-full p-10  flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity  duration-300 bg-black bg-opacity-50">
-                <Button className="py-2 px-5 flex items-center justify-center gap-2 ">
-                  <p>Preview</p> <Eye />
-                </Button>
-                <Button
-                  variant={"secondary"}
-                  className="py-2 px-5 flex items-center justify-center gap-2"
-                >
-                  <p>Select</p> <Edit />
-                </Button>
-              </div>
-            </div>
-          </div>
+          <ChooseTemplates />
         </div>
       </div>
     </>

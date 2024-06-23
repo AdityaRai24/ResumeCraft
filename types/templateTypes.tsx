@@ -6,7 +6,6 @@ type SectionType =
   | "experience";
 
 interface BaseSection {
-  id: string;
   type: SectionType;
   content: Record<string, any>;
   style?: Record<string, any>;
@@ -83,7 +82,6 @@ export type SectionTypes =
   | EducationSection;
 
 export interface ResumeTemplate {
-  id: string;
   isTemplate: boolean;
   userId: string;
   sections: SectionTypes[];

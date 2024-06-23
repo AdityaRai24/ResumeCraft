@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import ConvexAndClerk from "@/providers/ConvexAndClerk";
 import { poppins } from "@/utils/font";
+import { Toaster } from "react-hot-toast";
 
 
 export const metadata: Metadata = {
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
-        <ConvexAndClerk>{children}</ConvexAndClerk>
+        <ConvexAndClerk>
+            <Toaster />
+          {children}</ConvexAndClerk>
       </body>
     </html>
   );
