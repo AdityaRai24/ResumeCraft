@@ -51,7 +51,7 @@ const ChooseTemplates = () => {
         return (
           <div
             key={item?._id}
-            className="relative group inline-block w-[360px] h-[420px]"
+            className="relative group inline-block w-[340px] h-[420px]"
           >
             <Template1 obj={item} size="preview" />
             <div
