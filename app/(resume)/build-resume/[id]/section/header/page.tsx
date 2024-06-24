@@ -50,6 +50,13 @@ const Page = () => {
   const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
   const router = useRouter();
 
+  let sectionArray : string[] = [];
+  resume?.sections?.map((item)=>(
+    sectionArray.push(item.type)
+  ))
+  let headerIndex = sectionArray.findIndex((item)=>item === "header")
+
+
   useEffect(() => {
     if (resume?.sections && !pendingChangesRef.current) {
       const headerSection = resume.sections.find(
@@ -175,7 +182,7 @@ const Page = () => {
               <div className="flex ">
                 <Button
                   onClick={() => {
-                    router.push(`/build-resume/${resumeId}/tips/experience`);
+                    router.push(`/build-resume/${resumeId}/tips/${sectionArray[headerIndex+1]}`);
                   }}
                   className="px-16 py-8 mt-6 text-xl rounded-full"
                 >
