@@ -56,11 +56,12 @@ const Template1 = ({ size, obj, isLive }: TemplateType) => {
     >
       <div className={cn("mx-auto")}>
         {/* HEADER */}
-        {obj?.sections?.map((item) => {
+        {obj?.sections?.map((item,index) => {
           if (item?.type === "header") {
             return (
               <>
                 <div
+                key={index}
                   className={`py-2 border-b `}
                   style={{borderBottom : `1px solid ${primaryColorClass}`}}
                 >
@@ -168,13 +169,13 @@ const Template1 = ({ size, obj, isLive }: TemplateType) => {
         </div>
 
         {/* TECHNICAL SKILLS */}
-        {obj?.sections?.map((item) => {
+        {obj?.sections?.map((item,index) => {
           if (item?.type === "skills") {
             return (
               <div
                 className={`py-2 border-b `}
                 style={{borderBottom : `1px solid ${primaryColorClass}`}}
-
+              key={index}
               >
                 {" "}
                 <h1
@@ -183,7 +184,7 @@ const Template1 = ({ size, obj, isLive }: TemplateType) => {
                 >
                   TECHNICAL SKILLS
                 </h1>
-                <div className={`grid grid-cols-${item?.style?.columns}`}>
+                <div className={`grid grid-cols-${item?.style?.columns ? item?.style?.columns : "2"}`}>
                   {item?.content?.skills?.map((skill, index) => {
                     return <li key={index}>{skill}</li>;
                   })}
@@ -194,14 +195,14 @@ const Template1 = ({ size, obj, isLive }: TemplateType) => {
         })}
 
         {/* PROJECTS */}
-        {obj?.sections?.map((item) => {
+        {obj?.sections?.map((item,index) => {
           if (item?.type === "projects") {
             return (
               <>
                 <div
                   className={`py-2 border-b `}
                   style={{borderBottom : `1px solid ${primaryColorClass}`}}
-
+                  key={index}
                 >
                   <h1
                     className={`text-xl font-bold `}
@@ -211,9 +212,9 @@ const Template1 = ({ size, obj, isLive }: TemplateType) => {
                   </h1>
 
                   <div className="flex flex-col gap-3">
-                    {item?.content?.projects?.map((project) => {
+                    {item?.content?.projects?.map((project,index) => {
                       return (
-                        <div>
+                        <div key={index}>
                           <div className="flex items-center gap-2 justify-start">
                             <h1 className={cn("font-semibold text-md")}>
                               {project?.name}
@@ -262,13 +263,13 @@ const Template1 = ({ size, obj, isLive }: TemplateType) => {
           >
             EDUCATION
           </h1>
-          {obj?.sections?.map((item) => {
+          {obj?.sections?.map((item,index) => {
             if (item.type === "education") {
               return (
-                <div className="flex flex-col gap-1">
-                  {item?.content?.education.map((edu) => {
+                <div key={index} className="flex flex-col gap-1">
+                  {item?.content?.education.map((edu,index2) => {
                     return (
-                      <div className="flex items-center justify-between">
+                      <div key={index2} className="flex items-center justify-between">
                         <div>
                           <h1 className="font-semibold">{edu?.courseName}</h1>
                           <h1>{edu?.instituteName}</h1>

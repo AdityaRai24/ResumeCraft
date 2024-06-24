@@ -24,6 +24,7 @@ interface HeaderSection extends BaseSection {
     summary?: string;
     photo?: string;
   };
+  style: {};
 }
 
 interface SkillSection extends BaseSection {
@@ -46,6 +47,7 @@ interface ProjectSection extends BaseSection {
       liveurl: string;
     }[];
   };
+  style: {};
 }
 
 interface ExperienceSection extends BaseSection {
@@ -55,11 +57,12 @@ interface ExperienceSection extends BaseSection {
       companyName: string;
       role: string;
       jobDescription: string;
-      location? : string;
+      location?: string;
       startDate: string;
       endDate: string;
     }[];
   };
+  style: {};
 }
 
 interface EducationSection extends BaseSection {
@@ -70,8 +73,10 @@ interface EducationSection extends BaseSection {
       instituteName: string;
       startDate: string;
       endDate: string;
+      location: string;
     }[];
   };
+  style: {};
 }
 
 export type SectionTypes =
@@ -90,6 +95,6 @@ export interface ResumeTemplate {
     primaryTextColor: string;
     primaryColor: string;
     photo: boolean;
-    columns : number;
+    columns: number;
   };
 }

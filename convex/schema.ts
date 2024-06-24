@@ -1,7 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-
 const sectionContentSchema = v.union(
   v.object({
     type: v.literal("header"),
@@ -39,6 +38,7 @@ const sectionContentSchema = v.union(
         })
       ),
     }),
+    style: v.object({}),
   }),
   v.object({
     type: v.literal("experience"),
@@ -54,6 +54,7 @@ const sectionContentSchema = v.union(
         })
       ),
     }),
+    style: v.object({}),
   }),
   v.object({
     type: v.literal("education"),
@@ -63,12 +64,14 @@ const sectionContentSchema = v.union(
           courseName: v.string(),
           instituteName: v.string(),
           startDate: v.string(),
+          location: v.optional(v.string()),
           endDate: v.string(),
         })
       ),
     }),
-  }),
-)
+    style: v.object({}),
+  })
+);
 
 export default defineSchema({
   resumes: defineTable({
@@ -76,11 +79,11 @@ export default defineSchema({
     userId: v.string(),
     sections: v.array(sectionContentSchema),
     globalStyles: v.object({
-      fontFamily : v.string(),
-      primaryTextColor : v.string(),
-      primaryColor : v.string(),
-      photo : v.boolean(),
-      columns : v.number(),
-    })
-  })
-})
+      fontFamily: v.string(),
+      primaryTextColor: v.string(),
+      primaryColor: v.string(),
+      photo: v.boolean(),
+      columns: v.number(),
+    }),
+  }),
+});
