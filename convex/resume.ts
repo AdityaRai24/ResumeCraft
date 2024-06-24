@@ -88,72 +88,76 @@ export const createUserResume = mutation({
     }
 
     const initialSections: SectionTypes[] = [
-        {
-          type: "header",
-          content: {
-            firstName: "",
-            lastName: "",
-            email: "",
-            phone: "",
-            github: "",
-            linkedin: "",
-            summary: "",
-            location: "",
-            photo: undefined,
-          },
-          style: {},
+      {
+        type: "header",
+        content: {
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          github: "",
+          linkedin: "",
+          summary: "",
+          location: "",
+          photo: undefined,
         },
-        {
-          type: "experience",
-          content: {
-            experience: [
-              {
-                companyName: "",
-                role: "",
-                jobDescription: "",
-                location: "",
-                startDate: "",
-                endDate: "",
-              },
-            ],
-          },
+        style: {},
+      },
+      {
+        type: "experience",
+        content: {
+          experience: [
+            {
+              companyName: "",
+              role: "",
+              jobDescription: "",
+              location: "",
+              startDate: "",
+              endDate: "",
+            },
+          ],
         },
-        {
-          type: "education",
-          content: {
-            education: [
-              {
-                courseName: "",
-                instituteName: "",
-                startDate: "",
-                endDate: "",
-              },
-            ],
-          },
+        style: {},
+      },
+      {
+        type: "education",
+        content: {
+          education: [
+            {
+              courseName: "",
+              instituteName: "",
+              startDate: "",
+              endDate: "",
+              location: "",
+            },
+          ],
         },
-        {
-          type: "skills",
-          content: {
-            skills: [],
-          },
-          style: {
-            columns: undefined,
-          },
+        style: {},
+      },
+      {
+        type: "skills",
+        content: {
+          skills: [],
         },
-        {
-          type: "projects",
-          content: {
-            projects: [
-              {
-                name: "",
-                description: "",
-                githuburl: "",
-                liveurl: "",
-              },
-            ],
-          },
+        style: {
+          columns: 2,
         },
-      ];
+      },
+      {
+        type: "projects",
+        content: {
+          projects: [
+            {
+              name: "",
+              description: "",
+              githuburl: "",
+              liveurl: "",
+            },
+          ],
+        },
+        style: {},
+      },
+    ];
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
       userId: args.userId,
@@ -200,6 +204,79 @@ export const updateExperience = mutation({
     const newResume = await ctx.db.patch(args.id, {
       sections: resumeSections,
     });
+    return newResume;
+  },
+});
+
+export const updateEducation = mutation({
+  args: {
+    id: v.id("resumes"),
+    content: v.object({
+      education: v.array(
+        v.object({
+          courseName: v.string(),
+          instituteName: v.string(),
+          startDate: v.string(),
+          endDate: v.string(),
+          location: v.optional(v.string()),
+        })
+      ),
+    }),
+  },
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
+    }
+    const resumeSections = resume?.sections;
+    let index = resumeSections.findIndex((item) => item.type === "education");
+    if (index === -1) {
+      throw new Error("Something went wrong index");
+    } else {
+      resumeSections[index].content = {
+        ...resumeSections[index]?.content,
+        ...args.content,
+      };
+    }
+    const newResume = await ctx.db.patch(args.id, {
+      sections: resumeSections,
+    });
+  },
+});
+
+export const updateSkills = mutation({
+  args: {
+    id: v.id("resumes"),
+    content: v.optional(
+      v.object({
+        skills: v.array(v.string()),
+      })
+    ),
+    columns: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
+    }
+    const resumeSections = resume?.sections;
+    let index = resumeSections.findIndex((item) => item.type === "skills");
+    if (index === -1) {
+      throw new Error("Something went wrong index");
+    } else {
+      resumeSections[index].content = {
+        ...resumeSections[index].content,
+        ...args.content,
+      };
+      resumeSections[index].style = {
+        ...resumeSections[index].style,
+        columns: args.columns,
+      };
+    }
+    const newResume = await ctx.db.patch(args.id, {
+      sections: resumeSections,
+    });
+
     return newResume;
   },
 });

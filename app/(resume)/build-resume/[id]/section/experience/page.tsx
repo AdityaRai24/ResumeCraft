@@ -18,6 +18,7 @@ import React, {
 import debounce from "lodash/debounce";
 import QuillEditorComponent from "@/components/QuillEditor";
 import { Button } from "@/components/ui/button";
+import SectionInfo from "@/components/SectionInfo";
 
 interface ExperienceItem {
   companyName: string;
@@ -52,11 +53,9 @@ const Page = () => {
   const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
   const router = useRouter();
 
-  let sectionArray : string[] = [];
-  resume?.sections?.map((item)=>(
-    sectionArray.push(item.type)
-  ))
-  let experienceIndex = sectionArray.findIndex((item)=>item === "experience")
+  let sectionArray: string[] = [];
+  resume?.sections?.map((item) => sectionArray.push(item.type));
+  let experienceIndex = sectionArray.findIndex((item) => item === "experience");
 
   useEffect(() => {
     if (resume?.sections && !pendingChangesRef.current) {
@@ -66,34 +65,30 @@ const Page = () => {
       if (experienceSection?.content) {
         const savedExperience = (experienceSection.content as ExperienceContent)
           .experience;
-        if (savedExperience && savedExperience.length > 0) {
-          setExperience({ experience: savedExperience });
-        } else {
-          setExperience({ experience: [emptyExperienceItem] });
-        }
-      } else {
-        setExperience({ experience: [emptyExperienceItem] });
+        setExperience({ experience: savedExperience });
       }
     }
   }, [resume?.sections]);
 
   const debouncedUpdate = useMemo(() => {
-   return debounce((newExperience: ExperienceContent) => {
+    return debounce((newExperience: ExperienceContent) => {
       update({ id: resumeId, content: newExperience });
       pendingChangesRef.current = false;
     }, 400);
   }, [update, resumeId]);
 
-
   const handleChange = useCallback(
     (index: number) =>
-      (e: ChangeEvent<HTMLInputElement> | string, field?: keyof ExperienceItem) => {
+      (
+        e: ChangeEvent<HTMLInputElement> | string,
+        field?: keyof ExperienceItem
+      ) => {
         pendingChangesRef.current = true;
         setExperience((prevExperience) => {
           const newExperience = { ...prevExperience };
           if (typeof e === "string" && field) {
             newExperience.experience[index][field] = e;
-          } else if (typeof e !== "string"){
+          } else if (typeof e !== "string") {
             const { name, value } = e.target;
             newExperience.experience[index][name as keyof ExperienceItem] =
               value;
@@ -126,15 +121,11 @@ const Page = () => {
         if (item?.type === "experience") {
           return (
             <div key={idx} className="mt-24 mx-16">
-              <h1
-                className={cn(
-                  "text-[45px] font-extrabold",
-                  montserrat.className
-                )}
-              >
-                Let's work on your experience.
-              </h1>
-              <p className="text-lg">Start with your most recent job first.</p>
+              <SectionInfo
+                heading={"Let's work on your experience."}
+                text={"Start with your most recent job first."}
+              />
+
               {experience.experience.map((exp, index) => (
                 <form key={index} className="mt-8">
                   <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
@@ -193,7 +184,9 @@ const Page = () => {
               <div className="flex">
                 <Button
                   onClick={() => {
-                    router.push(`/build-resume/${resumeId}/tips/${sectionArray[experienceIndex+1]}`);
+                    router.push(
+                      `/build-resume/${resumeId}/tips?sec=${sectionArray[experienceIndex + 1]}`
+                    );
                   }}
                   className="px-16 py-8 mt-6 text-xl rounded-full"
                 >

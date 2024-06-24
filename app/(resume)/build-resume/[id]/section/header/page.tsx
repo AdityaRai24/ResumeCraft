@@ -18,6 +18,7 @@ import React, {
 import debounce from "lodash/debounce";
 import QuillEditorComponent from "@/components/QuillEditor";
 import { Button } from "@/components/ui/button";
+import SectionInfo from "@/components/SectionInfo";
 
 interface HeaderContent {
   firstName: string;
@@ -50,12 +51,9 @@ const Page = () => {
   const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
   const router = useRouter();
 
-  let sectionArray : string[] = [];
-  resume?.sections?.map((item)=>(
-    sectionArray.push(item.type)
-  ))
-  let headerIndex = sectionArray.findIndex((item)=>item === "header")
-
+  let sectionArray: string[] = [];
+  resume?.sections?.map((item) => sectionArray.push(item.type));
+  let headerIndex = sectionArray.findIndex((item) => item === "header");
 
   useEffect(() => {
     if (resume?.sections && !pendingChangesRef.current) {
@@ -108,18 +106,12 @@ const Page = () => {
         if (item?.type === "header") {
           return (
             <div key={idx} className="mt-24 mx-16">
-              <h1
-                className={cn(
-                  "text-[45px] font-extrabold",
-                  montserrat.className
-                )}
-              >
-                Let's start with your header.
-              </h1>
-              <p className="text-lg">
-                Include your full name and at least one way for employers to
-                reach you.
-              </p>
+              <SectionInfo
+                heading={"Let's start with your header."}
+                text="Include your full name and at least one way for employers to
+                reach you."
+              />
+
               <form className="mt-8">
                 <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
                   <InputField
@@ -179,10 +171,13 @@ const Page = () => {
                   />
                 </div>
               </form>
+
               <div className="flex ">
                 <Button
                   onClick={() => {
-                    router.push(`/build-resume/${resumeId}/tips/${sectionArray[headerIndex+1]}`);
+                    router.push(
+                      `/build-resume/${resumeId}/tips?sec=${sectionArray[headerIndex + 1]}`
+                    );
                   }}
                   className="px-16 py-8 mt-6 text-xl rounded-full"
                 >
