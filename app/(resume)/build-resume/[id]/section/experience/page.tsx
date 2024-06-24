@@ -52,6 +52,12 @@ const Page = () => {
   const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
   const router = useRouter();
 
+  let sectionArray : string[] = [];
+  resume?.sections?.map((item)=>(
+    sectionArray.push(item.type)
+  ))
+  let experienceIndex = sectionArray.findIndex((item)=>item === "experience")
+
   useEffect(() => {
     if (resume?.sections && !pendingChangesRef.current) {
       const experienceSection = resume.sections.find(
@@ -81,13 +87,13 @@ const Page = () => {
 
   const handleChange = useCallback(
     (index: number) =>
-      (e: ChangeEvent<HTMLInputElement> | string, field?: string) => {
+      (e: ChangeEvent<HTMLInputElement> | string, field?: keyof ExperienceItem) => {
         pendingChangesRef.current = true;
         setExperience((prevExperience) => {
           const newExperience = { ...prevExperience };
-          if (typeof e === "string") {
-            newExperience.experience[index].jobDescription = e;
-          } else {
+          if (typeof e === "string" && field) {
+            newExperience.experience[index][field] = e;
+          } else if (typeof e !== "string"){
             const { name, value } = e.target;
             newExperience.experience[index][name as keyof ExperienceItem] =
               value;
@@ -187,7 +193,7 @@ const Page = () => {
               <div className="flex">
                 <Button
                   onClick={() => {
-                    router.push(`/build-resume/${resumeId}/tips/education`);
+                    router.push(`/build-resume/${resumeId}/tips/${sectionArray[experienceIndex+1]}`);
                   }}
                   className="px-16 py-8 mt-6 text-xl rounded-full"
                 >
