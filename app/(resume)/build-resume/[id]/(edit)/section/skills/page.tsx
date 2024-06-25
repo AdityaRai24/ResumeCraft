@@ -26,7 +26,6 @@ const page = () => {
 
   let sectionArray: string[] = [];
   resume?.sections?.map((item) => sectionArray.push(item.type));
-  let experienceIndex = sectionArray.findIndex((item) => item === "skills");
 
 
   return (
@@ -41,18 +40,6 @@ const page = () => {
               />
 
               <SkillsForm resumeId={resumeId as Id<"resumes">} styles={item?.style} item={item}/>
-              <div className="flex">
-                <Button
-                  onClick={() => {
-                    router.push(
-                      `/build-resume/${resumeId}/tips?sec=${sectionArray[experienceIndex + 1]}`
-                    );
-                  }}
-                  className="px-16 py-8 mt-6 text-xl rounded-full"
-                >
-                  Next
-                </Button>
-              </div>
             </div>
           );
         }

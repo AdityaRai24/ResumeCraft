@@ -6,8 +6,6 @@ import { montserrat } from "@/utils/font";
 import Link from "next/link";
 
 export default function Home() {
-
-
   return (
     <>
       <Navbar />
@@ -27,9 +25,11 @@ export default function Home() {
             intuitive platform ensures you present your best self to potential
             employers. Start building your dream career today!
           </p>
-          <Button className="my-4 py-[30px] text-lg rounded-full px-8">
-            <Link href={'/build-resume/steps'}>Create Your Resume</Link>
-          </Button>
+          <Link href={"/build-resume/steps"}>
+            <Button className="my-4 py-[30px] hover:scale-[1.03] active:scale-[0.97] transition duration-300 ease-in-out text-lg rounded-full px-8">
+              Create Your Resume
+            </Button>
+          </Link>
         </div>
         <div></div>
       </div>

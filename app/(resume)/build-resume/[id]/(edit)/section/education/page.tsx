@@ -14,7 +14,7 @@ const page = () => {
   const resume = useQuery(api.resume.getTemplateDetails, {
     id: resumeId as Id<"resumes">,
   });
-  const router = useRouter()
+  const router = useRouter();
   if (resume === null) {
     return <div>No template found</div>;
   }
@@ -28,7 +28,7 @@ const page = () => {
 
   return (
     <>
-      {resume?.sections?.map((item,idx) => {
+      {resume?.sections?.map((item, idx) => {
         if (item?.type === "education") {
           return (
             <div key={idx} className="mt-24 mx-16">
@@ -38,20 +38,7 @@ const page = () => {
 "
               />
 
-              <EducationForm resumeId={resumeId as Id<"resumes">} item={item}/>
-              <div className="flex">
-                <Button
-                  onClick={() => {
-                    router.push(
-                      `/build-resume/${resumeId}/tips?sec=${sectionArray[experienceIndex + 1]}`
-                    );
-                  }}
-                  className="px-16 py-8 mt-6 text-xl rounded-full"
-                >
-                  Next
-                </Button>
-              </div>
-
+              <EducationForm resumeId={resumeId as Id<"resumes">} item={item} />
             </div>
           );
         }

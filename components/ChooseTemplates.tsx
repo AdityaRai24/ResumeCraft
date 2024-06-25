@@ -34,14 +34,11 @@ const ChooseTemplates = () => {
       userId: user?.id,
     }).then((res)=>{
        return router.push(`/build-resume/${res}/tips?sec=header`)
+    }).catch((err)=>{
+      toast.error("Something went wrong...")
     })
 
-    toast.promise(promise, {
-      loading: "Creating Resume...",
-      success: "Resume Created Successfully",
-      error: "Error while creating resume...",
-    })
-
+   
 
   };
 
@@ -52,9 +49,9 @@ const ChooseTemplates = () => {
         return (
           <div
             key={item?._id}
-            className="relative group inline-block w-[340px] h-[420px]"
+            className="relative group inline-block w-[319px] h-[449px]"
           >
-            <Template1 obj={item} size="preview" />
+            <Template1 obj={item}  isPreview />
             <div
               className="absolute inset-0 w-full h-full p-10  flex items-center gap-5 rounded-xl cursor-pointer justify-center
              opacity-0 group-hover:opacity-100 transition-opacity  duration-300 bg-black bg-opacity-50"

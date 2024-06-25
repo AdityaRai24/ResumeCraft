@@ -14,6 +14,7 @@ import { api } from "@/convex/_generated/api";
 import { debounce } from "lodash";
 import QuillEditorComponent from "../QuillEditor";
 import { Button } from "../ui/button";
+import { motion } from "framer-motion";
 
 interface ProjectType {
   name: string;
@@ -33,15 +34,14 @@ const ProjectForm = ({
   resumeId: Id<"resumes">;
   item: any;
 }) => {
-
   const emptyProject: ProjectType = {
-    name : "",
-    description : "",
-    githuburl : "",
-    liveurl : "",
+    name: "",
+    description: "",
+    githuburl: "",
+    liveurl: "",
   };
 
-  const [projects, setProjects] = useState<ProjectContent>({ projects: []});
+  const [projects, setProjects] = useState<ProjectContent>({ projects: [] });
   const pendingChangesRef = useRef(false);
   const update = useMutation(api.resume.updateProjects);
 
@@ -55,7 +55,7 @@ const ProjectForm = ({
     return debounce((newProject: ProjectContent) => {
       update({ id: resumeId, content: newProject });
       pendingChangesRef.current = false;
-    },400);
+    }, 400);
   }, [update, resumeId]);
 
   const handleChange = useCallback(
@@ -80,12 +80,12 @@ const ProjectForm = ({
     [debouncedUpdate]
   );
 
-  const addProject = ()=>{
-    setProjects((prev)=>({
+  const addProject = () => {
+    setProjects((prev) => ({
       ...prev,
-      projects : [...prev.projects,emptyProject]
-    }))
-  }
+      projects: [...prev.projects, emptyProject],
+    }));
+  };
 
   return (
     <>
@@ -117,8 +117,8 @@ const ProjectForm = ({
                 />
               </div>
               <div className="mt-8 w-[85%]">
-                <Label className="text-md">Project Description</Label>
                 <QuillEditorComponent
+                  label="Project Description"
                   value={item.description}
                   onChange={(content) =>
                     handleChange(index)(content, "description")
@@ -126,9 +126,19 @@ const ProjectForm = ({
                 />
               </div>
             </form>
-            <Button onClick={addProject} className="mt-4">
-              Add Another Project
-            </Button>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.4,
+                delay: 0.5,
+                ease: [0, 0.71, 0.2, 1.01],
+              }}
+            >
+              <Button onClick={addProject} className="mt-4">
+                Add Another Project
+              </Button>
+            </motion.div>
           </div>
         );
       })}
@@ -152,7 +162,16 @@ const InputField: React.FC<InputFieldProps> = ({
   placeholder,
 }) => {
   return (
-    <div className="flex flex-col justify-center gap-2">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        duration: 0.4,
+        delay: 0.5,
+        ease: [0, 0.71, 0.2, 1.01],
+      }}
+      className="flex flex-col justify-center gap-2"
+    >
       <Label htmlFor={name} className="text-md">
         {label}
       </Label>
@@ -165,7 +184,7 @@ const InputField: React.FC<InputFieldProps> = ({
         type="text"
         className="border border-muted-foreground"
       />
-    </div>
+    </motion.div>
   );
 };
 

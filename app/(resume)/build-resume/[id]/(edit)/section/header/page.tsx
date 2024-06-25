@@ -3,8 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
-import { montserrat } from "@/utils/font";
 import { useMutation, useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import React, {
@@ -19,6 +17,9 @@ import debounce from "lodash/debounce";
 import QuillEditorComponent from "@/components/QuillEditor";
 import { Button } from "@/components/ui/button";
 import SectionInfo from "@/components/SectionInfo";
+import { motion } from "framer-motion";
+import { container, item } from "@/lib/motion";
+import ContineBtn from "@/components/ContineBtn";
 
 interface HeaderContent {
   firstName: string;
@@ -53,7 +54,6 @@ const Page = () => {
 
   let sectionArray: string[] = [];
   resume?.sections?.map((item) => sectionArray.push(item.type));
-  let headerIndex = sectionArray.findIndex((item) => item === "header");
 
   useEffect(() => {
     if (resume?.sections && !pendingChangesRef.current) {
@@ -105,14 +105,16 @@ const Page = () => {
       {resume.sections?.map((item, idx) => {
         if (item?.type === "header") {
           return (
-            <div key={idx} className="mt-24 mx-16">
+            <div key={idx} className="my-24 mx-16">
               <SectionInfo
                 heading={"Let's start with your header."}
                 text="Include your full name and at least one way for employers to
                 reach you."
               />
 
-              <form className="mt-8">
+              <motion.form
+                className="mt-8"
+              >
                 <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
                   <InputField
                     label="First Name"
@@ -164,26 +166,15 @@ const Page = () => {
                   />
                 </div>
                 <div className="mt-8 w-[85%] ">
-                  <Label className="text-md">Summary</Label>
                   <QuillEditorComponent
+                  label="Summary"
                     value={header.summary}
                     onChange={(content) => handleChange(content, "summary")}
                   />
                 </div>
-              </form>
+              </motion.form>
 
-              <div className="flex ">
-                <Button
-                  onClick={() => {
-                    router.push(
-                      `/build-resume/${resumeId}/tips?sec=${sectionArray[headerIndex + 1]}`
-                    );
-                  }}
-                  className="px-16 py-8 mt-6 text-xl rounded-full"
-                >
-                  Next
-                </Button>
-              </div>
+            
             </div>
           );
         }
@@ -212,7 +203,12 @@ const InputField: React.FC<InputFieldProps> = ({
   type = "text",
   required,
 }) => (
-  <div className="flex flex-col justify-center gap-2">
+  <motion.div
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
+    className="flex flex-col justify-center gap-2"
+  >
     <Label htmlFor={name} className="text-md">
       {label}
       {required && "*"}
@@ -226,6 +222,6 @@ const InputField: React.FC<InputFieldProps> = ({
       placeholder={placeholder}
       className="border border-muted-foreground"
     />
-  </div>
+  </motion.div>
 );
 export default Page;

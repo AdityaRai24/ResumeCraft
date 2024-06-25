@@ -12,20 +12,19 @@ import {
 import Link from "next/link";
 
 interface TemplateType {
-  size: string;
+  isPreview?: boolean;
   obj: ResumeTemplate;
   isLive?: boolean;
 }
 
-const Template1 = ({ size, obj, isLive }: TemplateType) => {
-  const isPreview = size === "preview";
-
+const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="w-full overflow-hidden">
+    <div className=" overflow-hidden">
       <div
         className={cn(
-          "transform origin-top-left w-full h-full",
-          isLive && "scale-[0.5]",
+          "transform origin-top-left scale-[1] ",
+          isLive &&
+            "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
           isPreview && !isLive && "scale-[0.4]"
         )}
       >
@@ -47,11 +46,11 @@ const Template1 = ({ size, obj, isLive }: TemplateType) => {
   const content = (
     <div
       className={cn(
-        "bg-[white] py-8 mr-8 mb-2",
+        "bg-[white] py-8  w-[210mm] px-8",
         isPreview &&
-          "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10  shadow-2xl border border-primary ",
-        isLive && "w-[800px] h-[1150px]",
-        isPreview && !isLive && "w-[850px] h-[1050px]"
+          "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
+        isLive && "w-[210mm] h-[297mm]",
+        isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >
       <div className={cn("mx-auto")}>
@@ -74,7 +73,7 @@ const Template1 = ({ size, obj, isLive }: TemplateType) => {
                     </h1>
                     <div className="flex items-center justify-center gap-4 flex-wrap py-2">
                       {item?.content?.email && (
-                        <h1 className="flex items-center justify-center gap-1">
+                        <h1 className="flex !items-center justify-center gap-1">
                           <Mail size={16} /> <span>{item?.content?.email}</span>
                         </h1>
                       )}

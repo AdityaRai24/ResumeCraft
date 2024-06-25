@@ -19,6 +19,8 @@ import debounce from "lodash/debounce";
 import QuillEditorComponent from "@/components/QuillEditor";
 import { Button } from "@/components/ui/button";
 import SectionInfo from "@/components/SectionInfo";
+import { container } from "@/lib/motion";
+import { motion } from "framer-motion";
 
 interface ExperienceItem {
   companyName: string;
@@ -51,11 +53,6 @@ const Page = () => {
   const resumeId = params.id as Id<"resumes">;
   const pendingChangesRef = useRef(false);
   const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
-  const router = useRouter();
-
-  let sectionArray: string[] = [];
-  resume?.sections?.map((item) => sectionArray.push(item.type));
-  let experienceIndex = sectionArray.findIndex((item) => item === "experience");
 
   useEffect(() => {
     if (resume?.sections && !pendingChangesRef.current) {
@@ -127,7 +124,7 @@ const Page = () => {
               />
 
               {experience.experience.map((exp, index) => (
-                <form key={index} className="mt-8">
+                <motion.form key={index} className="mt-8">
                   <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
                     <InputField
                       label="Company Name"
@@ -168,31 +165,29 @@ const Page = () => {
                     />
                   </div>
                   <div className="mt-8 w-[85%]">
-                    <Label className="text-md">Job Description</Label>
                     <QuillEditorComponent
+                      label="Job Description"
                       value={exp.jobDescription}
                       onChange={(content) =>
                         handleChange(index)(content, "jobDescription")
                       }
                     />
                   </div>
-                </form>
+                </motion.form>
               ))}
-              <Button onClick={addExperience} className="mt-4">
-                Add Another Experience
-              </Button>
-              <div className="flex">
-                <Button
-                  onClick={() => {
-                    router.push(
-                      `/build-resume/${resumeId}/tips?sec=${sectionArray[experienceIndex + 1]}`
-                    );
-                  }}
-                  className="px-16 py-8 mt-6 text-xl rounded-full"
-                >
-                  Next
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.4,
+                  delay: 0.5,
+                  ease: [0, 0.71, 0.2, 1.01],
+                }}
+              >
+                <Button onClick={addExperience} className="mt-4">
+                  Add Another Experience
                 </Button>
-              </div>
+              </motion.div>
             </div>
           );
         }
@@ -218,7 +213,12 @@ const InputField: React.FC<InputFieldProps> = ({
   placeholder,
   type = "text",
 }) => (
-  <div className="flex flex-col justify-center gap-2">
+  <motion.div
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
+    className="flex flex-col justify-center gap-2"
+  >
     <Label htmlFor={name} className="text-md">
       {label}
     </Label>
@@ -231,7 +231,7 @@ const InputField: React.FC<InputFieldProps> = ({
       placeholder={placeholder}
       className="border border-muted-foreground"
     />
-  </div>
+  </motion.div>
 );
 
 export default Page;

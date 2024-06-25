@@ -19,14 +19,6 @@ const page = () => {
   let sectionArray: string[] = [];
   resume?.sections?.map((item) => sectionArray.push(item.type));
   let projectIndex = sectionArray.findIndex((item) => item === "projects");
-  
-  const redirectLoc =
-  projectIndex+1 === resume?.sections?.length
-  ? `/build-resume/${resumeId}/section/final`
-  : `/build-resume/${resumeId}/tips?sec=${sectionArray[projectIndex + 1]}`;
-  
-  console.log(redirectLoc)
-  console.log(projectIndex+1)
 
   return (
     <>
@@ -38,18 +30,7 @@ const page = () => {
                 heading="Time to showcase your projects !!"
                 text="Write about any of your projects or past work to impress your employer."
               />
-
               <ProjectForm resumeId={resumeId as Id<"resumes">} item={item} />
-              <div className="flex">
-                <Button
-                  onClick={() => {
-                    router.push(redirectLoc);
-                  }}
-                  className="px-16 py-8 mt-6 text-xl rounded-full"
-                >
-                  Next
-                </Button>
-              </div>
             </div>
           );
         }
