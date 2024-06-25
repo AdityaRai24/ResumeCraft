@@ -43,8 +43,8 @@ interface ProjectSection extends BaseSection {
     projects: {
       name: string;
       description: string;
-      githuburl: string;
-      liveurl: string;
+      githuburl?: string;
+      liveurl?: string;
     }[];
   };
   style: {};

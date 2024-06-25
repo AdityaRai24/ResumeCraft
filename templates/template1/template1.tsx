@@ -239,7 +239,7 @@ const Template1 = ({ size, obj, isLive }: TemplateType) => {
                               </Link>
                             )}
                           </div>
-                          <p>{project?.description}</p>
+                          <div dangerouslySetInnerHTML={{__html: project?.description}}/>
                         </div>
                       );
                     })}
