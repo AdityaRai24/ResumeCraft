@@ -21,7 +21,7 @@ const LiveResumePreview = () => {
     if(templateDetails === undefined){  
       return <div>Loading...</div>
     }
-  
+    console.log(templateDetails)
 
   return (
     <div className="relative overflow-hidden mr-32 mb-2 w-[400px] h-[575px] group">

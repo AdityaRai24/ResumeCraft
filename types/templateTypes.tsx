@@ -24,7 +24,7 @@ interface HeaderSection extends BaseSection {
     summary?: string;
     photo?: string;
   };
-  style: {};
+  style?: {};
 }
 
 interface SkillSection extends BaseSection {
@@ -32,7 +32,7 @@ interface SkillSection extends BaseSection {
   content: {
     skills: string[];
   };
-  style: {
+  style?: {
     columns?: number;
   };
 }
@@ -47,7 +47,7 @@ interface ProjectSection extends BaseSection {
       liveurl?: string;
     }[];
   };
-  style: {};
+  style?: {};
 }
 
 interface ExperienceSection extends BaseSection {
@@ -62,7 +62,7 @@ interface ExperienceSection extends BaseSection {
       endDate: string;
     }[];
   };
-  style: {};
+  style?: {};
 }
 
 interface EducationSection extends BaseSection {
@@ -73,10 +73,10 @@ interface EducationSection extends BaseSection {
       instituteName: string;
       startDate: string;
       endDate: string;
-      location: string;
+      location?: string;
     }[];
   };
-  style: {};
+  style?: {};
 }
 
 export type SectionTypes =
