@@ -3,15 +3,15 @@ import React from "react";
 
 const ResumeBuilderLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex items-start justify-start w-full h-screen">
+    <div className="flex h-screen w-full items-center justify-between">
       {/* STATUS */}
-      <div className="w-[150px] self-start h-full bg-primary"></div>
+      <div className="max-w-[150px] w-[150px]  self-start h-full bg-primary"></div>
 
       {/* FORM */}
-      <div className="grow">{children}</div>
+      <div className="grow  h-full">{children}</div>
 
       {/* PREVIEW */}
-      <div className="self-center">
+      <div className="self-end h-full w-[35vw]">
         <LiveResumePreview />
       </div>
     </div>

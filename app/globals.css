@@ -5,7 +5,7 @@
   
 @layer base {
   :root {
-    --background: 345 83% 95%;
+    --background: 345 83% 97%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -73,3 +73,30 @@
   .quill-content li {
     margin-bottom: 0.5em;
   }
+
+  @media print{
+    html, body {
+      height:100%; 
+      margin: 0 !important; 
+      padding: 0 !important;
+      overflow: hidden;
+    }
+    #hide{
+      display: none;
+    }
+    #resumeSection{
+      display: block;
+    }
+    body{
+      margin: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+  }
+
+  @page{
+    size: auto;
+    margin: 0mm;
+  }
+
+  

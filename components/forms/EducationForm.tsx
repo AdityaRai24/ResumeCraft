@@ -15,6 +15,8 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
+import { motion } from "framer-motion";
+import { container } from "@/lib/motion";
 
 interface EducationItem {
   courseName: string;
@@ -97,51 +99,61 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     <>
       {education?.education?.map((item, index) => {
         return (
-            <form key={index} className="mt-8">
-              <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
-                <InputField
-                  label="Institue Name"
-                  name="instituteName"
-                  value={item.instituteName}
-                  onChange={handleChange(index)}
-                  placeholder="University of California, Berkeley"
-                />
+          <motion.form key={index} className="mt-8">
+            <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
+              <InputField
+                label="Institue Name"
+                name="instituteName"
+                value={item.instituteName}
+                onChange={handleChange(index)}
+                placeholder="University of California, Berkeley"
+              />
 
-                <InputField
-                  label="Course Name"
-                  name="courseName"
-                  value={item.courseName}
-                  onChange={handleChange(index)}
-                  placeholder="Bachelor of Science"
-                />
-                <InputField
-                  label="Location"
-                  name="location"
-                  value={item.location}
-                  onChange={handleChange(index)}
-                  placeholder="California, USA"
-                />
-                <InputField
-                  label="Start Date"
-                  name="startDate"
-                  value={item.startDate}
-                  onChange={handleChange(index)}
-                  placeholder="2020"
-                />
-                <InputField
-                  label="End Date"
-                  name="endDate"
-                  value={item.endDate}
-                  onChange={handleChange(index)}
-                  placeholder="2024"
-                />
-              </div>
-            </form>
+              <InputField
+                label="Course Name"
+                name="courseName"
+                value={item.courseName}
+                onChange={handleChange(index)}
+                placeholder="Bachelor of Science"
+              />
+              <InputField
+                label="Location"
+                name="location"
+                value={item.location}
+                onChange={handleChange(index)}
+                placeholder="California, USA"
+              />
+              <InputField
+                label="Start Date"
+                name="startDate"
+                value={item.startDate}
+                onChange={handleChange(index)}
+                placeholder="2020"
+              />
+              <InputField
+                label="End Date"
+                name="endDate"
+                value={item.endDate}
+                onChange={handleChange(index)}
+                placeholder="2024"
+              />
+            </div>
+          </motion.form>
         );
       })}
-      <Button onClick={addEducation} className="mt-4">
-        Add Another Education
-      </Button>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.4,
+          delay: 0.5,
+          ease: [0, 0.71, 0.2, 1.01],
+        }}
+      >
+        <Button onClick={addEducation} className="mt-4">
+          Add Another Education
+        </Button>
+      </motion.div>
     </>
   );
 };
@@ -164,7 +176,11 @@ const InputField: React.FC<InputFieldProps> = ({
   type = "text",
 }) => {
   return (
-    <div className="flex flex-col justify-center gap-2">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
+    >
       <Label htmlFor={name} className="text-md">
         {label}
       </Label>
@@ -177,7 +193,7 @@ const InputField: React.FC<InputFieldProps> = ({
         placeholder={placeholder}
         className="border border-muted-foreground"
       />
-    </div>
+    </motion.div>
   );
 };
 
