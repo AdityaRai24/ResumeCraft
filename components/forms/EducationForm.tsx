@@ -97,7 +97,7 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     <>
       {education?.education?.map((item, index) => {
         return (
-            <form className="mt-8">
+            <form key={index} className="mt-8">
               <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
                 <InputField
                   label="Institue Name"

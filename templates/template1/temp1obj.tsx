@@ -8,21 +8,22 @@ export const temp1Obj  : ResumeTemplate = {
         {   
             type : "header",
             content: {
-                firstName: "Aditya",
-                lastName: "Srivastava",
-                email: "QJY2l@example.com",
-                phone: "1234567890",
-                github: "adityasrivastava",
-                linkedin: "aditya-srivastava",
-                summary: "I am a summary",
-                location: "mumbai",
-            }
+                firstName: "John",
+                lastName: "Doe",
+                email: "john.doe@example.com",
+                phone: "+1-555-123-4567",
+                github: "johndoe",
+                linkedin: "john-doe",
+                summary: "Experienced software developer with a strong background in full-stack development and a passion for creating innovative solutions.",
+                location: "New York, NY",
+            },
+            style:{}
         },
 
         {
             type : "skills",
             content: {
-                skills: ["HTML", "CSS", "JavaScript", "React", "Node.js"],
+                skills: ["HTML", "CSS", "JavaScript", "React", "Node.js", "TypeScript", "Python", "Django"],
             },
             style: {
                 columns: 3,
@@ -34,19 +35,20 @@ export const temp1Obj  : ResumeTemplate = {
             content: {
                 projects: [
                     {
-                        name: "Project 1",
-                        description: "Project 1 description",
-                        githuburl: "https://project1.com",
-                        liveurl: "https://project1.com",
+                        name: "Personal Portfolio",
+                        description: "Developed a personal portfolio website to showcase projects and skills.",
+                        githuburl: "https://github.com/johndoe/portfolio",
+                        liveurl: "https://johndoe.com",
                     },
                     {
-                        name: "Project 2",
-                        description: "Project 2 description",
-                        githuburl: "https://project1.com",
-                        liveurl: "https://project2.com",
+                        name: "E-commerce Platform",
+                        description: "Created a full-stack e-commerce platform with user authentication, product management, and payment processing.",
+                        githuburl: "https://github.com/johndoe/ecommerce",
+                        liveurl: "https://ecommerce.johndoe.com",
                     },
                 ],
             },
+            style:{}
         },
 
         {
@@ -54,49 +56,53 @@ export const temp1Obj  : ResumeTemplate = {
             content: {
                 experience: [
                     {
-                        companyName: "Company 1",
-                        role: "Role 1",
-                        jobDescription: "Job description 1",
-                        location: "Mumbai",
-                        startDate: "2020-01-01",
-                        endDate: "2021-01-01",
+                        companyName: "Tech Solutions Inc.",
+                        role: "Senior Software Engineer",
+                        jobDescription: "Led a team of developers in designing and implementing scalable web applications.",
+                        location: "San Francisco, CA",
+                        startDate: "2019-05-01",
+                        endDate: "Present",
                     },
                     {
-                        companyName: "Company 2",
-                        role: "Role 2",
-                        jobDescription: "Job description 2",
-                        location: "Pune",
-                        startDate: "2021-01-01",
-                        endDate: "2022-01-01",
+                        companyName: "Web Innovations LLC",
+                        role: "Full Stack Developer",
+                        jobDescription: "Developed and maintained web applications using modern JavaScript frameworks and RESTful APIs.",
+                        location: "Austin, TX",
+                        startDate: "2016-08-01",
+                        endDate: "2019-04-30",
                     },
                 ],
             },
+            style:{}
         },
         {
             type : "education",
             content: {
                 education: [
                     {
-                        courseName: "Course 1",
-                        instituteName: "Institute 1",
-                        startDate: "2020-01-01",
-                        endDate: "2021-01-01",
+                        courseName: "Bachelor of Science in Computer Science",
+                        instituteName: "University of California, Berkeley",
+                        startDate: "2012-09-01",
+                        endDate: "2016-05-31",
+                        location: "Berkeley, CA",
                     },
                     {
-                        courseName: "Course 2",
-                        instituteName: "Institute 2",
-                        startDate: "2021-01-01",
-                        endDate: "2022-01-01",
+                        courseName: "Master of Science in Software Engineering",
+                        instituteName: "Stanford University",
+                        startDate: "2017-09-01",
+                        endDate: "2019-06-15",
+                        location: "Stanford, CA",
                     },
                 ],
             },
+            style:{}
         }
     ],
     globalStyles: {
         fontFamily: "Inter",
         primaryTextColor: "text-cyan-700",
         primaryColor: "fuchsia-600",
-        columns : 1,
+        columns : 2,
         photo: false,
     }
 }

@@ -33,8 +33,8 @@ const sectionContentSchema = v.union(
         v.object({
           name: v.string(),
           description: v.string(),
-          githuburl: v.string(),
-          liveurl: v.string(),
+          githuburl: v.optional(v.string()),
+          liveurl: v.optional(v.string()),
         })
       ),
     }),

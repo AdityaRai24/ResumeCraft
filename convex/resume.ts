@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { SectionTypes } from "@/types/templateTypes";
+import { temp1Obj } from "@/templates/template1/temp1obj";
 
 // export const insertResumeData = mutation({
 //     args: {},
@@ -280,3 +281,38 @@ export const updateSkills = mutation({
     return newResume;
   },
 });
+
+export const updateProjects = mutation({
+  args:{
+    id: v.id("resumes"),
+    content: v.object({
+      projects: v.array(
+        v.object({
+          name: v.string(),
+          description: v.string(),
+          githuburl: v.optional(v.string()),
+          liveurl: v.optional(v.string()),
+        })
+      ),
+    }),
+  },
+  handler: async(ctx,args)=>{
+    console.log(args.content,args.id)
+    const resume = await ctx.db.get(args.id)
+    if(!resume){
+      throw new Error("Something went wrong")
+    }
+    const resumeSections = resume?.sections
+    let projectsIndex = resumeSections.findIndex((item)=>item.type === "projects")
+    if (projectsIndex === -1) {
+      throw new Error("Projects section not found in resume");
+    }else{
+      resumeSections[projectsIndex].content = {...resumeSections[projectsIndex].content,...args.content}
+    }
+
+    const newResume = await ctx.db.patch(args.id,{
+      sections: resumeSections
+    })
+    return newResume
+  }
+})

@@ -33,7 +33,7 @@ const ChooseTemplates = () => {
       id: id,
       userId: user?.id,
     }).then((res)=>{
-       return router.push(`/build-resume/${res}/section/header`)
+       return router.push(`/build-resume/${res}/tips?sec=header`)
     })
 
     toast.promise(promise, {
@@ -48,6 +48,7 @@ const ChooseTemplates = () => {
   return (
     <div className="grid grid-cols-3 gap-6  mt-5">
       {templates?.map((item) => {
+        console.log(item)
         return (
           <div
             key={item?._id}

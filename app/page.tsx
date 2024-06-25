@@ -1,10 +1,13 @@
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 import { montserrat } from "@/utils/font";
 import Link from "next/link";
 
 export default function Home() {
+
+
   return (
     <>
       <Navbar />

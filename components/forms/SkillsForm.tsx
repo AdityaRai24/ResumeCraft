@@ -13,6 +13,7 @@ import React, {
   import { api } from "@/convex/_generated/api";
   import { Button } from "../ui/button";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Label } from "../ui/label";
   
   const SkillsForm = ({
     item,
@@ -90,8 +91,10 @@ import React, {
     return (
       <>
         <form className="mt-8">
+          
+          <Label>Number of Columns</Label>
           <Select onValueChange={(e) => handleColumnChange(e)} value={columns.toString()}>
-            <SelectTrigger className="w-[40.4%] my-8 border border-muted-foreground">
+            <SelectTrigger className="w-[40.4%] mt-2 mb-8 border border-muted-foreground">
               <SelectValue placeholder="Number of Columns" />
             </SelectTrigger>
             <SelectContent>

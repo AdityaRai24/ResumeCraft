@@ -45,10 +45,9 @@ const page = () => {
       <h2 className="text-lg">  {currentTips?.topText}</h2>
       <h1 className={cn("text-6xl font-extrabold leading-[1.25]",montserrat.className)}>{currentTips?.mainText}</h1>
       <div className="flex items-center gap-5">
-        {currentTips?.bottomIcon && <currentTips.bottomIcon size={48}/>}
         <div>
           <h2 className="font-bold text-2xl">{currentTips?.bottomMainText}</h2>
-          <p className="font-medium text-xl">
+          <p className="font-medium text-md">
             {currentTips?.bottomText}
           </p>
         </div>

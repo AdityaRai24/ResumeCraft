@@ -2,10 +2,11 @@
 
 import SkillsForm from "@/components/forms/SkillsForm";
 import SectionInfo from "@/components/SectionInfo";
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const page = () => {
   const params = useParams();
@@ -14,12 +15,19 @@ const page = () => {
     id: resumeId as Id<"resumes">,
   });
 
+  const router = useRouter()
+
   if (resume === null) {
     return <div>No Template Found</div>;
   }
   if (resume === undefined) {
     return <div>Loading...</div>;
   }
+
+  let sectionArray: string[] = [];
+  resume?.sections?.map((item) => sectionArray.push(item.type));
+  let experienceIndex = sectionArray.findIndex((item) => item === "skills");
+
 
   return (
     <>
@@ -33,7 +41,18 @@ const page = () => {
               />
 
               <SkillsForm resumeId={resumeId as Id<"resumes">} styles={item?.style} item={item}/>
-
+              <div className="flex">
+                <Button
+                  onClick={() => {
+                    router.push(
+                      `/build-resume/${resumeId}/tips?sec=${sectionArray[experienceIndex + 1]}`
+                    );
+                  }}
+                  className="px-16 py-8 mt-6 text-xl rounded-full"
+                >
+                  Next
+                </Button>
+              </div>
             </div>
           );
         }
