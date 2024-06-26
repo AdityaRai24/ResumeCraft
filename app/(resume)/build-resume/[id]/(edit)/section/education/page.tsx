@@ -1,5 +1,6 @@
 "use client";
 import EducationForm from "@/components/forms/EducationForm";
+import HeaderSkeleton from "@/components/HeaderSkeleton";
 import SectionInfo from "@/components/SectionInfo";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
@@ -19,7 +20,7 @@ const page = () => {
     return <div>No template found</div>;
   }
   if (resume === undefined) {
-    return <div>Loading...</div>;
+    return <HeaderSkeleton />;
   }
 
   let sectionArray: string[] = [];

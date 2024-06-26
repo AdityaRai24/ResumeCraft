@@ -46,7 +46,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
   const content = (
     <div
       className={cn(
-        "bg-[white] py-8  w-[210mm] px-8",
+        "bg-[white] py-8  w-[210mm] h-[297mm] no-scrollbar px-8 overflow-scroll overflow-x-hidden",
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
@@ -84,13 +84,13 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                         </h1>
                       )}
                       {item?.content?.github && (
-                        <h1 className="flex items-center justify-center gap-1">
+                        <h1 className="flex items-center justify-center gap-1" >
                           <Github size={16} />
-                          <span>{item?.content?.github}</span>
+                          <span >{item?.content?.github}</span>
                         </h1>
                       )}
                       {item?.content?.linkedin && (
-                        <h1 className="flex items-center justify-center gap-1">
+                        <h1 className="flex items-center justify-center gap-1" >
                           <Linkedin size={16} />
                           <span>{item?.content?.linkedin}</span>
                         </h1>
@@ -214,7 +214,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                       return (
                         <div key={index}>
                           <div className="flex items-center gap-2 justify-start">
-                            <h1 className={cn("font-semibold text-md")}>
+                            <h1 className={cn("font-semibold text-lg underline")}>
                               {project?.name}
                             </h1>
                             {project?.githuburl && (

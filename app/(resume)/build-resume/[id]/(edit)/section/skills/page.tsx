@@ -1,6 +1,7 @@
 "use client";
 
 import SkillsForm from "@/components/forms/SkillsForm";
+import HeaderSkeleton from "@/components/HeaderSkeleton";
 import SectionInfo from "@/components/SectionInfo";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
@@ -21,7 +22,7 @@ const page = () => {
     return <div>No Template Found</div>;
   }
   if (resume === undefined) {
-    return <div>Loading...</div>;
+    return <HeaderSkeleton />;
   }
 
   let sectionArray: string[] = [];

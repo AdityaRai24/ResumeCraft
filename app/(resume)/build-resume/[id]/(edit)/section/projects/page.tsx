@@ -1,5 +1,6 @@
 "use client";
 import ProjectForm from "@/components/forms/ProjectForm";
+import HeaderSkeleton from "@/components/HeaderSkeleton";
 import SectionInfo from "@/components/SectionInfo";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
@@ -15,6 +16,13 @@ const page = () => {
   const resume = useQuery(api.resume.getTemplateDetails, {
     id: resumeId as Id<"resumes">,
   });
+  if (resume === null) {
+    return <div>No template found</div>;
+  }
+  if (resume === undefined) {
+    return <HeaderSkeleton />;
+  }
+
 
   let sectionArray: string[] = [];
   resume?.sections?.map((item) => sectionArray.push(item.type));

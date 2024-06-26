@@ -20,6 +20,7 @@ import SectionInfo from "@/components/SectionInfo";
 import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
 import ContineBtn from "@/components/ContineBtn";
+import HeaderSkeleton from "@/components/HeaderSkeleton";
 
 interface HeaderContent {
   firstName: string;
@@ -97,7 +98,7 @@ const Page = () => {
   }
 
   if (resume === undefined) {
-    return <div>Loading...</div>;
+    return <HeaderSkeleton />;
   }
 
   return (

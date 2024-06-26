@@ -10,6 +10,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
 import { motion } from "framer-motion";
 import {container, item} from "@/lib/motion"
+import TipsSkeleton from "@/components/TipsSkeleton";
 
 const page = () => {
   const searchParams = useSearchParams();
@@ -26,7 +27,7 @@ const page = () => {
   }
 
   if (resume === undefined) {
-    return <div>loading...</div>;
+    return <TipsSkeleton />;
   }
 
   let sectionArray: string[] = [];
@@ -93,5 +94,8 @@ const page = () => {
     </div>
   );
 };
+
+
+
 
 export default page;

@@ -9,6 +9,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { motion } from "framer-motion";
 import ContineBtn from "./ContineBtn";
+import { Skeleton } from "./ui/skeleton";
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -28,7 +29,7 @@ const LiveResumePreview = () => {
   }
 
   if (templateDetails === undefined) {
-    return <div>Loading...</div>;
+    return <ResumeSkeleton />;
   }
   const backLocation = `/build-resume/${params.id}/tips?sec=${sectionArray[currentIndex]}`;
 
@@ -74,5 +75,15 @@ const LiveResumePreview = () => {
     </>
   );
 };
+
+const ResumeSkeleton = () => {
+  return(
+    <div className="overflow-hidden w-full h-[80%] mt-8 ">
+        <Skeleton className="h-full bg-slate-500/20 w-[80%]"/>
+    </div>
+  )
+
+}
+
 
 export default LiveResumePreview;
