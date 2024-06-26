@@ -39,7 +39,7 @@ const LiveResumePreview = () => {
 
   return (
     <>
-      <div className="overflow-hidden w-full h-[80%] mt-8 ">
+      <div className="overflow-hidden w-full fixed h-[100%] mt-8 ">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -58,18 +58,28 @@ const LiveResumePreview = () => {
             delay: 0.5,
             ease: [0, 0.71, 0.2, 1.01],
           }}
-          className="flex items-center max-w-[80%] mx-auto justify-between"
+          className="fixed bottom-10 right-10"
         >
-          <ContineBtn
+         <div className="flex items-center justify-center gap-24">
+         <ContineBtn
             type="outline"
             text="Back"
-            path={sectionType === 'final' ? `/build-resume/${params.id}/tips?sec=${sectionArray[sectionArray.length - 1]}` : backLocation}
+            path={
+              sectionType === "final"
+                ? `/build-resume/${params.id}/tips?sec=${sectionArray[sectionArray.length - 1]}`
+                : backLocation
+            }
           />
           <ContineBtn
             type="default"
             text="Next"
-            path={sectionType === 'final' ? `/build-resume/${params.id}/download` : nextLocation}
+            path={
+              sectionType === "final"
+                ? `/build-resume/${params.id}/download`
+                : nextLocation
+            }
           />
+         </div>
         </motion.div>
       )}
     </>
@@ -77,13 +87,11 @@ const LiveResumePreview = () => {
 };
 
 const ResumeSkeleton = () => {
-  return(
+  return (
     <div className="overflow-hidden w-full h-[80%] mt-8 ">
-        <Skeleton className="h-full bg-slate-500/20 w-[80%]"/>
+      <Skeleton className="h-full bg-slate-500/20 w-[80%]" />
     </div>
-  )
-
-}
-
+  );
+};
 
 export default LiveResumePreview;

@@ -33,9 +33,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
     </div>
   );
   const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center justify-center bg-slate-200">
-      {children}
-    </div>
+    <div className="flex items-center justify-center ">{children}</div>
   );
 
   const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
@@ -45,8 +43,9 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
   const content = (
     <div
+      id="resumeSection"
       className={cn(
-        "bg-[white] py-8  w-[210mm] h-[297mm] no-scrollbar px-8 overflow-scroll overflow-x-hidden",
+        "bg-[white] py-8 drop-shadow-2xl  w-[210mm] h-[296.4mm] mb-[100px] no-scrollbar px-8 overflow-scroll overflow-x-hidden",
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
@@ -60,39 +59,48 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
             return (
               <div key={index}>
                 <div
-                  className={`py-2 border-b `}
+                  className={`py-0 border-b `}
                   style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                 >
                   {" "}
                   <>
                     <h1
-                      className={`text-4xl text-center font-extrabold`}
+                      className={`text-4xl uppercase text-center font-bold`}
                       style={{ color: primaryTextColorClass }}
                     >
                       {item?.content?.firstName} {item?.content?.lastName}
                     </h1>
-                    <div className="flex items-center justify-center gap-4 flex-wrap py-2">
+                    <div className="flex items-center justify-center gap-4 flex-wrap pt-1 pb-2">
                       {item?.content?.email && (
                         <h1 className="flex !items-center justify-center gap-1">
-                          <Mail size={16} /> <span>{item?.content?.email}</span>
+                          <Mail size={16} />{" "}
+                          <span className="text-sm">
+                            {item?.content?.email}
+                          </span>
                         </h1>
                       )}
                       {item?.content?.phone && (
                         <h1 className="flex items-center justify-center gap-1">
                           <PhoneCall size={16} />
-                          <span>{item?.content?.phone}</span>
+                          <span className="text-sm">
+                            {item?.content?.phone}
+                          </span>
                         </h1>
                       )}
                       {item?.content?.github && (
-                        <h1 className="flex items-center justify-center gap-1" >
+                        <h1 className="flex items-center justify-center gap-1">
                           <Github size={16} />
-                          <span >{item?.content?.github}</span>
+                          <span className="text-sm">
+                            {item?.content?.github}
+                          </span>
                         </h1>
                       )}
                       {item?.content?.linkedin && (
-                        <h1 className="flex items-center justify-center gap-1" >
+                        <h1 className="flex items-center justify-center gap-1">
                           <Linkedin size={16} />
-                          <span>{item?.content?.linkedin}</span>
+                          <span className="text-sm">
+                            {item?.content?.linkedin}
+                          </span>
                         </h1>
                       )}
                     </div>
@@ -106,13 +114,13 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                 >
                   {" "}
                   <h1
-                    className={`text-xl font-bold `}
+                    className={`text-lg font-bold `}
                     style={{ color: primaryTextColorClass }}
                   >
                     SUMMARY
                   </h1>
                   <div
-                    className="text-base font-normal"
+                    className="text-sm font-normal"
                     dangerouslySetInnerHTML={{
                       __html: item?.content?.summary || "",
                     }}
@@ -129,7 +137,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
           style={{ borderBottom: `1px solid ${primaryColorClass}` }}
         >
           <h1
-            className={`text-xl font-bold `}
+            className={`text-lg font-bold `}
             style={{ color: primaryTextColorClass }}
           >
             EXPERIENCE
@@ -138,23 +146,22 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
             if (item?.type === "experience") {
               return item?.content?.experience?.map((exp, index) => {
                 return (
-                  <div key={index}>
-                    <div className="flex items-center gap-2">
-                      <h1 className="font-semibold text-md">{exp?.role}</h1>
-                      {exp?.startDate && exp?.endDate && (
-                        <h1>
-                          {exp?.startDate} - {exp?.endDate}
-                        </h1>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
+                  <div key={index} className="pb-2">
+                    <div className="flex items-center justify-between gap-2">
                       <h1 className="font-semibold text-md">
-                        {exp?.companyName}
+                        {exp?.role}, {exp?.companyName}
                       </h1>
-                      <h1>{exp?.location}</h1>
+                      <div className="flex items-center text-sm gap-2">
+                        {exp?.startDate && exp?.endDate && (
+                          <h1>
+                            {exp?.startDate} - {exp?.endDate}
+                          </h1>
+                        )}
+                      </div>
+                      {/* <h1 className="text-sm">{exp?.location}</h1> */}
                     </div>
                     <div
-                      className="quill-content"
+                      className="quill-content text-sm"
                       dangerouslySetInnerHTML={{ __html: exp?.jobDescription }}
                     />
                   </div>
@@ -175,7 +182,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
               >
                 {" "}
                 <h1
-                  className={`text-xl font-bold `}
+                  className={`text-lg font-bold `}
                   style={{ color: primaryTextColorClass }}
                 >
                   TECHNICAL SKILLS
@@ -184,7 +191,11 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                   className={`grid grid-cols-${item?.style?.columns ? item?.style?.columns : "2"}`}
                 >
                   {item?.content?.skills?.map((skill, index) => {
-                    return <li key={index}>{skill}</li>;
+                    return (
+                      <li key={index} className="text-sm">
+                        {skill}
+                      </li>
+                    );
                   })}
                 </div>
               </div>
@@ -203,7 +214,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                   key={index}
                 >
                   <h1
-                    className={`text-xl font-bold `}
+                    className={`text-lg font-bold `}
                     style={{ color: primaryTextColorClass }}
                   >
                     PROJECTS
@@ -214,13 +225,15 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                       return (
                         <div key={index}>
                           <div className="flex items-center gap-2 justify-start">
-                            <h1 className={cn("font-semibold text-lg underline")}>
+                            <h1
+                              className={`font-semibold text-sm underline underline-offset-2 mb-[1px]`}
+                            >
                               {project?.name}
                             </h1>
                             {project?.githuburl && (
                               <Link href={project?.githuburl}>
                                 <Github
-                                  size={20}
+                                  size={16}
                                   className={`cursor-pointer`}
                                   style={{ color: primaryTextColorClass }}
                                 />
@@ -230,7 +243,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                             {project?.liveurl && (
                               <Link href={project?.liveurl}>
                                 <Globe
-                                  size={20}
+                                  size={16}
                                   className={`cursor-pointer`}
                                   style={{ color: primaryTextColorClass }}
                                 />
@@ -238,6 +251,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                             )}
                           </div>
                           <div
+                            className="text-sm"
                             dangerouslySetInnerHTML={{
                               __html: project?.description,
                             }}
@@ -259,7 +273,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
         >
           {" "}
           <h1
-            className={`text-xl font-bold `}
+            className={`text-lg font-bold `}
             style={{ color: primaryTextColorClass }}
           >
             EDUCATION
@@ -272,15 +286,17 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                     return (
                       <div
                         key={index2}
-                        className="flex items-center justify-between"
+                        className="flex items-center text-sm justify-between"
                       >
                         <div>
-                          <h1 className="font-semibold">{edu?.courseName}</h1>
-                          <h1>{edu?.instituteName}</h1>
+                          <h1 className="font-semibold text-sm">
+                            {edu?.courseName}
+                          </h1>
+                          <h1 className="text-sm">{edu?.instituteName}</h1>
                         </div>
                         <div>
                           {edu?.startDate && edu?.endDate && (
-                            <h1 className="font-bold">
+                            <h1 className="font-bold text-sm">
                               {edu?.startDate} - {edu?.endDate}
                             </h1>
                           )}
