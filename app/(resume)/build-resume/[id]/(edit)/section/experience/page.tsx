@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import SectionInfo from "@/components/SectionInfo";
 import { container } from "@/lib/motion";
 import { motion } from "framer-motion";
+import HeaderSkeleton from "@/components/HeaderSkeleton";
 
 interface ExperienceItem {
   companyName: string;
@@ -109,7 +110,7 @@ const Page = () => {
   }
 
   if (resume === undefined) {
-    return <div>Loading...</div>;
+    return <HeaderSkeleton />
   }
 
   return (
