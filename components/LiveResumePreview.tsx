@@ -58,7 +58,7 @@ const LiveResumePreview = () => {
             delay: 0.5,
             ease: [0, 0.71, 0.2, 1.01],
           }}
-          className="fixed bottom-10 right-10"
+          className="fixed bottom-5 right-10"
         >
          <div className="flex items-center justify-center gap-24">
          <ContineBtn

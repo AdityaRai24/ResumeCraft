@@ -77,37 +77,13 @@
   margin-bottom: 0.5em;
 }
 
-@media print {
-  html,
-  body {
-    height: 100%;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  #hide {
-    display: none;
-  }
-  #resumeSection {
-    display: block;
-  }
-  body {
-    margin: 0;
-    padding: 0;
-    box-shadow: none;
-  }
-  .resume-container {
-    width: 210mm;
-    height: 297mm;
-    overflow: visible;
-  }
-}
 
-@page {
-  size: auto;
-  margin: 0mm;
-}
+ body {
+  padding: 0px;
+  margin: 0px;
+ }
 
-@layer utilities {
+ @layer utilities {
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -117,9 +93,4 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-}
-
-
-body{
-  height: 100vh;
 }

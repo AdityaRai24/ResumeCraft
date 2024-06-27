@@ -43,7 +43,7 @@ const VerticalTimeline = () => {
     {
       title: "Introduction",
       icon: BadgeInfo,
-      name: "intro",
+      name: "introduction",
     },
     {
       title: "Header",

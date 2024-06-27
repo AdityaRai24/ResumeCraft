@@ -8,45 +8,50 @@ interface TipsType {
 
 export const tipsData: TipsType[] = [
   {
-    sec: "header",
-    topText: "Welcome! Let's Get Started",
-    mainText: "You're ready to create your resume",
-    bottomMainText: "Our tools will guide you through each step.",
-    bottomText:
-      "Start by filling in your basic information and let our AI assist you along the way.",
+    sec: "introduction",
+    topText: "Ready to begin?",
+    mainText: "Craft your standout resume",
+    bottomMainText: "Our AI-powered tools streamline the writing process!",
   },
-
+  {
+    sec: "header",
+    topText: "Welcome aboard! Let's dive in",
+    mainText: "Your journey to a stellar resume starts now",
+    bottomMainText: "Our intuitive tools will navigate you through each phase.",
+    bottomText:
+      "Begin with your core details, and let our AI assistant enhance your content along the way.",
+  },
   {
     sec: "experience",
-    topText: "Great progress! Next up → Experience",
-    mainText: "Add details about your work experience",
-    bottomMainText: "Our AI now makes writing easier!",
+    topText: "Excellent progress! Next stop → Work Experience",
+    mainText: "Showcase your professional journey",
+    bottomMainText: "Our AI simplifies the writing process!",
     bottomText:
-      "With writing help you can fix mistakes or rephrase sentences to suit your needs",
+      "Leverage our writing assistance to refine and tailor your experience descriptions for maximum impact.",
   },
   {
     sec: "education",
-    topText: "Great Job !! Next up → Education",
-    mainText: "Now let's add your education",
-    bottomMainText: "Highlight your academic achievements!",
+    topText: "Well done! Moving on to → Education",
+    mainText: "Time to highlight your academic path",
+    bottomMainText: "Showcase your educational milestones!",
     bottomText:
-      "Include your degrees, certifications, and any relevant coursework.",
+      "Feature your degrees, certifications, and any standout academic achievements.",
   },
   {
     sec: "skills",
-    topText: "Great progress! Next up → Skills",
-    mainText: "Time to showcase your skills",
-    bottomMainText: "Optimize your skills section for maximum impact.",
+    topText: "Fantastic progress! Next up → Skills",
+    mainText: "Let's spotlight your unique abilities",
+    bottomMainText: "Craft a skills section that truly stands out.",
     bottomText:
-      "Use our pre-written suggestions to highlight your strengths and get your resume to the top of the pile.",
+      "Utilize our curated suggestions to emphasize your strengths and boost your resume's visibility to potential employers.",
   },
   {
     sec: "projects",
-    topText: "Almost there! Next up → Projects",
-    mainText: "Highlight the projects you've worked on",
+    topText: "Final stretch! Last stop → Projects",
+    mainText: "Showcase the projects that define your expertise",
     bottomMainText:
-      "Including projects helps demonstrate your practical experience.",
+      "Featuring projects demonstrates your hands-on experience.",
     bottomText:
-      "You can add personal, academic, or professional projects to show your skills in action.",
+      "Include personal, academic, or professional projects to illustrate your skills in real-world scenarios.",
   },
 ];
