@@ -36,12 +36,12 @@ const page = () => {
   const index = sectionArray.findIndex((item) => item === sec);
   const currentTips = tipsData.find((item) => item.sec === sec);
 
-  const nextSection = sectionArray[index];
+  const nextSection = sec === 'introduction' ? 'header' : sectionArray[index];
   const prevSection = sectionArray[index - 1]
     ? sectionArray[index - 1]
     : "header";
 
-  
+  const nexturl = sec === 'introduction' ? `/build-resume/${resumeId}/tips?sec=header` : `/build-resume/${resumeId}/section/${nextSection}`
 
   return (
     <div className="flex items-center justify-start max-w-[70%] mx-16">
@@ -85,7 +85,7 @@ const page = () => {
             type={"outline"}
           />
           <ContineBtn
-            path={`/build-resume/${resumeId}/section/${nextSection}`}
+            path={nexturl}
             text="Continue"
             type={"default"}
           />

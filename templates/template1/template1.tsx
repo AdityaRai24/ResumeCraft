@@ -18,6 +18,7 @@ interface TemplateType {
 }
 
 const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
+
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className=" overflow-hidden">
       <div
@@ -36,6 +37,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
     <div className="flex items-center justify-center ">{children}</div>
   );
 
+
   const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
 
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
@@ -45,7 +47,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] py-8 drop-shadow-2xl  w-[210mm] h-[296.4mm] mb-[100px] no-scrollbar px-8 overflow-scroll overflow-x-hidden",
+        "bg-[white] py-8  w-[210mm] h-[297mm] px-8 ",
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
@@ -149,7 +151,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                   <div key={index} className="pb-2">
                     <div className="flex items-center justify-between gap-2">
                       <h1 className="font-semibold text-md">
-                        {exp?.role}, {exp?.companyName}
+                        {exp?.role} {exp?.role && exp?.companyName && ","} {exp?.companyName}
                       </h1>
                       <div className="flex items-center text-sm gap-2">
                         {exp?.startDate && exp?.endDate && (
