@@ -48,7 +48,7 @@ export const tipsData: TipsType[] = [
   {
     sec: "projects",
     topText: "Final stretch! Last stop → Projects",
-    mainText: "Showcase the projects that define your expertise",
+    mainText: "Showcase projects that define your expertise",
     bottomMainText:
       "Featuring projects demonstrates your hands-on experience.",
     bottomText:

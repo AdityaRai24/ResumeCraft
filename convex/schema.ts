@@ -1,6 +1,12 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+const skillsContentSchema = v.object({
+  type: v.union(v.literal("list"), v.literal("description")),
+  content: v.object({
+    skills: v.union(v.array(v.string()), v.string()),
+  }),
+});
 const sectionContentSchema = v.union(
   v.object({
     type: v.literal("header"),
@@ -19,12 +25,12 @@ const sectionContentSchema = v.union(
   }),
   v.object({
     type: v.literal("skills"),
-    content: v.object({
-      skills: v.array(v.string()),
-    }),
-    style: v.object({
-      columns: v.optional(v.number()),
-    }),
+    content: skillsContentSchema,
+    style: v.optional(
+      v.object({
+        columns: v.optional(v.number()),
+      })
+    ),
   }),
   v.object({
     type: v.literal("projects"),
@@ -77,6 +83,7 @@ export default defineSchema({
   resumes: defineTable({
     isTemplate: v.boolean(),
     userId: v.string(),
+    templateName : v.string(),
     sections: v.array(sectionContentSchema),
     globalStyles: v.object({
       fontFamily: v.string(),

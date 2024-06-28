@@ -1,7 +1,6 @@
 "use client";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import React from "react";
-import Template1 from "@/templates/template1/template1";
 import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "convex/react";
@@ -10,13 +9,27 @@ import { Id } from "@/convex/_generated/dataModel";
 import { motion } from "framer-motion";
 import ContineBtn from "./ContineBtn";
 import { Skeleton } from "./ui/skeleton";
+import { ResumeTemplate } from "@/types/templateTypes";
+import Template1 from "@/templates/template1/template1";
+import Template2 from "@/templates/template2/template2";
+
+type TemplateComponentType = React.ComponentType<{
+  obj: ResumeTemplate;
+  isPreview: boolean;
+  isLive?: boolean;
+}>;
+
+const templateComponents: Record<string, TemplateComponentType> = {
+  Template1: Template1,
+  Template2: Template2,
+  // Add more templates as needed
+};
 
 const LiveResumePreview = () => {
   const params = useParams();
   const templateDetails = useQuery(api.resume.getTemplateDetails, {
     id: params.id as Id<"resumes">,
   });
-  const router = useRouter();
   const pathname = usePathname();
   const sectionType = pathname.split("/section/")[1];
 
@@ -31,11 +44,18 @@ const LiveResumePreview = () => {
   if (templateDetails === undefined) {
     return <ResumeSkeleton />;
   }
-  const backLocation = `/build-resume/${params.id}/tips?sec=${sectionArray[currentIndex]}`;
 
+  const backLocation = `/build-resume/${params.id}/tips?sec=${sectionArray[currentIndex]}`;
   const nextLocation = sectionArray[currentIndex + 1]
     ? `/build-resume/${params.id}/tips?sec=${sectionArray[currentIndex + 1]}`
     : `/build-resume/${params.id}/section/final`;
+
+  const TemplateComponent = templateComponents[templateDetails.templateName];
+
+  if (!TemplateComponent) {
+    console.error(`No component found for template: ${templateDetails.templateName}`);
+    return <div>Error: Template not found</div>;
+  }
 
   return (
     <>
@@ -45,7 +65,7 @@ const LiveResumePreview = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
         >
-          <Template1 obj={templateDetails} isLive isPreview />
+          <TemplateComponent obj={templateDetails} isLive isPreview />
         </motion.div>
       </div>
 

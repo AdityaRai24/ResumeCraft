@@ -27,14 +27,27 @@ interface HeaderSection extends BaseSection {
   style?: {};
 }
 
-interface SkillSection extends BaseSection {
-  type: "skills";
+
+interface ListSkillSection {
+  type : "list";
   content: {
-    skills: string[];
-  };
+    skills: string[]
+  }
   style?: {
     columns?: number;
   };
+}
+
+interface DescriptionSkillSection {
+  type : "description";
+  content: {
+    skills: string
+  }
+}
+
+interface SkillSection extends BaseSection {
+  type: "skills";
+  content : DescriptionSkillSection | ListSkillSection
 }
 
 interface ProjectSection extends BaseSection {
@@ -89,6 +102,7 @@ export type SectionTypes =
 export interface ResumeTemplate {
   isTemplate: boolean;
   userId: string;
+  templateName :string;
   sections: SectionTypes[];
   globalStyles: {
     fontFamily: string;
