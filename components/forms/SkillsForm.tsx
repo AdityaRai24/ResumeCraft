@@ -31,6 +31,7 @@ const SkillsForm = ({
   resumeId: Id<"resumes">;
   styles: any;
 }) => {
+
   const initialSkillPlaceholders = [
     "HTML, CSS, Bootstrap",
     "React JS, Javascript, Typescript",
@@ -66,8 +67,17 @@ const SkillsForm = ({
   }, [item?.content?.skills, styles?.columns]);
 
   const debouncedUpdate = useMemo(() => {
-    return debounce((newSkills: SkillContent, newColumns?: number) => {
-      update({ id: resumeId, content: newSkills, columns: newColumns });
+    return debounce((newSkills: string[], newColumns?: number) => {
+      update({
+        id: resumeId,
+        content: {
+          type: "list",
+          content: {
+            skills: newSkills
+          }
+        },
+        columns: newColumns
+      });
       pendingChangesRef.current = false;
     }, 400);
   }, [update, resumeId]);
@@ -78,25 +88,30 @@ const SkillsForm = ({
       setSkills((prevSkills) => {
         const newSkills = [...prevSkills.skills];
         newSkills[index] = value;
-        const updatedSkills = {
-          skills: newSkills.filter((skill) => skill !== ""),
-        };
+        const updatedSkills = newSkills.filter((skill) => skill !== "");
         debouncedUpdate(updatedSkills, columns);
         return { skills: newSkills };
       });
     },
     [debouncedUpdate, columns]
   );
-
   const handleColumnChange = useCallback(
     (e: string) => {
       const newColumns = Number(e);
       setColumns(newColumns);
-      update({ id: resumeId, content: skills, columns: newColumns });
+      update({
+        id: resumeId,
+        content: {
+          type: "list",
+          content: {
+            skills: skills.skills.filter(skill => skill !== "")
+          }
+        },
+        columns: newColumns
+      });
     },
     [resumeId, update, skills]
   );
-
   const addSkillField = () => {
     setSkills((prevSkills) => ({
       skills: [...prevSkills.skills, ""],

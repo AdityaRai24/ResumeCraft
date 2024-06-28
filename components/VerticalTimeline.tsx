@@ -34,7 +34,6 @@ const VerticalTimeline = () => {
 
   const searchParams = useSearchParams();
   const sec = searchParams.get("sec");
-  console.log(currentSec, sec);
 
   let sectionArray: string[] = [];
   resume?.sections?.map((item) => sectionArray.push(item.type));

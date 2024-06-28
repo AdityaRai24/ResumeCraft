@@ -37,7 +37,6 @@ const ChooseTemplates = () => {
         return router.push(`/build-resume/${res}/tips?sec=header`);
       })
       .catch((err) => {
-        console.log(err);
         toast.error("Something went wrong...");
       });
   };
@@ -57,6 +56,7 @@ const ChooseTemplates = () => {
     <div className="grid grid-cols-3 gap-6 mt-5">
 
       {templates?.map((item, index) => {
+        console.log(templates)
       const TemplateComponent = templateComponents[item.templateName];
 
       if (!TemplateComponent) {

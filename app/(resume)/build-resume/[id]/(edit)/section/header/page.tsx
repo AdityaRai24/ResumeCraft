@@ -108,8 +108,6 @@ const Page = () => {
 
         if (item?.type === "header") {
 
-          console.log(item)
-
           return (
             <div key={idx} className="my-24 mx-16">
               <SectionInfo
@@ -171,13 +169,13 @@ const Page = () => {
                     type="text"
                   />
                 </div>
-                <div className="mt-8 w-[85%] ">
+                {item?.content?.summary !== undefined && <div className="mt-8 w-[85%] ">
                   <QuillEditorComponent
                   label="Summary"
                     value={header.summary}
                     onChange={(content) => handleChange(content, "summary")}
                   />
-                </div>
+                </div>}
               </motion.form>
 
             

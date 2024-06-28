@@ -125,6 +125,7 @@ export const temp2Obj: ResumeTemplate = {
       style: {},
     },
   ],
+  templateName : "Template2",
   globalStyles: {
     columns: 2,
     fontFamily: "Inter",
