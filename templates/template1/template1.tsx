@@ -1,14 +1,8 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { ResumeTemplate } from "@/types/templateTypes";
-import {
-  GitBranch,
-  Github,
-  Globe,
-  Linkedin,
-  Mail,
-  PhoneCall,
-} from "lucide-react";
+import { fontMap, FontName } from "@/utils/font";
+import { Github, Globe, Linkedin, Mail, PhoneCall } from "lucide-react";
 import Link from "next/link";
 
 interface TemplateType {
@@ -25,7 +19,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
           "transform origin-top-left scale-[1] ",
           isLive &&
             "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
-          isPreview && !isLive && "scale-[0.4]",
+          isPreview && !isLive && "scale-[0.4]"
         )}
       >
         {children}
@@ -50,6 +44,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
+        fontMap[obj?.globalStyles?.fontFamily as FontName]?.className,
         isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >

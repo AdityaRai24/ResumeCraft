@@ -55,7 +55,7 @@ const SkillsForm = ({
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
-      const contentSkills = item?.content?.skills || [];
+      const contentSkills = item?.content?.content?.skills || [];
       setSkills({
         skills: [
           ...contentSkills,

@@ -4,7 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { tipsData } from "@/lib/tipsData";
 import { cn } from "@/lib/utils";
-import { montserrat } from "@/utils/font";
+import { fontMap } from "@/utils/font";
 import { useQuery } from "convex/react";
 import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
@@ -37,11 +37,13 @@ const page = () => {
   const currentTips = tipsData.find((item) => item.sec === sec);
 
   const nextSection = sec === 'introduction' ? 'header' : sectionArray[index];
+
   const prevSection = sectionArray[index - 1]
     ? sectionArray[index - 1]
-    : "header";
+    : "introduction";
 
   const nexturl = sec === 'introduction' ? `/build-resume/${resumeId}/tips?sec=header` : `/build-resume/${resumeId}/section/${nextSection}`
+  const prevurl = sec === 'header' ? `/build-resume/${resumeId}/tips?sec=introduction` : `/build-resume/${resumeId}/section/${prevSection}`
 
   return (
     <div className="flex items-center justify-start max-w-[80%] mx-16">
@@ -49,27 +51,25 @@ const page = () => {
         variants={container}
         initial="hidden"
         animate="visible"
-        className="mt-24"
+        className={cn("mt-24",fontMap.Geologica.className)}
       >
         <div className="flex flex-col gap-4">
           <motion.h2 variants={item} className="text-lg">
-            {" "}
             {currentTips?.topText}
           </motion.h2>
           <motion.div variants={item}>
             <h1
               className={cn(
-                "text-6xl font-extrabold leading-[1.10]",
-                montserrat.className
+                "text-6xl font-bold leading-[1.10]",
               )}
             >
               {currentTips?.mainText}
             </h1>
             <div className="flex flex-col items-start gap-1 mt-4">
-              <h2 className="font-bold text-2xl">
+              <h2 className="font-normal text-2xl">
                 {currentTips?.bottomMainText}
               </h2>
-              <p className="font-medium text-md">{currentTips?.bottomText}</p>
+              <p className="font-normal text-base">{currentTips?.bottomText}</p>
             </div>
           </motion.div>
         </div>
@@ -80,7 +80,7 @@ const page = () => {
           className="flex items-center mt-8 justify-between"
         >
           <ContineBtn
-            path={`/build-resume/${resumeId}/section/${prevSection}`}
+            path={prevurl}
             text="Back"
             type={"outline"}
           />

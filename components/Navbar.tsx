@@ -2,12 +2,13 @@
 import { File } from "lucide-react";
 import { Button } from "./ui/button";
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import { fontMap } from "@/utils/font";
 
 const Navbar = () => {
   const { user, isLoaded, isSignedIn } = useUser();
 
   return (
-    <div className="w-[80%] mx-auto flex items-center justify-between my-6">
+    <div className={`${fontMap.Geologica.className} w-[80%] mx-auto flex items-center justify-between my-6`}>
       <div className="flex items-center gap-2">
         <File size={40}/>
         <h1 className="text-3xl font-semibold ">

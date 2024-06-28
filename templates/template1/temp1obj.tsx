@@ -1,4 +1,4 @@
-import { ResumeTemplate } from "@/types/templateTypes";
+import { ResumeTemplate, SectionTypes } from "@/types/templateTypes";
 
 export const temp1Obj: ResumeTemplate = {
   isTemplate: true,
@@ -126,3 +126,4 @@ export const temp1Obj: ResumeTemplate = {
     primaryTextColor: "#C026D3",
   }
 };
+

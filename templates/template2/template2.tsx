@@ -1,9 +1,8 @@
 import { ResumeTemplate } from "@/types/templateTypes";
 import { cn } from "@/lib/utils";
-import { montserrat } from "@/utils/font";
+import { fontMap, FontName } from "@/utils/font";
 import Link from "next/link";
-import { Github, Globe } from "lucide-react";
-
+import { Github, Globe, Linkedin } from "lucide-react";
 interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
@@ -42,6 +41,7 @@ const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
         isPreview && !isLive && "w-[795px] h-[1122px]",
+        fontMap[obj?.globalStyles?.fontFamily as FontName]?.className,
         !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl"
       )}
     >
@@ -50,7 +50,9 @@ const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
         {obj?.sections?.map((item, index) => {
           if (item?.type === "header") {
             return (
-              <div key={index} className={`${montserrat.className}  `}>
+              <div
+                key={index}
+              >
                 <h1
                   className="text-4xl text-center font-semibold"
                   style={{ color: primaryTextColorClass }}
@@ -58,16 +60,36 @@ const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
                   {item?.content?.firstName} {item?.content?.lastName}
                 </h1>
                 <div className="flex items-center justify-center gap-2">
-                  {item?.content?.phone && <p>{`${item?.content?.phone} |`}  </p>}
-                  {item?.content?.email && <p className="underline underline-offset-2">
-                    {`${item?.content?.email} |`}
-                  </p>}
-                 {item?.content?.linkedin && <p className="underline underline-offset-2">
-                    {`${item?.content?.linkedin} |`}
-                  </p>}
-                 {item?.content?.github && <a href={`https://github.com/${item?.content?.github}`} className="underline underline-offset-2">
-                    {item?.content?.github}
-                  </a>}
+                  {item?.content?.phone && (
+                    <p>{`${item?.content?.phone} |`} </p>
+                  )}
+                  {item?.content?.email && (
+                    <p className="underline underline-offset-2">
+                      {`${item?.content?.email} |`}
+                    </p>
+                  )}
+                  {item?.content?.linkedin && (
+                    <div className="flex items-center justify-center gap-1">
+                    <Linkedin size={20}/>
+                     <a
+                       href={`https://linkedin.com/${item?.content?.linkedin}`}
+                       className="underline underline-offset-2"
+                     >
+                       {item?.content?.linkedin}
+                     </a> |
+                    </div>
+                  )}
+                  {item?.content?.github && (
+                   <div className="flex items-center justify-center gap-1">
+                   <Github size={20}/>
+                    <a
+                      href={`https://github.com/${item?.content?.github}`}
+                      className="underline underline-offset-2"
+                    >
+                      {item?.content?.github}
+                    </a>
+                   </div>
+                  )}
                 </div>
               </div>
             );
@@ -104,6 +126,7 @@ const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
                         {item?.location && item?.location}
                       </p>
                       <p className="text-sm text-right italic">
+                        {`${item?.startDate} -`}
                         {item?.endDate}
                       </p>
                     </div>
