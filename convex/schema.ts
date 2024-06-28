@@ -44,7 +44,7 @@ const sectionContentSchema = v.union(
         })
       ),
     }),
-    style: v.object({}),
+    style: v.optional(v.any()),
   }),
   v.object({
     type: v.literal("experience"),
@@ -60,7 +60,7 @@ const sectionContentSchema = v.union(
         })
       ),
     }),
-    style: v.object({}),
+    style: v.optional(v.any()),
   }),
   v.object({
     type: v.literal("education"),
@@ -75,7 +75,7 @@ const sectionContentSchema = v.union(
         })
       ),
     }),
-    style: v.object({}),
+    style:  v.optional(v.any()),
   })
 );
 

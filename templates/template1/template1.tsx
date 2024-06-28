@@ -25,7 +25,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
           "transform origin-top-left scale-[1] ",
           isLive &&
             "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
-          isPreview && !isLive && "scale-[0.4]"
+          isPreview && !isLive && "scale-[0.4]",
         )}
       >
         {children}

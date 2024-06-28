@@ -7,6 +7,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { ResumeTemplate } from "@/types/templateTypes";
 import Template2 from "@/templates/template2/template2";
+import { Button } from "@/components/ui/button";
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -81,6 +82,52 @@ const LiveResumePreview = () => {
 
   return (
     <div className="flex flex-col items-center mx-auto">
+    {!resumeOnlyMode && (
+      <button
+        onClick={handlePrint}
+        className="mb-4 px-4 py-2 no-scrollbar bg-blue-500 text-white rounded hover:bg-blue-600 print:hidden"
+      >
+        Print Resume
+      </button>
+    )}
+    <div className="resume-container no-scrollbar" id="pdf">
+      <TemplateComponent obj={templateDetails} />
+    </div>
+  </div>
+
+  );
+};
+
+    // <>
+    //   {!resumeOnlyMode ? (
+    //     <div
+    //       className={`flex justify-between items-center gap-10 max-w-[95%] mx-auto`}
+    //     >
+    //       <>
+    //         {" "}
+    //         <div className="self-start mt-[160px]">
+    //           <h1 className="text-6xl font-semibold">
+    //             Your Resume is ready to download
+    //           </h1>
+    //           <Button onClick={handlePrint}>Download</Button>
+    //         </div>
+    //       </>
+    //       <div className="">
+    //         <div className="resume-container no-scrollbar" id="pdf">
+    //           <TemplateComponent obj={templateDetails} />
+    //         </div>
+    //       </div>
+    //     </div>
+    //   ) : (
+    //     <div className="flex flex-col items-center mx-auto">
+    //   <div className="resume-container no-scrollbar" id="pdf">
+    //     <TemplateComponent obj={templateDetails} />
+    //   </div>
+    // </div> 
+    //   )}
+    // </>
+{
+  /* <div className="flex flex-col items-center mx-auto">
       {!resumeOnlyMode && (
         <button
           onClick={handlePrint}
@@ -92,8 +139,7 @@ const LiveResumePreview = () => {
       <div className="resume-container no-scrollbar" id="pdf">
         <TemplateComponent obj={templateDetails} />
       </div>
-    </div>
-  );
-};
+    </div> */
+}
 
 export default LiveResumePreview;

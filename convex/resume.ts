@@ -77,7 +77,7 @@ export const createUserResume = mutation({
   args: {
     id: v.id("resumes"),
     userId: v.string(),
-    templateName :v.string()
+    templateName: v.string(),
   },
   handler: async (ctx, args) => {
     const resume = await ctx.db.get(args.id);
@@ -89,7 +89,6 @@ export const createUserResume = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-    console.log(args.id,args.templateName,args.userId)
 
     const initialSections: SectionTypes[] = [
       {
@@ -165,7 +164,7 @@ export const createUserResume = mutation({
         style: {},
       },
     ];
-    
+
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
       userId: args.userId,
@@ -256,11 +255,12 @@ export const updateEducation = mutation({
 export const updateSkills = mutation({
   args: {
     id: v.id("resumes"),
-    content: v.optional(
-      v.object({
+    content: v.object({
+      type: v.literal("list"),
+      content: v.object({
         skills: v.array(v.string()),
-      })
-    ),
+      }),
+    }),
     columns: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
@@ -305,7 +305,6 @@ export const updateProjects = mutation({
     }),
   },
   handler: async (ctx, args) => {
-    console.log(args.content, args.id);
     const resume = await ctx.db.get(args.id);
     if (!resume) {
       throw new Error("Something went wrong");
