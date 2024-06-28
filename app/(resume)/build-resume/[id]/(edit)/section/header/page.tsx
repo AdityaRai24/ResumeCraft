@@ -104,7 +104,12 @@ const Page = () => {
   return (
     <>
       {resume.sections?.map((item, idx) => {
+
+
         if (item?.type === "header") {
+
+          console.log(item)
+
           return (
             <div key={idx} className="my-24 mx-16">
               <SectionInfo
@@ -150,11 +155,11 @@ const Page = () => {
                     type="tel"
                   />
                   <InputField
-                    label="Github"
+                    label="Github Username"
                     name="github"
                     value={header.github}
                     onChange={handleChange}
-                    placeholder="github.com/AdityaRai24"
+                    placeholder="AdityaRai24"
                     type="text"
                   />
                   <InputField

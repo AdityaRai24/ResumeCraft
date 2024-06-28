@@ -44,7 +44,7 @@ const page = () => {
   const nexturl = sec === 'introduction' ? `/build-resume/${resumeId}/tips?sec=header` : `/build-resume/${resumeId}/section/${nextSection}`
 
   return (
-    <div className="flex items-center justify-start max-w-[70%] mx-16">
+    <div className="flex items-center justify-start max-w-[80%] mx-16">
       <motion.div
         variants={container}
         initial="hidden"

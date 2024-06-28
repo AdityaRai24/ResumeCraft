@@ -46,7 +46,7 @@ const ProjectForm = ({
   const update = useMutation(api.resume.updateProjects);
 
   useEffect(() => {
-    if (item?.content) {
+    if (!pendingChangesRef.current) {
       setProjects(item.content);
     }
   }, [item]);

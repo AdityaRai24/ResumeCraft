@@ -77,6 +77,7 @@ export const createUserResume = mutation({
   args: {
     id: v.id("resumes"),
     userId: v.string(),
+    templateName :v.string()
   },
   handler: async (ctx, args) => {
     const resume = await ctx.db.get(args.id);
@@ -88,6 +89,7 @@ export const createUserResume = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
+    console.log(args.id,args.templateName,args.userId)
 
     const initialSections: SectionTypes[] = [
       {
@@ -139,7 +141,10 @@ export const createUserResume = mutation({
       {
         type: "skills",
         content: {
-          skills: [],
+          type: "list",
+          content: {
+            skills: [],
+          },
         },
         style: {
           columns: 2,
@@ -160,10 +165,12 @@ export const createUserResume = mutation({
         style: {},
       },
     ];
+    
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
       userId: args.userId,
       globalStyles: resume?.globalStyles!,
+      templateName: args?.templateName,
       sections: initialSections,
     });
 
@@ -284,7 +291,7 @@ export const updateSkills = mutation({
 });
 
 export const updateProjects = mutation({
-  args:{
+  args: {
     id: v.id("resumes"),
     content: v.object({
       projects: v.array(
@@ -297,59 +304,70 @@ export const updateProjects = mutation({
       ),
     }),
   },
-  handler: async(ctx,args)=>{
-    console.log(args.content,args.id)
-    const resume = await ctx.db.get(args.id)
-    if(!resume){
-      throw new Error("Something went wrong")
+  handler: async (ctx, args) => {
+    console.log(args.content, args.id);
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
     }
-    const resumeSections = resume?.sections
-    let projectsIndex = resumeSections.findIndex((item)=>item.type === "projects")
+    const resumeSections = resume?.sections;
+    let projectsIndex = resumeSections.findIndex(
+      (item) => item.type === "projects"
+    );
     if (projectsIndex === -1) {
       throw new Error("Projects section not found in resume");
-    }else{
-      resumeSections[projectsIndex].content = {...resumeSections[projectsIndex].content,...args.content}
+    } else {
+      resumeSections[projectsIndex].content = {
+        ...resumeSections[projectsIndex].content,
+        ...args.content,
+      };
     }
 
-    const newResume = await ctx.db.patch(args.id,{
-      sections: resumeSections
-    })
-    return newResume
-  }
-})
+    const newResume = await ctx.db.patch(args.id, {
+      sections: resumeSections,
+    });
+    return newResume;
+  },
+});
 
 export const updateColor = mutation({
-  args:{
-    id:v.id("resumes"),
-    color: v.string()
+  args: {
+    id: v.id("resumes"),
+    color: v.string(),
   },
-  handler: async(ctx,args)=>{
-    const resume = await ctx.db.get(args.id)
-    if(!resume){
-      throw new Error("Something went wrong")
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
     }
-    const newGlobalStyles = {...resume.globalStyles,primaryTextColor:args.color}
-    const newResume = await ctx.db.patch(args.id,{
-      globalStyles : newGlobalStyles
-    })
-    return newResume
-  }
-})
+    const newGlobalStyles = {
+      ...resume.globalStyles,
+      primaryTextColor: args.color,
+    };
+    const newResume = await ctx.db.patch(args.id, {
+      globalStyles: newGlobalStyles,
+    });
+    return newResume;
+  },
+});
 
 export const updateColorPC = mutation({
-  args:{
-    id:v.id("resumes"),
-    color: v.string()
+  args: {
+    id: v.id("resumes"),
+    color: v.string(),
   },
-  handler: async(ctx,args)=>{
-    const resume = await ctx.db.get(args.id)
-    if(!resume){
-      throw new Error("Something went wrong")
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
     }
-    const newGlobalStyles = {...resume.globalStyles,primaryColor:args.color}
-    const newResume = await ctx.db.patch(args.id,{
-      globalStyles : newGlobalStyles
-    })
-    return newResume
-  }
-})
+    const newGlobalStyles = {
+      ...resume.globalStyles,
+      primaryColor: args.color,
+    };
+    const newResume = await ctx.db.patch(args.id, {
+      globalStyles: newGlobalStyles,
+    });
+    return newResume;
+  },
+});

@@ -18,7 +18,6 @@ interface TemplateType {
 }
 
 const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
-
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className=" overflow-hidden">
       <div
@@ -33,10 +32,10 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
       </div>
     </div>
   );
+
   const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className="flex items-center justify-center ">{children}</div>
   );
-
 
   const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
 
@@ -47,111 +46,110 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] py-8  w-[210mm] h-[297mm] px-8 ",
+        "bg-[white] py-8 overflow-scroll overflow-x-hidden w-[210mm] h-[297mm] px-8 ",
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
         isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >
-      <div className={cn("mx-auto")}>
+      <div>
         {/* HEADER */}
-        {obj?.sections?.map((item, index) => {
-          if (item?.type === "header") {
+        {obj?.sections?.map((section, sectionIndex) => {
+          if (section?.type === "header") {
             return (
-              <div key={index}>
+              <div key={`header-section-${sectionIndex}`}>
                 <div
-                  className={`py-0 border-b `}
+                  className={`py-0 border-b`}
                   style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                 >
-                  {" "}
-                  <>
-                    <h1
-                      className={`text-4xl uppercase text-center font-bold`}
-                      style={{ color: primaryTextColorClass }}
-                    >
-                      {item?.content?.firstName} {item?.content?.lastName}
-                    </h1>
-                    <div className="flex items-center justify-center gap-4 flex-wrap pt-1 pb-2">
-                      {item?.content?.email && (
-                        <h1 className="flex !items-center justify-center gap-1">
-                          <Mail size={16} />{" "}
-                          <span className="text-sm">
-                            {item?.content?.email}
-                          </span>
-                        </h1>
-                      )}
-                      {item?.content?.phone && (
-                        <h1 className="flex items-center justify-center gap-1">
-                          <PhoneCall size={16} />
-                          <span className="text-sm">
-                            {item?.content?.phone}
-                          </span>
-                        </h1>
-                      )}
-                      {item?.content?.github && (
-                        <h1 className="flex items-center justify-center gap-1">
-                          <Github size={16} />
-                          <span className="text-sm">
-                            {item?.content?.github}
-                          </span>
-                        </h1>
-                      )}
-                      {item?.content?.linkedin && (
-                        <h1 className="flex items-center justify-center gap-1">
-                          <Linkedin size={16} />
-                          <span className="text-sm">
-                            {item?.content?.linkedin}
-                          </span>
-                        </h1>
-                      )}
-                    </div>
-                  </>
+                  <h1
+                    className={`text-4xl uppercase text-center font-bold`}
+                    style={{ color: primaryTextColorClass }}
+                  >
+                    {section?.content?.firstName} {section?.content?.lastName}
+                  </h1>
+                  <div className="flex items-center justify-center gap-4 flex-wrap pt-1 pb-2">
+                    {[
+                      {
+                        type: "email",
+                        icon: Mail,
+                        content: section?.content?.email,
+                      },
+                      {
+                        type: "phone",
+                        icon: PhoneCall,
+                        content: section?.content?.phone,
+                      },
+                      {
+                        type: "github",
+                        icon: Github,
+                        content: section?.content?.github,
+                      },
+                      {
+                        type: "linkedin",
+                        icon: Linkedin,
+                        content: section?.content?.linkedin,
+                      },
+                    ].map(
+                      (item, index) =>
+                        item.content && (
+                          <h1
+                            key={`contact-${item.type}-${index}`}
+                            className="flex items-center justify-center gap-1"
+                          >
+                            <item.icon size={16} />
+                            <span className="text-sm">{item.content}</span>
+                          </h1>
+                        )
+                    )}
+                  </div>
                 </div>
 
                 {/* SUMMARY */}
                 <div
-                  className={`py-2 border-b `}
+                  className={`py-2 border-b`}
                   style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                 >
-                  {" "}
                   <h1
-                    className={`text-lg font-bold `}
+                    className={`text-lg font-bold`}
                     style={{ color: primaryTextColorClass }}
                   >
                     SUMMARY
                   </h1>
                   <div
-                    className="text-sm font-normal"
+                    className="quill-content text-sm font-normal"
                     dangerouslySetInnerHTML={{
-                      __html: item?.content?.summary || "",
+                      __html: section?.content?.summary || "",
                     }}
                   />
                 </div>
               </div>
             );
           }
+          return null;
         })}
 
         {/* EXPERIENCE */}
         <div
-          className={`border-b  py-2`}
+          className={`border-b pt-2`}
           style={{ borderBottom: `1px solid ${primaryColorClass}` }}
         >
           <h1
             className={`text-lg font-bold `}
             style={{ color: primaryTextColorClass }}
           >
-            EXPERIENCE
+            WORK EXPERIENCE
           </h1>
           {obj?.sections?.map((item) => {
             if (item?.type === "experience") {
               return item?.content?.experience?.map((exp, index) => {
                 return (
-                  <div key={index} className="pb-2">
+                  <div key={index}>
                     <div className="flex items-center justify-between gap-2">
-                      <h1 className="font-semibold text-md">
-                        {exp?.role} {exp?.role && exp?.companyName && ","} {exp?.companyName}
+                      <h1 className="font-semibold text-base">
+                        {exp?.role} {exp?.role && exp?.companyName && ","}{" "}
+                        {exp?.companyName}
                       </h1>
                       <div className="flex items-center text-sm gap-2">
                         {exp?.startDate && exp?.endDate && (
@@ -187,19 +185,21 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                   className={`text-lg font-bold `}
                   style={{ color: primaryTextColorClass }}
                 >
-                  TECHNICAL SKILLS
+                  SKILLS
                 </h1>
-                <div
-                  className={`grid grid-cols-${item?.style?.columns ? item?.style?.columns : "2"}`}
-                >
-                  {item?.content?.skills?.map((skill, index) => {
-                    return (
-                      <li key={index} className="text-sm">
-                        {skill}
-                      </li>
-                    );
-                  })}
-                </div>
+                {item?.content?.type === "list" && (
+                  <div
+                    className={`mt-2 grid grid-cols-${item?.style?.columns}`}
+                  >
+                    {item?.content?.content?.skills?.map((skill, index) => {
+                      return (
+                        <li key={index} className="text-sm">
+                          {skill}
+                        </li>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           }
@@ -211,7 +211,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
             return (
               <>
                 <div
-                  className={`py-2 border-b `}
+                  className={`border-b pt-2`}
                   style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                   key={index}
                 >
@@ -222,7 +222,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                     PROJECTS
                   </h1>
 
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col">
                     {item?.content?.projects?.map((project, index) => {
                       return (
                         <div key={index}>
@@ -253,7 +253,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                             )}
                           </div>
                           <div
-                            className="text-sm"
+                            className="quill-content text-sm"
                             dangerouslySetInnerHTML={{
                               __html: project?.description,
                             }}
