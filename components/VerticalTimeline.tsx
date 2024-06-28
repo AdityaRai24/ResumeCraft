@@ -87,7 +87,7 @@ const VerticalTimeline = () => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <Link href={`/build-resume/${resumeId}/tips?sec=${section.name}`}>
+                      <Link href={section.name === 'final' ? `/build-resume/${resumeId}/section/${section.name}` : `/build-resume/${resumeId}/tips?sec=${section.name}`}>
                         <div
                           className={`${currentSec === section.name || sec === section.name ? "ring-black ring-2 ring-offset-8" : ""}   bg-[transparent]  rounded-full`}
                         >

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import ConvexAndClerk from "@/providers/ConvexAndClerk";
-import { poppins } from "@/utils/font";
+import { fontMap } from "@/utils/font";
 import { Toaster } from "react-hot-toast";
 
 
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={poppins.className}>
+      <body className={fontMap.Poppins.className}>
         <ConvexAndClerk>
             <Toaster />
           {children}</ConvexAndClerk>

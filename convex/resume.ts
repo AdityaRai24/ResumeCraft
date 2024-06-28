@@ -1,8 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { SectionTypes } from "@/types/templateTypes";
-import { temp1Obj } from "@/templates/template1/temp1obj";
-import { useMutation } from "convex/react";
 
 // export const insertResumeData = mutation({
 //     args: {},
@@ -370,3 +368,26 @@ export const updateColorPC = mutation({
     return newResume;
   },
 });
+
+export const updateFont = mutation({
+  args:{
+    id: v.id("resumes"),
+    font : v.string()
+  },
+  handler:async(ctx,args)=>{
+    const resume = await ctx.db.get(args.id)
+    if (!resume) {
+      throw new Error("Something went wrong");
+    }
+
+    const updatedResume = await ctx.db.patch(args.id,{
+      globalStyles: {
+        ...resume.globalStyles,
+        fontFamily: args.font
+      }
+    })
+
+    return updatedResume
+
+  }
+})

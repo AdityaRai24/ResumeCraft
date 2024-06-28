@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { motion, Variants } from "framer-motion";
 import { ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
+import { fontMap, FontName } from "@/utils/font";
 
 const page = () => {
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");
@@ -27,6 +28,7 @@ const page = () => {
   const resume = useQuery(api.resume.getTemplateDetails, {
     id: resumeId as Id<"resumes">,
   });
+  const updateFont = useMutation(api.resume.updateFont)
 
   const handlePrimaryTextColorChange = useMemo(() => {
     return debounce((color: any) => {
@@ -59,13 +61,28 @@ const page = () => {
     "#9d161d",
   ];
 
+  const fontOptions = Object.keys(fontMap) as FontName[];
+
+  const handleFontChange = async(font: FontName)=>{
+    await updateFont({id:resumeId as Id<"resumes">,font})
+  }
+
+  const currentFont = resume?.globalStyles?.fontFamily || "Inter";
+
   return (
     <FinalLayout>
-      <div className="max-w-[70%] mt-32 mx-16">
+      <div className="max-w-[70%] mt-16 mx-16">
+        <div className="mb-16">
+          <h1 className="text-6xl font-bold">Almost Done !!</h1>
+          <p className="font-normal text-lg">
+            Change the theme color and font of your resume if you want...
+          </p>
+        </div>
+
         <div className="mb-8">
           <div className="mb-4">
             <Label className="text-xl">Primary Text Color :</Label>
-            <p>
+            <p className="text-gray-600">
               This is for all the title text that you can see in the resume..
             </p>
           </div>
@@ -127,7 +144,7 @@ const page = () => {
         <div className="mt-4 mb-8">
           <div className="mb-4">
             <Label className="text-xl">Border/Design Style :</Label>
-            <p>
+            <p className="text-gray-600">
               This is for all the borders or designs that you can see in the
               resume.
             </p>
@@ -184,6 +201,27 @@ const page = () => {
             />
           </div>
         )}
+
+        <div className="mb-4">
+            <Label className="text-xl">Font Style :</Label>
+            <p className="text-gray-600">
+              Choose a font style for your resume...
+            </p>
+          </div>
+        <div className="flex items-center justify-start gap-2">
+          {fontOptions?.map((item, index) => {
+            return (
+              <Button
+              onClick={()=>handleFontChange(item)}
+                className={`${item === currentFont ? "border-primary scale-[1.065]" : ""} hover:border  hover:border-primary hover:scale-[1.05] transition duration-300 ease`}
+                key={index}
+                variant={"outline"}
+              >
+                {item}
+              </Button>
+            );
+          })}
+        </div>
       </div>
     </FinalLayout>
   );
