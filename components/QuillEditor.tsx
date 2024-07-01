@@ -4,19 +4,30 @@ import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 import { motion } from "framer-motion";
 import { Label } from "./ui/label";
+import { Button } from "./ui/button";
+import { WandSparkles } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import axios from 'axios'
 
 const QuillEditor = dynamic(() => import("react-quill"), { ssr: false });
 
 interface QuillEditorComponentProps {
   value: string;
   onChange: (content: string) => void;
-  label : string;
+  label: string;
 }
 
 export default function QuillEditorComponent({
   value,
   onChange,
-  label
+  label,
 }: QuillEditorComponentProps) {
   const quillModules = {
     toolbar: [
@@ -27,14 +38,51 @@ export default function QuillEditorComponent({
 
   const quillFormats = ["bold", "italic", "underline", "list", "bullet"];
 
+  const handleGenerate = async()=>{
+    try {
+      const response = await axios.post('http://localhost:3000/api/generateJD')
+      console.log(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
     >
-      <Label className="text-md">{label}</Label>
-
+      <div className="flex items-center justify-between">
+        <Label className="text-md">{label}</Label>
+        <Dialog>
+          <DialogTrigger>
+            <Button type="button">
+              Magic Write <WandSparkles className="ml-2" size={14} />{" "}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                Write ATS friendly, professional job descriptions with our AI
+              </DialogTitle>
+              <DialogDescription>
+                Write something and click on generate to see the magic !!
+              </DialogDescription>
+              <div>
+                <QuillEditor
+                  value={value}
+                  onChange={onChange}
+                  modules={quillModules}
+                  formats={quillFormats}
+                  className="bg-white mt-2"
+                />
+                <Button onClick={handleGenerate} className="mt-2 w-full">Generate Description</Button>
+              </div>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </div>
       <QuillEditor
         value={value}
         onChange={onChange}

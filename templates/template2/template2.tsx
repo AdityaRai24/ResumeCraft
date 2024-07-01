@@ -36,7 +36,7 @@ const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] py-8 overflow-scroll overflow-x-hidden w-[210mm] h-[313mm] px-8 ",
+        "bg-[white] py-8 overflow-scroll overflow-x-hidden w-[210mm] h-[297mm] px-8 ",
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",

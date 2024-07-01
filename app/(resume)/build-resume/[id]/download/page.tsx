@@ -1,6 +1,6 @@
 "use client";
 import { useParams, useSearchParams } from "next/navigation";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Template1 from "@/templates/template1/template1";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -8,9 +8,15 @@ import { Id } from "@/convex/_generated/dataModel";
 import { ResumeTemplate } from "@/types/templateTypes";
 import Template2 from "@/templates/template2/template2";
 import { Button } from "@/components/ui/button";
+import { fontMap } from "@/utils/font";
+import { cn } from "@/lib/utils";
+import toast from "react-hot-toast";
+import { Loader, Loader2 } from "lucide-react";
 
 const LiveResumePreview = () => {
   const params = useParams();
+  const [loading, setLoading] = useState(false);
+
   const templateDetails = useQuery(api.resume.getTemplateDetails, {
     id: params.id as Id<"resumes">,
   });
@@ -47,6 +53,7 @@ const LiveResumePreview = () => {
 
   const handlePrint = async () => {
     try {
+      setLoading(true);
       console.log("Initiating PDF download");
       const response = await fetch(`http://localhost:3000/api/generatePdf`, {
         body: JSON.stringify({ id: params.id }),
@@ -75,71 +82,53 @@ const LiveResumePreview = () => {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
       console.log("PDF download initiated");
+      setLoading(false);
+      toast.success("Pdf download started successfully");
     } catch (error) {
+      setLoading(false);
+      toast.error("Failed to download PDF");
       console.error("Failed to download PDF", error);
     }
   };
 
   return (
     <div className="flex flex-col items-center mx-auto">
-    {!resumeOnlyMode && (
-      <button
-        onClick={handlePrint}
-        className="mb-4 px-4 py-2 no-scrollbar bg-blue-500 text-white rounded hover:bg-blue-600 print:hidden"
-      >
-        Print Resume
-      </button>
-    )}
-    <div className="resume-container no-scrollbar" id="pdf">
-      <TemplateComponent obj={templateDetails} />
-    </div>
-  </div>
-
-  );
-};
-
-    // <>
-    //   {!resumeOnlyMode ? (
-    //     <div
-    //       className={`flex justify-between items-center gap-10 max-w-[95%] mx-auto`}
-    //     >
-    //       <>
-    //         {" "}
-    //         <div className="self-start mt-[160px]">
-    //           <h1 className="text-6xl font-semibold">
-    //             Your Resume is ready to download
-    //           </h1>
-    //           <Button onClick={handlePrint}>Download</Button>
-    //         </div>
-    //       </>
-    //       <div className="">
-    //         <div className="resume-container no-scrollbar" id="pdf">
-    //           <TemplateComponent obj={templateDetails} />
-    //         </div>
-    //       </div>
-    //     </div>
-    //   ) : (
-    //     <div className="flex flex-col items-center mx-auto">
-    //   <div className="resume-container no-scrollbar" id="pdf">
-    //     <TemplateComponent obj={templateDetails} />
-    //   </div>
-    // </div> 
-    //   )}
-    // </>
-{
-  /* <div className="flex flex-col items-center mx-auto">
       {!resumeOnlyMode && (
-        <button
-          onClick={handlePrint}
-          className="mb-4 px-4 py-2 no-scrollbar bg-blue-500 text-white rounded hover:bg-blue-600 print:hidden"
-        >
-          Print Resume
-        </button>
+        <>
+          <div className="my-16">
+            <h1
+              className={cn("text-6xl font-bold", fontMap.Geologica.className)}
+            >
+              Your Resume is Ready !!
+            </h1>
+            <div className="flex items-center justify-center mt-8">
+              <Button
+                disabled={loading}
+                onClick={handlePrint}
+                className="hover:scale-[1.02] active:scale-[0.98] transition duration-300 ease-out text-xl py-8 px-32"
+              >
+                {loading ? (
+                  <>
+                    Downloading... <Loader2 className="ml-4 animate-spin" />
+                  </>
+                ) : (
+                  <>Download</>
+                )}
+              </Button>
+            </div>
+            {loading && (
+              <p className="text-center my-2 text-muted-foreground">
+                Downloading may take few seconds so kindly be patient...
+              </p>
+            )}{" "}
+          </div>
+        </>
       )}
       <div className="resume-container no-scrollbar" id="pdf">
         <TemplateComponent obj={templateDetails} />
       </div>
-    </div> */
-}
+    </div>
+  );
+};
 
 export default LiveResumePreview;
