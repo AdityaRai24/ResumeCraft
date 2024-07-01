@@ -23,7 +23,7 @@ const page = () => {
         </div>
 
         <div className="max-w-[70%] mx-auto ">
-          <div className="flex items-center shadow-lg rounded-lg p-3 bg-slate-100 justify-between">
+          {/* <div className="flex items-center shadow-lg rounded-lg p-3 bg-slate-100 justify-between">
             <div className="flex items-center justify-center gap-3">
               <h1 className="font-semibold">Filters : </h1>
               <Select>
@@ -59,10 +59,7 @@ const page = () => {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <h1 className="font-semibold">Color :</h1>
-            </div>
-          </div>
+          </div> */}
 
           <ChooseTemplates />
         </div>

@@ -3,8 +3,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { cn } from "@/lib/utils";
-import { montserrat } from "@/utils/font";
 import { useMutation, useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import React, {
@@ -16,12 +14,11 @@ import React, {
   useRef,
 } from "react";
 import debounce from "lodash/debounce";
-import QuillEditorComponent from "@/components/QuillEditor";
 import { Button } from "@/components/ui/button";
 import SectionInfo from "@/components/SectionInfo";
-import { container } from "@/lib/motion";
 import { motion } from "framer-motion";
 import HeaderSkeleton from "@/components/HeaderSkeleton";
+import QuillExpEditor from "@/components/QuillEditors/QuillExp";
 
 interface ExperienceItem {
   companyName: string;
@@ -166,8 +163,10 @@ const Page = () => {
                     />
                   </div>
                   <div className="mt-8 w-[85%]">
-                    <QuillEditorComponent
+                    <QuillExpEditor
                       label="Job Description"
+                      companyName={exp.companyName}
+                      role={exp.role}
                       value={exp.jobDescription}
                       onChange={(content) =>
                         handleChange(index)(content, "jobDescription")
@@ -185,7 +184,7 @@ const Page = () => {
                   ease: [0, 0.71, 0.2, 1.01],
                 }}
               >
-                <Button onClick={addExperience} className="mt-4">
+                <Button onClick={addExperience} className="mt-4 mb-8">
                   Add Another Experience
                 </Button>
               </motion.div>
