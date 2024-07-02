@@ -23,21 +23,19 @@ interface QuillEditorComponentProps {
   value: string;
   onChange: (content: string) => void;
   label: string;
-  companyName: string;
-  role: string;
+  projectTitle: string;
 }
 
-export default function QuillExpEditor({
+export default function QuillProjectEditor({
   value,
   onChange,
   label,
-  companyName,
-  role,
+  projectTitle,
 }: QuillEditorComponentProps) {
   const [generatedContent, setGeneratedContent] = useState("");
-  const [tempValue, setTempValue] = useState("")
   const [loading, setLoading] = useState(false);
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
+  const [tempValue, setTempValue] = useState("")
 
   const quillModules = {
     toolbar: [
@@ -49,23 +47,21 @@ export default function QuillExpEditor({
   const quillFormats = ["bold", "italic", "underline", "list", "bullet"];
 
   const handleGenerate = async () => {
-
-
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:3000/api/generateJD",
-        { companyName: companyName, role: role,jobDescription : tempValue }
+        "http://localhost:3000/api/generatePD",
+        { projectTitle: projectTitle, projectDescription: generatedContent }
       );
       // Convert the array of strings to an HTML list
       const listItems = response.data.textArray
-        .map((item : string) => `<li>${item}</li>`)
+        .map((item: string) => `<li>${item}</li>`)
         .join("");
       const generatedHtml = `<ul>${listItems}</ul>`;
       setGeneratedContent(generatedHtml);
       setLoading(false);
     } catch (error) {
-      toast.error("Something went wrong Quill Experience")
+      toast.error("Something went wrong Quill Project")
     }
   };
 
@@ -90,27 +86,29 @@ export default function QuillExpEditor({
       <div className="flex items-center justify-between">
         <Label className="text-md">{label}</Label>
 
-        <Button 
-        type="button"
-        onClick={() => {
-          if (!companyName.trim() && !role.trim()) {
-            toast.error("Company name and role required...")
-          } else {
-            setDialogIsOpen(true);
-          }
-        }}
-      >
-        Magic Write <WandSparkles className="ml-2" size={14} />
-      </Button>
+        <Button
+          type="button"
+          onClick={() => {
+            if (!projectTitle.trim()) {
+              toast.error("Project Title required...");
+            } else {
+              setDialogIsOpen(true);
+            }
+          }}
+        >
+          Magic Write <WandSparkles className="ml-2" size={14} />
+        </Button>
 
-      <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
+        <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                Write ATS friendly, professional job descriptions with our AI
+                Write ATS friendly, project descriptions with our AI
               </DialogTitle>
               <DialogDescription>
-                Write something and click on generate to see the magic !!
+                Compose your description in the text area provided. Select
+                'Generate' to enhance your writing, or choose 'Generate' without
+                writing anything to have our AI create a description for you.
               </DialogDescription>
               <div>
                 <QuillEditor
@@ -121,7 +119,11 @@ export default function QuillExpEditor({
                   className="bg-white mt-2"
                 />
                 {loading ? (
-                  <Button disabled onClick={handleGenerate} className="mt-2 w-full">
+                  <Button
+                    disabled
+                    onClick={handleGenerate}
+                    className="mt-2 w-full"
+                  >
                     Generating Description{" "}
                     <Loader2 className="animate-spin ml-2" />
                   </Button>

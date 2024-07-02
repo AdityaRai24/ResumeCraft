@@ -36,14 +36,14 @@ const page = () => {
   const index = sectionArray.findIndex((item) => item === sec);
   const currentTips = tipsData.find((item) => item.sec === sec);
 
-  const nextSection = sec === 'introduction' ? 'header' : sectionArray[index];
+  const nextSection = sectionArray[index];
 
   const prevSection = sectionArray[index - 1]
     ? sectionArray[index - 1]
-    : "introduction";
+    : "header";
 
-  const nexturl = sec === 'introduction' ? `/build-resume/${resumeId}/tips?sec=header` : `/build-resume/${resumeId}/section/${nextSection}`
-  const prevurl = sec === 'header' ? `/build-resume/${resumeId}/tips?sec=introduction` : `/build-resume/${resumeId}/section/${prevSection}`
+  const nexturl =  `/build-resume/${resumeId}/section/${nextSection}`
+  const prevurl = sec === 'header' ? `/build-resume/${resumeId}/tips?sec=header` : `/build-resume/${resumeId}/section/${prevSection}`
 
   return (
     <div className="flex items-center justify-start max-w-[80%] mx-16">

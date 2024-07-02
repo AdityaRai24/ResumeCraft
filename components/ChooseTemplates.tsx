@@ -1,7 +1,4 @@
 "use client";
-import Template1 from "@/templates/template1/template1";
-import Template2 from "@/templates/template2/template2";
-import { ResumeTemplate } from "@/types/templateTypes";
 import { Button } from "./ui/button";
 import { Edit, Eye } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
@@ -11,6 +8,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Id } from "@/convex/_generated/dataModel";
 import { Skeleton } from "./ui/skeleton";
+import { templateComponents, TemplateComponentType } from "@/templates/templateStructures";
 
 const ChooseTemplates = () => {
   const { user } = useUser();
@@ -34,29 +32,20 @@ const ChooseTemplates = () => {
       templateName: templateName,
     })
       .then((res) => {
-        return router.push(`/build-resume/${res}/tips?sec=introduction`);
+        return router.push(`/build-resume/${res}/tips?sec=header`);
       })
       .catch((err) => {
         toast.error("Something went wrong...");
       });
   };
 
-  type TemplateComponentType = React.ComponentType<{
-    obj: ResumeTemplate;
-    isPreview: boolean;
-  }>;
-  
 
-  const templateComponents : Record<string, TemplateComponentType> = {
-    Template1: Template1,
-    Template2: Template2,
-  };
 
   return (
     <div className="grid grid-cols-3 gap-6 mt-5">
 
       {templates?.map((item, index) => {
-      const TemplateComponent = templateComponents[item.templateName];
+      const TemplateComponent : TemplateComponentType = templateComponents[item.templateName];
 
       if (!TemplateComponent) {
         console.error(`No component found for template: ${item.templateName}`);

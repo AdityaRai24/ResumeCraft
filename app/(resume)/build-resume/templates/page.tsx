@@ -1,4 +1,5 @@
 import ChooseTemplates from "@/components/ChooseTemplates";
+import Navbar from "@/components/Navbar";
 import {
   Select,
   SelectContent,
@@ -11,14 +12,12 @@ const page = () => {
   return (
     <>
       <div>
+        <Navbar />
         <div className="flex items-center justify-center my-16">
           <div>
-            <h1 className="text-4xl font-extrabold py-3">
+            <h1 className="text-4xl font-semibold py-3">
               Templates recommended for you
             </h1>
-            <p className="text-lg font-normal text-center">
-              You can always change your template later.
-            </p>
           </div>
         </div>
 

@@ -3,10 +3,13 @@ import { File } from "lucide-react";
 import { Button } from "./ui/button";
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { fontMap } from "@/utils/font";
-import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const Navbar = () => {
   const { user, isLoaded, isSignedIn } = useUser();
+
+  const router = useRouter()
 
   return (
     <div
@@ -14,14 +17,17 @@ const Navbar = () => {
     >
       <div className="flex items-center gap-2">
         <File size={40} />
-        <h1 className="text-3xl font-semibold ">
+       <Link href="/"> <h1 className="text-3xl font-semibold ">
           Resume<span className="text-primary">Craft</span>
-        </h1>
+        </h1></Link>
       </div>
 
       {!isLoaded && <h1>Loading...</h1>}
       {isSignedIn && (
         <div className="flex items-center gap-4">
+
+          <Button onClick={()=>router.push(`/my-resumes`)} variant="outline"> My Resumes</Button>
+
           <h1 className="text-xl font-semibold">{user?.firstName}</h1>
           <UserButton />
         </div>
