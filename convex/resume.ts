@@ -1,14 +1,10 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { SectionTypes } from "@/types/templateTypes";
-
-// export const insertResumeData = mutation({
-//     args: {},
-//     handler: async(ctx,args)=>{
-//         const resume  = await ctx.db.insert("resumes",temp1Obj)
-//         return resume
-//     }
-// })
+import {
+  createSection,
+  templateStructures,
+} from "@/templates/templateStructures";
 
 export const getTemplates = query({
   args: {},
@@ -37,13 +33,13 @@ export const updateHeader = mutation({
     id: v.id("resumes"),
     content: v.object({
       firstName: v.string(),
-      lastName: v.string(),
+      lastName: v.optional(v.string()),
       email: v.string(),
-      phone: v.string(),
-      github: v.string(),
-      linkedin: v.string(),
-      location: v.string(),
-      summary: v.string(),
+      phone: v.optional(v.string()),
+      github: v.optional(v.string()),
+      linkedin: v.optional(v.string()),
+      location: v.optional(v.string()),
+      summary: v.optional(v.string()),
     }),
   },
   handler: async (ctx, args) => {
@@ -88,80 +84,15 @@ export const createUserResume = mutation({
       throw new Error("Something went wrong");
     }
 
-    const initialSections: SectionTypes[] = [
-      {
-        type: "header",
-        content: {
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          github: "",
-          linkedin: "",
-          summary: "",
-          location: "",
-          photo: undefined,
-        },
-        style: {},
-      },
-      {
-        type: "experience",
-        content: {
-          experience: [
-            {
-              companyName: "",
-              role: "",
-              jobDescription: "",
-              location: "",
-              startDate: "",
-              endDate: "",
-            },
-          ],
-        },
-        style: {},
-      },
-      {
-        type: "education",
-        content: {
-          education: [
-            {
-              courseName: "",
-              instituteName: "",
-              startDate: "",
-              endDate: "",
-              location: "",
-            },
-          ],
-        },
-        style: {},
-      },
-      {
-        type: "skills",
-        content: {
-          type: "list",
-          content: {
-            skills: [],
-          },
-        },
-        style: {
-          columns: 2,
-        },
-      },
-      {
-        type: "projects",
-        content: {
-          projects: [
-            {
-              name: "",
-              description: "",
-              githuburl: "",
-              liveurl: "",
-            },
-          ],
-        },
-        style: {},
-      },
-    ];
+    const templateSections = templateStructures[args.templateName];
+    if (!templateSections) {
+      throw new Error("Invalid template name");
+    }
+
+    const initialSections = templateSections.map((section) =>
+      createSection(section.type, section.fields)
+    );
+
 
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
@@ -370,24 +301,37 @@ export const updateColorPC = mutation({
 });
 
 export const updateFont = mutation({
-  args:{
+  args: {
     id: v.id("resumes"),
-    font : v.string()
+    font: v.string(),
   },
-  handler:async(ctx,args)=>{
-    const resume = await ctx.db.get(args.id)
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
     if (!resume) {
       throw new Error("Something went wrong");
     }
 
-    const updatedResume = await ctx.db.patch(args.id,{
+    const updatedResume = await ctx.db.patch(args.id, {
       globalStyles: {
         ...resume.globalStyles,
-        fontFamily: args.font
-      }
-    })
+        fontFamily: args.font,
+      },
+    });
 
-    return updatedResume
+    return updatedResume;
+  },
+});
 
-  }
-})
+export const getUserResumes = query({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const resumes = await ctx.db
+      .query("resumes")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .collect();
+
+    return resumes;
+  },
+});

@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import axios from 'axios'
+import toast from "react-hot-toast";
 
 const QuillEditor = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -41,9 +42,8 @@ export default function QuillEditorComponent({
   const handleGenerate = async()=>{
     try {
       const response = await axios.post('http://localhost:3000/api/generateJD')
-      console.log(response.data)
     } catch (error) {
-      console.log(error)
+      toast.error("Something went wrong Quill Editor")
     }
   }
 

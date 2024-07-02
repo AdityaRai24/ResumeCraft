@@ -15,6 +15,7 @@ import { debounce } from "lodash";
 import QuillEditorComponent from "../QuillEditor";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
+import QuillProjectEditor from "../QuillEditors/QuillProject";
 
 interface ProjectType {
   name: string;
@@ -117,9 +118,10 @@ const ProjectForm = ({
                 />
               </div>
               <div className="mt-8 w-[85%]">
-                <QuillEditorComponent
+                <QuillProjectEditor
                   label="Project Description"
                   value={item.description}
+                  projectTitle={item.name}
                   onChange={(content) =>
                     handleChange(index)(content, "description")
                   }
