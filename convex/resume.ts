@@ -116,8 +116,10 @@ export const updateExperience = mutation({
           role: v.string(),
           jobDescription: v.string(),
           location: v.optional(v.string()),
-          startDate: v.string(),
-          endDate: v.string(),
+          startMonth: v.optional(v.string()),
+          startYear : v.string(),
+          endMonth: v.optional(v.string()),
+          endYear : v.string()
         })
       ),
     }),

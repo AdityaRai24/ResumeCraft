@@ -16,7 +16,10 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
-import { container } from "@/lib/motion";
+import DatePicker from "react-date-picker";
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
+
 
 interface EducationItem {
   courseName: string;
@@ -35,6 +38,10 @@ interface EducationFormProps {
   resumeId: Id<"resumes">;
 }
 
+type ValuePiece = Date | null;
+
+type Value = ValuePiece | [ValuePiece, ValuePiece];
+
 const EducationForm = ({ item, resumeId }: EducationFormProps) => {
   const emptyEducation: EducationItem = {
     courseName: "",
@@ -43,6 +50,8 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     startDate: "",
     endDate: "",
   };
+
+  const [value, onChange] = useState<Value>(new Date());
 
   const [education, setEducation] = useState<EducationContent>({
     education: [],
@@ -58,7 +67,6 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newEducation: EducationContent) => {
-
       update({ id: resumeId, content: newEducation });
       pendingChangesRef.current = false;
     }, 400);

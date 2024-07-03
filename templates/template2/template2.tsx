@@ -161,9 +161,9 @@ const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
                         <h1 className="text-sm italic">{item?.companyName}</h1>
                       </div>
                       <div className="text-right">
-                        {item?.startDate && item?.endDate && (
+                        {item?.startYear && item?.endYear && (
                           <p className="text-base ">
-                            {item?.startDate} - {item?.endDate}
+                            {item?.startMonth}, {item?.startYear} - {item?.endMonth}, {item?.endYear}
                           </p>
                         )}{" "}
                         {item?.location && (

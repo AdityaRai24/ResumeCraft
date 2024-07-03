@@ -16,8 +16,6 @@ const page = () => {
     id: resumeId as Id<"resumes">,
   });
 
-  const router = useRouter()
-
   if (resume === null) {
     return <div>No Template Found</div>;
   }

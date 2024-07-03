@@ -51,7 +51,7 @@ export default function QuillProjectEditor({
       setLoading(true);
       const response = await axios.post(
         "http://localhost:3000/api/generatePD",
-        { projectTitle: projectTitle, projectDescription: generatedContent }
+        { projectTitle: projectTitle, projectDescription: tempValue }
       );
       // Convert the array of strings to an HTML list
       const listItems = response.data.textArray
