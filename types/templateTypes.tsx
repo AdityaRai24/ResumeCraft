@@ -27,27 +27,26 @@ interface HeaderSection extends BaseSection {
   style?: {};
 }
 
-
 interface ListSkillSection {
-  type : "list";
+  type: "list";
   content: {
-    skills: string[]
-  }
+    skills: string[];
+  };
   style?: {
     columns?: number;
   };
 }
 
 interface DescriptionSkillSection {
-  type : "description";
+  type: "description";
   content: {
-    skills: string
-  }
+    skills: string;
+  };
 }
 
 interface SkillSection extends BaseSection {
   type: "skills";
-  content : DescriptionSkillSection | ListSkillSection
+  content: DescriptionSkillSection | ListSkillSection;
 }
 
 interface ProjectSection extends BaseSection {
@@ -71,8 +70,10 @@ interface ExperienceSection extends BaseSection {
       role: string;
       jobDescription: string;
       location?: string;
-      startDate: string;
-      endDate: string;
+      startMonth?: string;
+      startYear: string;
+      endMonth?: string;
+      endYear: string;
     }[];
   };
   style?: {};
@@ -102,7 +103,7 @@ export type SectionTypes =
 export interface ResumeTemplate {
   isTemplate: boolean;
   userId: string;
-  templateName :string;
+  templateName: string;
   sections: SectionTypes[];
   globalStyles: {
     fontFamily: string;

@@ -55,8 +55,10 @@ const sectionContentSchema = v.union(
           role: v.string(),
           jobDescription: v.string(),
           location: v.optional(v.string()),
-          startDate: v.string(),
-          endDate: v.string(),
+          startMonth: v.optional(v.string()),
+          startYear: v.string(),
+          endMonth: v.optional(v.string()),
+          endYear: v.string(),
         })
       ),
     }),
@@ -75,7 +77,7 @@ const sectionContentSchema = v.union(
         })
       ),
     }),
-    style:  v.optional(v.any()),
+    style: v.optional(v.any()),
   })
 );
 
@@ -83,7 +85,7 @@ export default defineSchema({
   resumes: defineTable({
     isTemplate: v.boolean(),
     userId: v.string(),
-    templateName : v.string(),
+    templateName: v.string(),
     sections: v.array(sectionContentSchema),
     globalStyles: v.object({
       fontFamily: v.string(),

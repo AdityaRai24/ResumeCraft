@@ -35,6 +35,7 @@
     "react": "^18",
     "react-color-palette": "^7.1.1",
     "react-color-pallete": "^1.0.1",
+    "react-date-picker": "^11.0.0",
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-print": "^1.3.1",
