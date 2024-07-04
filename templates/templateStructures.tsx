@@ -2,7 +2,7 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import Template1 from "./template1/template1";
 import Template2 from "./template2/template2";
 
-export const allSectionFields = {
+export const allSectionFields : any = {
   header: {
     firstName: "",
     lastName: "",
@@ -57,7 +57,7 @@ export const allSectionFields = {
   },
 };
 
-export function createSection(type, fields: string[]) {
+export function createSection(type : any, fields: string[]) {
   let content: any = {};
   fields.forEach((field) => {
     content[field] = allSectionFields[type][field];
@@ -79,7 +79,7 @@ export function createSection(type, fields: string[]) {
   };
 }
 
-export const templateStructures = {
+export const templateStructures : any = {
   Template1: [
     {
       type: "header",
