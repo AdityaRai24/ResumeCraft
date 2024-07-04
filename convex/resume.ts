@@ -84,12 +84,12 @@ export const createUserResume = mutation({
       throw new Error("Something went wrong");
     }
 
-    const templateSections = templateStructures[args.templateName];
+    const templateSections : any = templateStructures[args.templateName];
     if (!templateSections) {
       throw new Error("Invalid template name");
     }
 
-    const initialSections = templateSections.map((section) =>
+    const initialSections = templateSections.map((section : any) =>
       createSection(section.type, section.fields)
     );
 

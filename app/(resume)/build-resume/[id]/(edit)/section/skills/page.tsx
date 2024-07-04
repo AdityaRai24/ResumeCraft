@@ -3,7 +3,6 @@
 import SkillsForm from "@/components/forms/SkillsForm";
 import HeaderSkeleton from "@/components/HeaderSkeleton";
 import SectionInfo from "@/components/SectionInfo";
-import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
