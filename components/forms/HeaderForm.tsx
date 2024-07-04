@@ -58,7 +58,7 @@ const HeaderForm = ({
         setHeader(savedHeader);
       }
     }
-  }, [resume?.sections]);
+  }, [resume?.sections,pendingChangesRef]);
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newHeader: HeaderContent) => {

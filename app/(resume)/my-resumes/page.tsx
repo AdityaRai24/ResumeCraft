@@ -14,12 +14,12 @@ import React from "react";
 const Page = () => {
   const { user, isSignedIn } = useUser();
   const router = useRouter();
+  const templates = useQuery(api.resume.getUserResumes, {
+    userId: user?.id || "",
+  });
 
   if (!user) return null;
 
-  const templates = useQuery(api.resume.getUserResumes, {
-    userId: user?.id,
-  });
 
 
   if (templates === null || templates?.length === 0) {
@@ -60,7 +60,7 @@ const Page = () => {
             const TemplateComponent = templateComponents[item?.templateName];
 
             if (!TemplateComponent) {
-              return <div>Something went wronng...</div>;
+              return <div key={index}>Something went wronng...</div>;
             }
 
             return (

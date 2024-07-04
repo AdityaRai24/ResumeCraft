@@ -64,7 +64,7 @@ const SkillsForm = ({
       });
       setColumns(styles?.columns || 2);
     }
-  }, [item?.content?.skills, styles?.columns]);
+  }, [item?.content?.content?.skills, styles?.columns,pendingChangesRef]);
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newSkills: string[], newColumns?: number) => {

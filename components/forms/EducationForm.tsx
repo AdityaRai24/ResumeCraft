@@ -63,7 +63,7 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     if (!pendingChangesRef.current) {
       setEducation(item?.content);
     }
-  }, [item?.content?.education]);
+  }, [item?.content,pendingChangesRef]);
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newEducation: EducationContent) => {
