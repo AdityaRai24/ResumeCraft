@@ -65,7 +65,7 @@ const LiveResumePreview = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
         >
-          <TemplateComponent obj={templateDetails} isLive isPreview />
+          <TemplateComponent obj={templateDetails as ResumeTemplate} isLive isPreview />
         </motion.div>
       </div>
 
