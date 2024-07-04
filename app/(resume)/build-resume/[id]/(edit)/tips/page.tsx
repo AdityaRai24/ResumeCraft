@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import {container, item} from "@/lib/motion"
 import TipsSkeleton from "@/components/TipsSkeleton";
 
-const page = () => {
+const Page = () => {
   const searchParams = useSearchParams();
   const sec = searchParams.get("sec");
 
@@ -98,4 +98,4 @@ const page = () => {
 
 
 
-export default page;
+export default Page;

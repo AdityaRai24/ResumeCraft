@@ -14,7 +14,7 @@ import { motion, Variants } from "framer-motion";
 import { ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
 import { fontMap, FontName } from "@/utils/font";
 
-const page = () => {
+const Page = () => {
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");
   const [primaryColor, setPrimaryColor] = useColor("#000");
   const [showPrimaryTextColorBox, setShowPrimaryTextColorBox] = useState(false);
@@ -227,4 +227,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

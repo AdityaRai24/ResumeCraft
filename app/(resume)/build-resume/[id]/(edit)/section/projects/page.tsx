@@ -9,7 +9,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
 
-const page = () => {
+const Page = () => {
   const params = useParams();
   const resumeId = params.id;
   const router = useRouter();
@@ -47,4 +47,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

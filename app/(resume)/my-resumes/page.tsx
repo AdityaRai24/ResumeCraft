@@ -11,7 +11,7 @@ import { Edit, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const page = () => {
+const Page = () => {
   const { user, isSignedIn } = useUser();
   const router = useRouter();
 
@@ -105,4 +105,4 @@ const ChooseSkeleton = () => {
   );
 };
 
-export default page;
+export default Page;

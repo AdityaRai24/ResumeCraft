@@ -7,7 +7,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
 
-const page = () => {
+const Page = () => {
   return (
     <>
       <div
@@ -61,4 +61,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

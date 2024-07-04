@@ -9,7 +9,7 @@ import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 
-const page = () => {
+const Page = () => {
   const params = useParams();
   const resumeId = params.id;
   const resume = useQuery(api.resume.getTemplateDetails, {
@@ -47,4 +47,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

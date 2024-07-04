@@ -107,7 +107,7 @@ export default function QuillProjectEditor({
               </DialogTitle>
               <DialogDescription>
                 Compose your description in the text area provided. Select
-                'Generate' to enhance your writing, or choose 'Generate' without
+                &apos;Generate&apos; to enhance your writing, or choose  &apos;Generate&apos; without
                 writing anything to have our AI create a description for you.
               </DialogDescription>
               <div>
