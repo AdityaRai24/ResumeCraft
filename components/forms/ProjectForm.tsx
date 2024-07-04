@@ -48,9 +48,9 @@ const ProjectForm = ({
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
-      setProjects(item.content);
+      setProjects(item?.content);
     }
-  }, [item]);
+  }, [item?.content, pendingChangesRef]);
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newProject: ProjectContent) => {

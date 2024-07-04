@@ -56,9 +56,9 @@ const ExperienceForm = ({
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
-      setExperience(item.content);
+      setExperience(item?.content);
     }
-  }, [item]);
+  }, [item?.content,pendingChangesRef]);
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newExperience: ExperienceContent) => {

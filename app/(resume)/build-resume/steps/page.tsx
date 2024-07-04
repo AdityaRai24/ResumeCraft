@@ -15,7 +15,7 @@ const Page = () => {
       >
         <motion.div variants={container} initial="hidden" animate="visible" className="max-w-[70%] mx-auto">
           <h1 className={` text-center text-6xl font-extrabold `}>
-            Here's what you need to know
+            Here&apos;s what you need to know
           </h1>
           <div className="flex items-center justify-between gap-16 mt-20">
             <motion.div variants={item} className="flex flex-col gap-2 items-center justify-center">

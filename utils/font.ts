@@ -10,6 +10,7 @@ const poppinsFont = Poppins({
 const ralewayFont = Raleway({ subsets: ["latin"] });
 const geologicaFont = Geologica({
   subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export type FontName = 'Inter' | 'Montserrat' | 'OpenSans' | 'Poppins' | 'Raleway' | 'Geologica';

@@ -35,14 +35,14 @@ const Page = () => {
       setPrimaryTextColor(color);
       update({ id: resumeId as Id<"resumes">, color: color.hex });
     }, 400);
-  }, [primaryTextColor]);
+  }, [update,setPrimaryTextColor,resumeId]);
 
   const handlePrimaryColorChange = useMemo(() => {
     return debounce((color: any) => {
       setPrimaryColor(color);
       updatePC({ id: resumeId as Id<"resumes">, color: color.hex });
     }, 400);
-  }, [primaryColor]);
+  }, [setPrimaryColor,updatePC,resumeId]);
 
   const handleChosePrimaryColor = (color: string) => {
     updatePC({ id: resumeId as Id<"resumes">, color: color });
