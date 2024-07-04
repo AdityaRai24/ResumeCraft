@@ -39,7 +39,7 @@ const VerticalTimeline = () => {
   resume?.sections?.map((item) => sectionArray.push(item.type));
   sectionArray.push("final");
 
-  const sectionIconMap = {
+  const sectionIconMap : any = {
     header: User,
     experience: LineChart,
     education: GraduationCap,
