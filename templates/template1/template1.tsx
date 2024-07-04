@@ -147,10 +147,10 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                         {exp?.companyName}
                       </h1>
                       <div className="flex items-center text-sm gap-2">
-                        {exp?.startDate && exp?.endDate && (
+                        {exp?.startMonth && exp?.startYear && exp?.endMonth && exp?.endYear && (
                           <h1>
-                            {exp?.startDate} - {exp?.endDate}
-                          </h1>
+                            {exp?.startMonth}, {exp?.startYear} - {exp?.endMonth}, {exp?.endYear}
+                            </h1>
                         )}
                       </div>
                       {/* <h1 className="text-sm">{exp?.location}</h1> */}
