@@ -19,7 +19,7 @@ const LiveResumePreview = () => {
 
   const templateDetails = useQuery(api.resume.getTemplateDetails, {
     id: params.id as Id<"resumes">,
-  });
+  }) as ResumeTemplate | undefined | null;
 
   const searchParams = useSearchParams();
   const resumeOnlyMode = searchParams.get("resumeonly") === "true";
@@ -30,6 +30,8 @@ const LiveResumePreview = () => {
   if (templateDetails === undefined) {
     return <div>Loading...</div>;
   }
+
+  console.log(templateDetails)
 
   type TemplateComponentType = React.ComponentType<{
     obj: ResumeTemplate;
@@ -125,10 +127,18 @@ const LiveResumePreview = () => {
         </>
       )}
       <div className="resume-container no-scrollbar" id="pdf">
-        <TemplateComponent obj={templateDetails} />
+      {templateDetails && (
+          <TemplateComponent 
+            obj={templateDetails} 
+            isPreview={false} 
+            isLive={true} 
+          />
+        )}
       </div>
     </div>
   );
 };
 
 export default LiveResumePreview;
+
+
