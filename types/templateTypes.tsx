@@ -32,9 +32,6 @@ interface ListSkillSection {
   content: {
     skills: string[];
   };
-  style?: {
-    columns?: number;
-  };
 }
 
 interface DescriptionSkillSection {
@@ -47,6 +44,9 @@ interface DescriptionSkillSection {
 interface SkillSection extends BaseSection {
   type: "skills";
   content: DescriptionSkillSection | ListSkillSection;
+  style?: {
+    columns?: number;
+  };
 }
 
 interface ProjectSection extends BaseSection {
