@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { fontMap } from "@/utils/font";
+import { fontMap } from "@/lib/font";
 import { Computer, LayoutTemplate, PencilLine } from "lucide-react";
 import Link from "next/link";
 import React from "react";

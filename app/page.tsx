@@ -1,10 +1,10 @@
 "use client";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
-import { fontMap } from "@/utils/font";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
+import { fontMap } from "@/lib/font";
 
 export default function Home() {
   return (

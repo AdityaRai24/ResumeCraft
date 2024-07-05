@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { motion, Variants } from "framer-motion";
 import { ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
-import { fontMap, FontName } from "@/utils/font";
+import { fontMap, FontName } from "@/lib/font";
 
 const Page = () => {
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");

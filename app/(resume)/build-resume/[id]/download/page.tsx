@@ -8,7 +8,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { ResumeTemplate } from "@/types/templateTypes";
 import Template2 from "@/templates/template2/template2";
 import { Button } from "@/components/ui/button";
-import { fontMap } from "@/utils/font";
+import { fontMap } from "@/lib/font";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { Loader, Loader2 } from "lucide-react";

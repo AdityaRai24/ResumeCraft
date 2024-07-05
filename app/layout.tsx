@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ConvexAndClerk from "@/providers/ConvexAndClerk";
-import { fontMap } from "@/utils/font";
 import { Toaster } from "react-hot-toast";
+import { fontMap } from "@/lib/font";
 
 
 export const metadata: Metadata = {

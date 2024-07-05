@@ -1,8 +1,9 @@
 import { ResumeTemplate } from "@/types/templateTypes";
 import { cn } from "@/lib/utils";
-import { fontMap, FontName } from "@/utils/font";
+import { fontMap, FontName } from "@/lib/font";
 import Link from "next/link";
 import { Github, Globe, Linkedin } from "lucide-react";
+import { Geologica } from "next/font/google";
 interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
