@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { ResumeTemplate } from "@/types/templateTypes";
-import { fontMap, FontName } from "@/utils/font";
+import { fontMap, FontName } from "@/lib/font";
 import { Github, Globe, Linkedin, Mail, PhoneCall } from "lucide-react";
 import Link from "next/link";
 

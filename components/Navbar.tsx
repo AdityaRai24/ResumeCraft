@@ -2,7 +2,7 @@
 import { File } from "lucide-react";
 import { Button } from "./ui/button";
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
-import { fontMap } from "@/utils/font";
+import { fontMap } from "@/lib/font";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 

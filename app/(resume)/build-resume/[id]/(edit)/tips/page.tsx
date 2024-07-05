@@ -4,7 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { tipsData } from "@/lib/tipsData";
 import { cn } from "@/lib/utils";
-import { fontMap } from "@/utils/font";
+import { fontMap } from "@/lib/font";
 import { useQuery } from "convex/react";
 import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
