@@ -4,7 +4,6 @@ import ConvexAndClerk from "@/providers/ConvexAndClerk";
 import { Toaster } from "react-hot-toast";
 import { fontMap } from "@/lib/font";
 
-
 export const metadata: Metadata = {
   title: "Resume Craft",
   description: "Craft a winning resume in minutes",

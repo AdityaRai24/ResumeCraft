@@ -1,9 +1,9 @@
 "use client"
 import { cn } from "@/lib/utils";
-import { fontMap } from "@/lib/font";
 import React from "react";
 import {motion} from "framer-motion"
 import { item } from "@/lib/motion";
+import { fontMap } from "@/lib/font";
 
 interface SectionInfoTypes{
     heading: string;
