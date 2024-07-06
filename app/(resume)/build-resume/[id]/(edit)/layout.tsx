@@ -1,7 +1,7 @@
 import LiveResumePreview from "@/components/LiveResumePreview";
 import VerticalTimeline from "@/components/VerticalTimeline";
-import { cn } from "@/lib/utils";
 import { fontMap } from "@/lib/font";
+import { cn } from "@/lib/utils";
 import React from "react";
 
 const ResumeBuilderLayout = ({ children }: { children: React.ReactNode }) => {

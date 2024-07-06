@@ -1,11 +1,11 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { fontMap } from "@/lib/font";
 import { Computer, LayoutTemplate, PencilLine } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
+import { fontMap } from "@/lib/font";
 
 const Page = () => {
   return (

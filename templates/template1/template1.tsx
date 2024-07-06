@@ -1,7 +1,7 @@
 "use client";
+import { fontMap, FontName } from "@/lib/font";
 import { cn } from "@/lib/utils";
 import { ResumeTemplate } from "@/types/templateTypes";
-import { fontMap, FontName } from "@/lib/font";
 import { Github, Globe, Linkedin, Mail, PhoneCall } from "lucide-react";
 import Link from "next/link";
 
@@ -44,7 +44,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
-        fontMap[obj?.globalStyles?.fontFamily as FontName]?.className,
+        // fontMap[obj?.globalStyles?.fontFamily as FontName]?.className,
         isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >

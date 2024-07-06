@@ -1,9 +1,8 @@
 import { ResumeTemplate } from "@/types/templateTypes";
 import { cn } from "@/lib/utils";
-import { fontMap, FontName } from "@/lib/font";
 import Link from "next/link";
 import { Github, Globe, Linkedin } from "lucide-react";
-import { Geologica } from "next/font/google";
+import { fontMap, FontName } from "@/lib/font";
 interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
@@ -42,7 +41,7 @@ const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
         isPreview && !isLive && "w-[795px] h-[1122px]",
-        fontMap[obj?.globalStyles?.fontFamily as FontName]?.className,
+        // fontMap[obj?.globalStyles?.fontFamily as FontName]?.className,
         !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl"
       )}
     >
