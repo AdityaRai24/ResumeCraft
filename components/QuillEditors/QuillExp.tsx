@@ -54,7 +54,7 @@ export default function QuillExpEditor({
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:3000/api/generateJD",
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generateJD`,
         { companyName: companyName, role: role,jobDescription : tempValue }
       );
       // Convert the array of strings to an HTML list
@@ -65,6 +65,7 @@ export default function QuillExpEditor({
       setGeneratedContent(generatedHtml);
       setLoading(false);
     } catch (error) {
+      console.log(error)
       toast.error("Something went wrong Quill Experience")
     }
   };
