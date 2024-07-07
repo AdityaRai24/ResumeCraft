@@ -57,7 +57,7 @@ const LiveResumePreview = () => {
     try {
       setLoading(true);
       console.log("Initiating PDF download");
-      const response = await fetch(`http://localhost:3000/api/generatePdf`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generatePdf`, {
         body: JSON.stringify({ id: params.id }),
         method: "POST",
       });

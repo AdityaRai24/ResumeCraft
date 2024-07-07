@@ -41,7 +41,7 @@ export default function QuillEditorComponent({
 
   const handleGenerate = async()=>{
     try {
-      const response = await axios.post('http://localhost:3000/api/generateJD')
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generateJD`)
     } catch (error) {
       toast.error("Something went wrong Quill Editor")
     }

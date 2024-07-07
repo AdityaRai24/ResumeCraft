@@ -50,7 +50,7 @@ export default function QuillProjectEditor({
     try {
       setLoading(true);
       const response = await axios.post(
-        "http://localhost:3000/api/generatePD",
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generatePD`,
         { projectTitle: projectTitle, projectDescription: tempValue }
       );
       // Convert the array of strings to an HTML list

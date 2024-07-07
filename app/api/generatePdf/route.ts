@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     page.setDefaultTimeout(60000);
     
     console.log("Navigating to page...");
-    await page.goto(`http://localhost:3000/build-resume/${id}/download?resumeonly=true`, {
+    await page.goto(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/build-resume/${id}/download?resumeonly=true`, {
       waitUntil: "networkidle0",
       timeout: 60000,
     });
