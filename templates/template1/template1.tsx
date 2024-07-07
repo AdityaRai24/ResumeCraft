@@ -40,7 +40,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] py-8 overflow-scroll overflow-x-hidden w-[210mm] h-[297mm] px-8 ",
+        "bg-[white] text-black py-8 overflow-hidden overflow-x-hidden w-[210mm] h-[297mm] px-8 ",
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
@@ -292,9 +292,9 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                           <h1 className="text-sm">{edu?.instituteName}</h1>
                         </div>
                         <div>
-                          {edu?.startDate && edu?.endDate && (
+                          {edu?.startYear && edu?.endYear && (
                             <h1 className="font-bold text-sm">
-                              {edu?.startDate} - {edu?.endDate}
+                              {edu?.startMonth} {edu?.startYear} - {edu?.endMonth} {edu?.endYear}
                             </h1>
                           )}
                         </div>

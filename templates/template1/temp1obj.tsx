@@ -94,17 +94,21 @@ export const temp1Obj: ResumeTemplate = {
         education: [
           {
             courseName: "Bachelor of Science in Computer Science",
-            endDate: "2016-05-31",
             instituteName: "University of California, Berkeley",
             location: "Berkeley, CA",
-            startDate: "2012-09-01",
+            startMonth: "Feb",
+            startYear: "2022",
+            endMonth: "March",
+            endYear: "2023"
           },
           {
             courseName: "Master of Science in Software Engineering",
-            endDate: "2019-06-15",
             instituteName: "Stanford University",
             location: "Stanford, CA",
-            startDate: "2017-09-01",
+            startMonth: "Feb",
+            startYear: "2022",
+            endMonth: "March",
+            endYear: "2023"
           },
         ],
       },

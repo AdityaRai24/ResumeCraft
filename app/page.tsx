@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
 import { fontMap } from "@/lib/font";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -36,7 +37,8 @@ export default function Home() {
             </Link>
           </motion.div>
         </div>
-        <div></div>
+        <div>
+        </div>
       </motion.div>
     </>
   );

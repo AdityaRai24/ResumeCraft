@@ -33,8 +33,10 @@ export const allSectionFields : any = {
       {
         courseName: "",
         instituteName: "",
-        startDate: "",
-        endDate: "",
+        startMonth : "",
+        startYear: "",
+        endMonth :"",
+        endYear : "",
         location: "",
       },
     ],
