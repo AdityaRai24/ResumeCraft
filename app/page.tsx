@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
 import { fontMap } from "@/lib/font";
-import Image from "next/image";
 
 export default function Home() {
   return (
@@ -31,7 +30,7 @@ export default function Home() {
           </motion.p>
           <motion.div variants={item}>
             <Link href={"/build-resume/steps"}>
-              <Button className="my-4 py-[30px] hover:scale-[1.03] active:scale-[0.97] transition duration-300 ease-in-out text-lg rounded-xl px-8">
+              <Button className="my-4 py-[35px] hover:scale-[1.03] active:scale-[0.97] transition duration-300 ease-in-out text-lg rounded-full px-12">
                 Create Your Resume
               </Button>
             </Link>
