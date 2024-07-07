@@ -35,7 +35,7 @@ export default function QuillExpEditor({
   role,
 }: QuillEditorComponentProps) {
   const [generatedContent, setGeneratedContent] = useState("");
-  const [tempValue, setTempValue] = useState("")
+  const [tempValue, setTempValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
 
@@ -49,38 +49,36 @@ export default function QuillExpEditor({
   const quillFormats = ["bold", "italic", "underline", "list", "bullet"];
 
   const handleGenerate = async () => {
-
-
     try {
       setLoading(true);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generateJD`,
-        { companyName: companyName, role: role,jobDescription : tempValue }
+        { companyName: companyName, role: role, jobDescription: tempValue }
       );
       // Convert the array of strings to an HTML list
       const listItems = response.data.textArray
-        .map((item : string) => `<li>${item}</li>`)
+        .map((item: string) => `<li>${item}</li>`)
         .join("");
       const generatedHtml = `<ul>${listItems}</ul>`;
       setGeneratedContent(generatedHtml);
       setLoading(false);
     } catch (error) {
-      console.log(error)
-      toast.error("Something went wrong Quill Experience")
+      console.log(error);
+      toast.error("Something went wrong Quill Experience");
     }
   };
 
   const continueData = () => {
     onChange(generatedContent);
-    setTempValue("")
-    setGeneratedContent("")
-    setDialogIsOpen(false)
+    setTempValue("");
+    setGeneratedContent("");
+    setDialogIsOpen(false);
   };
 
-  const cancelData = ()=>{
-    setDialogIsOpen(false)
-    setGeneratedContent("")
-  }
+  const cancelData = () => {
+    setDialogIsOpen(false);
+    setGeneratedContent("");
+  };
 
   return (
     <motion.div
@@ -91,27 +89,30 @@ export default function QuillExpEditor({
       <div className="flex items-center justify-between">
         <Label className="text-md">{label}</Label>
 
-        <Button 
-        type="button"
-        onClick={() => {
-          if (!companyName.trim() && !role.trim()) {
-            toast.error("Company name and role required...")
-          } else {
-            setDialogIsOpen(true);
-          }
-        }}
-      >
-        Magic Write <WandSparkles className="ml-2" size={14} />
-      </Button>
+        <Button
+          type="button"
+          onClick={() => {
+            if (!companyName.trim() && !role.trim()) {
+              toast.error("Company name and role required...");
+            } else {
+              setDialogIsOpen(true);
+            }
+          }}
+        >
+          Magic Write <WandSparkles className="ml-2" size={14} />
+        </Button>
 
-      <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
-          <DialogContent>
+        <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
+          <DialogContent className="!max-w-lg">
             <DialogHeader>
               <DialogTitle>
                 Write ATS friendly, professional job descriptions with our AI
               </DialogTitle>
               <DialogDescription>
-                Write something and click on generate to see the magic !!
+                Enter your experience details in the text area provided. Click
+                &apos;Generate Description&apos; to refine and enhance your input. If you
+                leave the text area blank and click &apos;Generate Description&apos;, our
+                AI will create experience points based on the job title.
               </DialogDescription>
               <div>
                 <QuillEditor
@@ -122,7 +123,11 @@ export default function QuillExpEditor({
                   className="bg-white mt-2"
                 />
                 {loading ? (
-                  <Button disabled onClick={handleGenerate} className="mt-2 w-full">
+                  <Button
+                    disabled
+                    onClick={handleGenerate}
+                    className="mt-2 w-full"
+                  >
                     Generating Description{" "}
                     <Loader2 className="animate-spin ml-2" />
                   </Button>

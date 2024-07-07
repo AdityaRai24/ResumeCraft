@@ -35,7 +35,7 @@ export default function QuillProjectEditor({
   const [generatedContent, setGeneratedContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [dialogIsOpen, setDialogIsOpen] = useState(false);
-  const [tempValue, setTempValue] = useState("")
+  const [tempValue, setTempValue] = useState("");
 
   const quillModules = {
     toolbar: [
@@ -53,7 +53,6 @@ export default function QuillProjectEditor({
         `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generatePD`,
         { projectTitle: projectTitle, projectDescription: tempValue }
       );
-      // Convert the array of strings to an HTML list
       const listItems = response.data.textArray
         .map((item: string) => `<li>${item}</li>`)
         .join("");
@@ -61,21 +60,21 @@ export default function QuillProjectEditor({
       setGeneratedContent(generatedHtml);
       setLoading(false);
     } catch (error) {
-      toast.error("Something went wrong Quill Project")
+      toast.error("Something went wrong Quill Project");
     }
   };
 
   const continueData = () => {
     onChange(generatedContent);
-    setTempValue("")
-    setGeneratedContent("")
-    setDialogIsOpen(false)
+    setTempValue("");
+    setGeneratedContent("");
+    setDialogIsOpen(false);
   };
 
-  const cancelData = ()=>{
-    setDialogIsOpen(false)
-    setGeneratedContent("")
-  }
+  const cancelData = () => {
+    setDialogIsOpen(false);
+    setGeneratedContent("");
+  };
 
   return (
     <motion.div
@@ -100,15 +99,16 @@ export default function QuillProjectEditor({
         </Button>
 
         <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
-          <DialogContent>
+          <DialogContent className="!max-w-lg">
             <DialogHeader>
               <DialogTitle>
                 Write ATS friendly, project descriptions with our AI
               </DialogTitle>
               <DialogDescription>
                 Compose your description in the text area provided. Select
-                &apos;Generate&apos; to enhance your writing, or choose  &apos;Generate&apos; without
-                writing anything to have our AI create a description for you.
+                &apos;Generate Description&apos; to enhance your writing. If you leave the
+                text area empty and click &apos;Generate Description&apos;, our AI will
+                create a description for you based on the title.
               </DialogDescription>
               <div>
                 <QuillEditor
