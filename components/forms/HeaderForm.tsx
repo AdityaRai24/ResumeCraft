@@ -134,7 +134,7 @@ const HeaderForm = ({
             name="linkedin"
             value={header.linkedin}
             onChange={handleChange}
-            placeholder="linkedin.com/AdityaRai24"
+            placeholder="linkedin.com/JohnDoe56"
             type="text"
           />
         </div>

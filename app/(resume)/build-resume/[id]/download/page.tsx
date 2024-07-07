@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { Loader, Loader2 } from "lucide-react";
 import { fontMap } from "@/lib/font";
+import Navbar from "@/components/Navbar";
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -95,6 +96,7 @@ const LiveResumePreview = () => {
 
   return (
     <div className="flex flex-col items-center mx-auto">
+      <Navbar />
       {!resumeOnlyMode && (
         <>
           <div className="my-16">
