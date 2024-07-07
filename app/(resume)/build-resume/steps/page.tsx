@@ -55,8 +55,8 @@ const Page = () => {
               <Computer size={70} />
               <h1 className="font-semibold text-3xl">Step 3</h1>
               <p className="text-md text-justify">
-                We'll help you fine-tune the details, quickly generate each
-                section, and download your new resume. That's it - you're ready
+                We&apos;ll help you fine-tune the details, quickly generate each
+                section, and download your new resume. That&apos;s it - you&apos;re ready
                 to apply!
               </p>
             </motion.div>
