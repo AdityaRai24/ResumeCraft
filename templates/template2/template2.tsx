@@ -7,11 +7,12 @@ interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
   isLive?: boolean;
+  modalPreview? :boolean;
 }
 
-const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
+const Template2 = ({ isPreview, obj, isLive,modalPreview }: TemplateType) => {
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className=" overflow-hidden">
+    <div className="overflow-hidden">
       <div
         className={cn(
           "transform origin-top-left scale-[1] ",
@@ -36,13 +37,14 @@ const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] py-8 overflow-scroll overflow-x-hidden w-[210mm] h-[297mm] px-8 ",
+        "bg-[white] text-black py-8 overflow-hidden overflow-x-hidden w-[210mm] h-[297mm] px-8 ",
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
         isPreview && !isLive && "w-[795px] h-[1122px]",
         // fontMap[obj?.globalStyles?.fontFamily as FontName]?.className,
-        !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl"
+        !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl",
+        modalPreview && "scale-[0.6]"
       )}
     >
       <div>
@@ -126,8 +128,8 @@ const Template2 = ({ isPreview, obj, isLive }: TemplateType) => {
                         {item?.location && item?.location}
                       </p>
                       <p className="text-sm text-right italic">
-                        {`${item?.startDate} -`}
-                        {item?.endDate}
+                        {`${item?.startMonth} ${item.startYear} -`}
+                        {item?.endMonth} {item?.endYear}
                       </p>
                     </div>
                   </div>

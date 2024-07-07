@@ -13,35 +13,51 @@ const Page = () => {
       <div
         className={`flex items-center justify-center w-full h-[90vh] ${fontMap.Geologica.className}`}
       >
-        <motion.div variants={container} initial="hidden" animate="visible" className="max-w-[70%] mx-auto">
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="visible"
+          className="max-w-[80%] mx-auto"
+        >
           <h1 className={` text-center text-6xl font-extrabold `}>
             Here&apos;s what you need to know
           </h1>
           <div className="flex items-center justify-between gap-16 mt-20">
-            <motion.div variants={item} className="flex flex-col gap-2 items-center justify-center">
+            <motion.div
+              variants={item}
+              className="flex flex-col gap-2 items-center justify-center"
+            >
               <LayoutTemplate size={70} />
               <h1 className="font-semibold text-3xl">Step 1</h1>
               <p className="text-md text-justify">
                 Check out our pre-designed templates and guided steps, allowing
-                you to create a polished resume faster.
+                you to create a polished resume in minutes.
               </p>
             </motion.div>
 
-            <motion.div variants={item} className="flex flex-col gap-2 items-center justify-center">
+            <motion.div
+              variants={item}
+              className="flex flex-col gap-2 items-center justify-center"
+            >
               <PencilLine size={70} />
               <h1 className="font-semibold text-3xl">Step 2</h1>
               <p className="text-md text-justify">
-                Check out our pre-designed templates and guided steps, allowing
-                you to create a polished resume faster.
+                Get the right words to describe what you do. Search by job title
+                and find pre-written content of your skills and
+                responsibilities.
               </p>
             </motion.div>
 
-            <motion.div variants={item} className="flex flex-col gap-2 items-center justify-center">
+            <motion.div
+              variants={item}
+              className="flex flex-col gap-2 items-center justify-center"
+            >
               <Computer size={70} />
               <h1 className="font-semibold text-3xl">Step 3</h1>
               <p className="text-md text-justify">
-                Check out our pre-designed templates and guided steps, allowing
-                you to create a polished resume faster.
+                We'll help you fine-tune the details, quickly generate each
+                section, and download your new resume. That's it - you're ready
+                to apply!
               </p>
             </motion.div>
           </div>

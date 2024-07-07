@@ -25,8 +25,10 @@ interface EducationItem {
   courseName: string;
   instituteName: string;
   location: string;
-  startDate: string;
-  endDate: string;
+  startMonth : string;
+  startYear :string;
+  endMonth : string;
+  endYear : string;
 }
 
 interface EducationContent {
@@ -47,8 +49,10 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     courseName: "",
     instituteName: "",
     location: "",
-    startDate: "",
-    endDate: "",
+    startMonth:"",
+    startYear:"",
+    endMonth:"",
+    endYear:""
   };
 
   const [value, onChange] = useState<Value>(new Date());
@@ -72,22 +76,36 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     }, 400);
   }, [update, resumeId]);
 
+  // const handleChange = useCallback(
+  //   (index: number) =>
+  //     (
+  //       e: ChangeEvent<HTMLInputElement> | string,
+  //       field?: keyof EducationItem
+  //     ) => {
+  //       pendingChangesRef.current = true;
+  //       setEducation((prev) => {
+  //         let newEducation = { ...prev };
+  //         if (typeof e === "string" && field) {
+  //           newEducation.education[index][field] = e;
+  //         } else if (typeof e !== "string") {
+  //           newEducation.education[index][
+  //             e.target.name as keyof EducationItem
+  //           ] = e.target.value;
+  //         }
+  //         debouncedUpdate(newEducation);
+  //         return newEducation;
+  //       });
+  //     },
+  //   [debouncedUpdate]
+  // );
+
   const handleChange = useCallback(
     (index: number) =>
-      (
-        e: ChangeEvent<HTMLInputElement> | string,
-        field?: keyof EducationItem
-      ) => {
+      (name: keyof EducationItem, value: string) => {
         pendingChangesRef.current = true;
-        setEducation((prev) => {
-          let newEducation = { ...prev };
-          if (typeof e === "string" && field) {
-            newEducation.education[index][field] = e;
-          } else if (typeof e !== "string") {
-            newEducation.education[index][
-              e.target.name as keyof EducationItem
-            ] = e.target.value;
-          }
+        setEducation((prevEducation) => {
+          const newEducation = { ...prevEducation };
+          newEducation.education[index][name] = value;
           debouncedUpdate(newEducation);
           return newEducation;
         });
@@ -101,6 +119,15 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
       education: [...prev.education, emptyEducation],
     }));
   };
+
+  
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+  ];
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 50 }, (_, i) => (currentYear - i).toString());
+
 
   return (
     <>
@@ -131,19 +158,41 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
                 placeholder="California, USA"
               />
               <InputField
-                label="Start Date"
-                name="startDate"
-                value={item.startDate}
-                onChange={handleChange(index)}
-                placeholder="2020"
-              />
-              <InputField
-                label="End Date"
-                name="endDate"
-                value={item.endDate}
-                onChange={handleChange(index)}
-                placeholder="2024"
-              />
+              label="Start Month"
+              name="startMonth"
+              value={item.startMonth}
+              onChange={handleChange(index)}
+              placeholder="Select Month"
+              type="select"
+              options={months}
+            />
+            <InputField
+              label="Start Year"
+              name="startYear"
+              value={item.startYear}
+              onChange={handleChange(index)}
+              placeholder="Select Year"
+              type="select"
+              options={years}
+            />
+            <InputField
+              label="End Month"
+              name="endMonth"
+              value={item.endMonth}
+              onChange={handleChange(index)}
+              placeholder="Select Month"
+              type="select"
+              options={months}
+            />
+            <InputField
+              label="End Year"
+              name="endYear"
+              value={item.endYear}
+              onChange={handleChange(index)}
+              placeholder="Select Year or Present"
+              type="select"
+              options={[...years, "Present"]}
+            />
             </div>
           </motion.form>
         );
@@ -169,9 +218,10 @@ interface InputFieldProps {
   label: string;
   name: keyof EducationItem;
   value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (name: keyof EducationItem, value: string) => void;
   placeholder: string;
   type?: string;
+  options?: string[];
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -181,27 +231,45 @@ const InputField: React.FC<InputFieldProps> = ({
   onChange,
   placeholder,
   type = "text",
-}) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
-    >
-      <Label htmlFor={name} className="text-md">
-        {label}
-      </Label>
+  options,
+}) => (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
+    className="flex flex-col justify-center gap-2"
+  >
+    <Label htmlFor={name} className="text-md">
+      {label}
+    </Label>
+    {type === "select" ? (
+      <select
+        name={name}
+        id={name}
+        value={value}
+        onChange={(e) => onChange(name, e.target.value)}
+        className="border bg-[transparent] border-muted-foreground p-2 rounded"
+      >
+        <option value="">{placeholder}</option>
+        {options?.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    ) : (
       <Input
         type={type}
         name={name}
         id={name}
         value={value}
-        onChange={onChange}
+        onChange={(e) => onChange(name, e.target.value)}
         placeholder={placeholder}
         className="border border-muted-foreground"
       />
-    </motion.div>
-  );
-};
+    )}
+  </motion.div>
+);
+
 
 export default EducationForm;

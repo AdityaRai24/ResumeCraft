@@ -1,8 +1,6 @@
 "use client";
 import { useParams, usePathname } from "next/navigation";
 import React from "react";
-import { Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -22,7 +20,6 @@ type TemplateComponentType = React.ComponentType<{
 const templateComponents: Record<string, TemplateComponentType> = {
   Template1: Template1,
   Template2: Template2,
-  // Add more templates as needed
 };
 
 const LiveResumePreview = () => {

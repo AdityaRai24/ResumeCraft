@@ -85,8 +85,10 @@ interface EducationSection extends BaseSection {
     education: {
       courseName: string;
       instituteName: string;
-      startDate: string;
-      endDate: string;
+      startMonth?: string;
+      startYear: string;
+      endMonth?: string;
+      endYear: string;
       location?: string;
     }[];
   };

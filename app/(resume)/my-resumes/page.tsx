@@ -1,9 +1,11 @@
 "use client";
 import Navbar from "@/components/Navbar";
+import PreviewModal from "@/components/PreviewModal";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { usePreview } from "@/lib/use-preview";
 import { templateComponents } from "@/templates/templateStructures";
 import { ResumeTemplate } from "@/types/templateTypes";
 import { useUser } from "@clerk/nextjs";
@@ -19,9 +21,9 @@ const Page = () => {
     userId: user?.id || "",
   });
 
+  const preview = usePreview()
+
   if (!user) return null;
-
-
 
   if (templates === null || templates?.length === 0) {
     return (
@@ -47,9 +49,9 @@ const Page = () => {
     );
   }
 
-  const editResume = (resumeId : Id<"resumes">)=>{
-    router.push(`/build-resume/${resumeId}/tips?sec=header`)
-  }
+  const editResume = (resumeId: Id<"resumes">) => {
+    router.push(`/build-resume/${resumeId}/tips?sec=header`);
+  };
 
   return (
     <div>
@@ -69,9 +71,15 @@ const Page = () => {
                 key={index}
                 className="relative group inline-block w-[319px] h-[449px]"
               >
-                <TemplateComponent obj={item as ResumeTemplate} isPreview={true} />
+                <TemplateComponent
+                  obj={item as ResumeTemplate}
+                  isPreview={true}
+                />
                 <div className="absolute inset-0 w-full h-full p-10 flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
-                  <Button className="py-2 px-5 flex items-center justify-center gap-2">
+                  <Button
+                    onClick={() => preview.onOpen(item as ResumeTemplate)}
+                    className="py-2 px-5 flex items-center justify-center gap-2"
+                  >
                     <p>Preview</p> <Eye />
                   </Button>
                   <Button
@@ -82,6 +90,7 @@ const Page = () => {
                     <p>Select</p> <Edit />
                   </Button>
                 </div>
+                <PreviewModal />
               </div>
             );
           })}

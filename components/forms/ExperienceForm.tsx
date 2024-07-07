@@ -220,7 +220,7 @@ const InputField: React.FC<InputFieldProps> = ({
         id={name}
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
-        className="border border-muted-foreground p-2 rounded"
+        className="border bg-[transparent] border-muted-foreground p-2 rounded"
       >
         <option value="">{placeholder}</option>
         {options?.map((option) => (

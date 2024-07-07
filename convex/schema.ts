@@ -71,9 +71,11 @@ const sectionContentSchema = v.union(
         v.object({
           courseName: v.string(),
           instituteName: v.string(),
-          startDate: v.string(),
           location: v.optional(v.string()),
-          endDate: v.string(),
+          startMonth : v.optional(v.string()),
+          startYear: v.optional(v.string()),
+          endMonth : v.optional(v.string()),
+          endYear: v.optional(v.string()),
         })
       ),
     }),
