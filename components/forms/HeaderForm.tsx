@@ -94,7 +94,7 @@ const HeaderForm = ({
             name="firstName"
             value={header.firstName}
             onChange={handleChange}
-            placeholder="Aditya"
+            placeholder="John"
             required
           />
           <InputField
@@ -102,14 +102,14 @@ const HeaderForm = ({
             name="lastName"
             value={header.lastName}
             onChange={handleChange}
-            placeholder="Rai"
+            placeholder="Doe"
           />
           <InputField
             label="Email"
             name="email"
             value={header.email}
             onChange={handleChange}
-            placeholder="aditya@gmail.com"
+            placeholder="johndoe@gmail.com"
             type="email"
             required
           />
@@ -118,7 +118,7 @@ const HeaderForm = ({
             name="phone"
             value={header.phone}
             onChange={handleChange}
-            placeholder="1234567890"
+            placeholder="9876543210"
             type="tel"
           />
           <InputField
@@ -126,7 +126,7 @@ const HeaderForm = ({
             name="github"
             value={header.github}
             onChange={handleChange}
-            placeholder="AdityaRai24"
+            placeholder="JohnDoe56"
             type="text"
           />
           <InputField

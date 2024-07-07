@@ -62,7 +62,7 @@ const Page = () => {
             </motion.div>
           </div>
           <motion.div variants={item}>
-            <Button className="block hover:scale-[1.03] active:scale-[0.97] transition duration-300 ease-in-out mx-auto mt-16 px-24 pt-8 pb-8 rounded-xl">
+            <Button className="block hover:scale-[1.03] active:scale-[0.97] transition duration-300 ease-in-out mx-auto mt-16 px-24 pt-8 pb-8 rounded-full">
               <Link
                 href={"/build-resume/templates"}
                 className="w-full h-full flex items-center text-xl justify-center"
