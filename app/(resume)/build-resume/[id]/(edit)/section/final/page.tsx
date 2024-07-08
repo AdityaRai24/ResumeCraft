@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { motion, Variants } from "framer-motion";
 import { ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
-import { fontMap, FontName } from "@/lib/font";
 
 const Page = () => {
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");
@@ -61,9 +60,10 @@ const Page = () => {
     "#9d161d",
   ];
 
-  const fontOptions = Object.keys(fontMap) as FontName[];
 
-  const handleFontChange = async(font: FontName)=>{
+  const fontOptions = ["Raleway","Inter","OpenSans","Poppins","Montserrat","Geologica"]; ;
+
+  const handleFontChange = async(font: string)=>{
     await updateFont({id:resumeId as Id<"resumes">,font})
   }
 

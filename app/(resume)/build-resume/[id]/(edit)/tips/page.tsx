@@ -4,13 +4,13 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { tipsData } from "@/lib/tipsData";
 import { cn } from "@/lib/utils";
-import { fontMap } from "@/lib/font";
 import { useQuery } from "convex/react";
 import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
 import { motion } from "framer-motion";
 import {container, item} from "@/lib/motion"
 import TipsSkeleton from "@/components/TipsSkeleton";
+import { geologicaFont } from "@/lib/font";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -51,7 +51,7 @@ const Page = () => {
         variants={container}
         initial="hidden"
         animate="visible"
-        className={cn("mt-24",fontMap.Geologica.className)}
+        className={cn("mt-24",geologicaFont.className)}
       >
         <div className="flex flex-col gap-4">
           <motion.h2 variants={item} className="text-lg">
