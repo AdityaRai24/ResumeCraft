@@ -1,0 +1,4 @@
+{
+    "builds" : [{"src" : "app/api/generatePDF/route.ts", "use" : "@vercel/node"}],
+    "routes" : [{"src" : "/(.*)", "dest" : "app/api/generatePDF/route.ts"}]
+}

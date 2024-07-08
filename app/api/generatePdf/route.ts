@@ -1,16 +1,41 @@
-// pages/api/generatePdf.js
+// @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
-import puppeteer from "puppeteer";
+import chromium from 'chrome-aws-lambda';
+
 
 export async function POST(req: NextRequest) {
   console.log("PDF generation started");
+
+  let chrome: typeof chromium = {};
+  let options = {}
+  let puppeteer;
+
+  if(process.env.AWS_LAMBDA_FUNCTION){
+
+    chrome = (await import("chrome-aws-lambda")).default;
+    puppeteer = (await import("puppeteer-core")).default; 
+
+    options={
+      args: [...chrome.args,"--hide-scrollbars","--disable-web-security"],
+      defaultViewport: chrome.defaultViewport,
+      executablePath: chrome.executablePath,
+      headless: true,
+      ignoreHTTPSErrors: true
+    }
+
+  }else{
+    puppeteer = await import("puppeteer");
+
+    options={
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      ignoreHTTPSErrors: true
+    }
+  }
+
   try {
     const { id } = await req.json(); // Extract the id from the request body
 
-    const browser = await puppeteer.launch({
-      headless: true as any,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
+    const browser = await puppeteer.launch(options);
     console.log("Browser launched");
     
     const page = await browser.newPage();
@@ -26,11 +51,7 @@ export async function POST(req: NextRequest) {
       timeout: 60000,
     });
     console.log("Page loaded");
-    
-    // Use a more reliable wait method
-    await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 5000)));
-    console.log("Waited additional 5 seconds");
-    
+
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
