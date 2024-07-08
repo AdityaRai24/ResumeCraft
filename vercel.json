@@ -1,4 +1,9 @@
 {
-    "builds" : [{"src" : "app/api/generatePDF/route.ts", "use" : "@vercel/node"}],
-    "routes" : [{"src" : "/(.*)", "dest" : "app/api/generatePDF/route.ts"}]
-}
+    "builds": [
+      { "src": "package.json", "use": "@vercel/next" }
+    ],
+    "routes": [
+      { "src": "/api/generatePDF", "dest": "app/api/generatePDF/route.ts" },
+      { "src": "/(.*)", "dest": "/$1" }
+    ]
+  }
