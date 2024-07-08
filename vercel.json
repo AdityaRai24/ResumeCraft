@@ -4,11 +4,5 @@
             "src": "package.json",
             "use": "@vercel/next"
         }
-    ],
-    "functions": {
-        "api/generatePdf/*.ts": {
-            "memory": 3008,
-            "maxDuration": 60
-        }
-    }
+    ]
 }
