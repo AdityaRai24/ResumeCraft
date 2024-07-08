@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   let options = {}
   let puppeteer;
 
-  if(process.env.AWS_LAMBDA_FUNCTION){
+  if(process.env.AWS_LAMBDA_FUNCTION_VERSION){
 
     chrome = (await import("chrome-aws-lambda")).default;
     puppeteer = (await import("puppeteer-core")).default; 
