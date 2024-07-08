@@ -1,9 +1,14 @@
 {
     "builds": [
-      { "src": "package.json", "use": "@vercel/next" }
+        {
+            "src": "package.json",
+            "use": "@vercel/next"
+        }
     ],
-    "routes": [
-      { "src": "/api/generatePdf", "dest": "app/api/generatePdf/route.ts" },
-      { "src": "/(.*)", "dest": "/$1" }
-    ]
-  }
+    "functions": {
+        "api/generatePdf/*.ts": {
+            "memory": 3008,
+            "maxDuration": 60
+        }
+    }
+}
