@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     options={
       args: [...chrome.args,"--hide-scrollbars","--disable-web-security"],
-      defaultViewport: chrome.defaultViewport,
+      defaultViewport: await chrome.defaultViewport,
       executablePath: await chrome.executablePath,
       headless: true,
       ignoreHTTPSErrors: true
