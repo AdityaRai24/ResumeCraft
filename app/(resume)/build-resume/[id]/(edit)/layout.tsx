@@ -1,6 +1,6 @@
 import LiveResumePreview from "@/components/LiveResumePreview";
 import VerticalTimeline from "@/components/VerticalTimeline";
-import { fontMap } from "@/lib/font";
+import { geologicaFont } from "@/lib/font";
 import { cn } from "@/lib/utils";
 import React from "react";
 
@@ -18,7 +18,7 @@ const ResumeBuilderLayout = ({ children }: { children: React.ReactNode }) => {
           <div
             className={cn(
               "flex-grow overflow-y-auto",
-              fontMap.Geologica.className
+              geologicaFont.className
             )}
           >
             {children}

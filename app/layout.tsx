@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import ConvexAndClerk from "@/providers/ConvexAndClerk";
 import { Toaster } from "react-hot-toast";
-import { fontMap } from "@/lib/font";
+import { poppinsFont } from "@/lib/font";
 
 export const metadata: Metadata = {
   title: "Resume Craft",
@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={fontMap.Poppins.className}>
+      <body className={poppinsFont.className}>
         <ConvexAndClerk>
             <Toaster />
           {children}</ConvexAndClerk>

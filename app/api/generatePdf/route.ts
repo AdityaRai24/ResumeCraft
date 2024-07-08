@@ -12,6 +12,8 @@ export async function POST(req: NextRequest) {
 
   if(process.env.AWS_LAMBDA_FUNCTION_VERSION){
 
+    console.log("REACHED SERVER SIDE")
+
     chrome = (await import("chrome-aws-lambda")).default;
     puppeteer = (await import("puppeteer-core")).default; 
 

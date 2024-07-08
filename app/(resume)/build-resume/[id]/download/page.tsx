@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { Loader, Loader2 } from "lucide-react";
-import { fontMap } from "@/lib/font";
 import Navbar from "@/components/Navbar";
+import { geologicaFont } from "@/lib/font";
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -32,7 +32,6 @@ const LiveResumePreview = () => {
     return <div>Loading...</div>;
   }
 
-  console.log(templateDetails)
 
   type TemplateComponentType = React.ComponentType<{
     obj: ResumeTemplate;
@@ -96,12 +95,11 @@ const LiveResumePreview = () => {
 
   return (
     <div className="flex flex-col items-center mx-auto">
-      <Navbar />
       {!resumeOnlyMode && (
         <>
           <div className="my-16">
             <h1
-              className={cn("text-6xl font-bold", fontMap.Geologica.className)}
+              className={cn("text-6xl font-bold", geologicaFont.className)}
             >
               Your Resume is Ready !!
             </h1>

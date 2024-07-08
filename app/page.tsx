@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
-import { fontMap } from "@/lib/font";
+import { geologicaFont } from "@/lib/font";
 
 export default function Home() {
   return (
@@ -14,7 +14,7 @@ export default function Home() {
         variants={container}
         initial="hidden"
         animate="visible"
-        className={`my-24 w-[80%] mx-auto flex items-center justify-between ${fontMap.Geologica.className}`}
+        className={`my-24 w-[80%] mx-auto flex items-center justify-between ${geologicaFont.className}`}
       >
         <div className="max-w-[70%]">
           <motion.h1

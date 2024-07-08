@@ -5,13 +5,12 @@ import Link from "next/link";
 import React from "react";
 import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
-import { fontMap } from "@/lib/font";
-
+import {  geologicaFont } from "@/lib/font";
 const Page = () => {
   return (
     <>
       <div
-        className={`flex items-center justify-center w-full h-[90vh] ${fontMap.Geologica.className}`}
+        className={`flex items-center justify-center w-full h-[90vh] ${geologicaFont.className}`}
       >
         <motion.div
           variants={container}

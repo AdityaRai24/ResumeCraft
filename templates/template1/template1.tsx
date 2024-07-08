@@ -1,8 +1,8 @@
 "use client";
-import { fontMap, FontName } from "@/lib/font";
 import { cn } from "@/lib/utils";
 import { ResumeTemplate } from "@/types/templateTypes";
 import { Github, Globe, Linkedin, Mail, PhoneCall } from "lucide-react";
+import {  geologicaFont, interFont, montserratFont, openSansFont, poppinsFont, ralewayFont } from "@/lib/font";
 import Link from "next/link";
 
 interface TemplateType {
@@ -44,7 +44,12 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
-        // fontMap[obj?.globalStyles?.fontFamily as FontName]?.className,
+        obj?.globalStyles?.fontFamily === 'Inter' && interFont.className,
+        obj?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
+        obj?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
+        obj?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
+        obj?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
+        obj?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
         isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >
@@ -147,11 +152,15 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                         {exp?.companyName}
                       </h1>
                       <div className="flex items-center text-sm gap-2">
-                        {exp?.startMonth && exp?.startYear && exp?.endMonth && exp?.endYear && (
-                          <h1>
-                            {exp?.startMonth}, {exp?.startYear} - {exp?.endMonth}, {exp?.endYear}
+                        {exp?.startMonth &&
+                          exp?.startYear &&
+                          exp?.endMonth &&
+                          exp?.endYear && (
+                            <h1>
+                              {exp?.startMonth}, {exp?.startYear} -{" "}
+                              {exp?.endMonth}, {exp?.endYear}
                             </h1>
-                        )}
+                          )}
                       </div>
                       {/* <h1 className="text-sm">{exp?.location}</h1> */}
                     </div>
@@ -294,7 +303,8 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                         <div>
                           {edu?.startYear && edu?.endYear && (
                             <h1 className="font-bold text-sm">
-                              {edu?.startMonth} {edu?.startYear} - {edu?.endMonth} {edu?.endYear}
+                              {edu?.startMonth} {edu?.startYear} -{" "}
+                              {edu?.endMonth} {edu?.endYear}
                             </h1>
                           )}
                         </div>
