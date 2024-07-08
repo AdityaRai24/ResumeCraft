@@ -3,7 +3,7 @@
       { "src": "package.json", "use": "@vercel/next" }
     ],
     "routes": [
-      { "src": "/api/generatePDF", "dest": "app/api/generatePDF/route.ts" },
+      { "src": "/api/generatePdf", "dest": "app/api/generatePdf/route.ts" },
       { "src": "/(.*)", "dest": "/$1" }
     ]
   }
