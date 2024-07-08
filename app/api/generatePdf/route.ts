@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from "next/server";
-import chromium from "chrome-aws-lambda";
+import chromium from '@sparticuz/chromium';
 
 export async function POST(req: NextRequest) {
   console.log("PDF generation started");
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   let puppeteer;
 
   if (process.env.AWS_LAMBDA_FUNCTION_VERSION) {
-    chrome = (await import("chrome-aws-lambda")).default;
+    chrome = (await import("@sparticuz/chromium")).default;
     puppeteer = (await import("puppeteer-core")).default;
 
     options = {
