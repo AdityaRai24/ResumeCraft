@@ -57,9 +57,9 @@ export default function QuillEditorComponent({
         <Label className="text-md">{label}</Label>
         <Dialog>
           <DialogTrigger>
-            <Button type="button">
+          {label === 'Summary' ? "" :  <Button type="button">
               Magic Write <WandSparkles className="ml-2" size={14} />{" "}
-            </Button>
+            </Button>}
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
