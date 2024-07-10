@@ -11,7 +11,7 @@ interface BaseSection {
   style?: Record<string, any>;
 }
 
-interface HeaderSection extends BaseSection {
+export interface HeaderSection extends BaseSection {
   type: "header";
   content: {
     firstName: string;

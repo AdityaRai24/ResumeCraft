@@ -83,15 +83,14 @@ export const createUserResume = mutation({
       throw new Error("Something went wrong");
     }
 
-    const templateSections : any = templateStructures[args.templateName];
+    const templateSections: any = templateStructures[args.templateName];
     if (!templateSections) {
       throw new Error("Invalid template name");
     }
 
-    const initialSections = templateSections.map((section : any) =>
+    const initialSections = templateSections.map((section: any) =>
       createSection(section.type, section.fields)
     );
-
 
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
@@ -116,9 +115,9 @@ export const updateExperience = mutation({
           jobDescription: v.string(),
           location: v.optional(v.string()),
           startMonth: v.optional(v.string()),
-          startYear : v.string(),
+          startYear: v.string(),
           endMonth: v.optional(v.string()),
-          endYear : v.string()
+          endYear: v.string(),
         })
       ),
     }),
@@ -154,10 +153,10 @@ export const updateEducation = mutation({
         v.object({
           courseName: v.string(),
           instituteName: v.string(),
-          startMonth : v.optional(v.string()),
-          startYear : v.optional(v.string()),
+          startMonth: v.optional(v.string()),
+          startYear: v.optional(v.string()),
           endMonth: v.optional(v.string()),
-          endYear : v.optional(v.string()),
+          endYear: v.optional(v.string()),
           location: v.string(),
         })
       ),
@@ -336,5 +335,56 @@ export const getUserResumes = query({
       .collect();
 
     return resumes;
+  },
+});
+
+export const reorderSections = mutation({
+  args: {
+    id: v.id("resumes"),
+    sections: v.array(
+      v.union(
+        v.literal("header"),
+        v.literal("skills"),
+        v.literal("projects"),
+        v.literal("experience"),
+        v.literal("education")
+      )
+    ),
+  },
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
+    }
+    const resumeSections = resume?.sections;
+
+    const sectionMap = new Map(
+      resumeSections.map((section) => [section.type, section])
+    );
+
+    // Create the new array based on the user's order
+    const rearrangedSections = args.sections
+      .map((type) => {
+        const section = sectionMap.get(type);
+        if (!section) {
+          console.warn(`Section type "${type}" not found in resumeSections`);
+          return null;
+        }
+        return section;
+      })
+      .filter((section) => section !== null);
+
+    // Add any sections that were in resumeSections but not in userOrder
+    resumeSections.forEach((section) => {
+      if (!args.sections.includes(section.type)) {
+        rearrangedSections.push(section);
+      }
+    });
+
+    const newResume = await ctx.db.patch(args.id, {
+      sections: rearrangedSections,
+    });
+
+    return newResume;
   },
 });

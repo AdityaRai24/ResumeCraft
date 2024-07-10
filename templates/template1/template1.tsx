@@ -44,12 +44,12 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
-        obj?.globalStyles?.fontFamily === 'Inter' && interFont.className,
-        obj?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
-        obj?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
-        obj?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
-        obj?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
-        obj?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
+        // obj?.globalStyles?.fontFamily === 'Inter' && interFont.className,
+        // obj?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
+        // obj?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
+        // obj?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
+        // obj?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
+        // obj?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
         isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >
