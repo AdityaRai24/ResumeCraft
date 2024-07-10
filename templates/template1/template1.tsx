@@ -2,8 +2,16 @@
 import { cn } from "@/lib/utils";
 import { ResumeTemplate } from "@/types/templateTypes";
 import { Github, Globe, Linkedin, Mail, PhoneCall } from "lucide-react";
-import {  geologicaFont, interFont, montserratFont, openSansFont, poppinsFont, ralewayFont } from "@/lib/font";
+import {
+  geologicaFont,
+  interFont,
+  montserratFont,
+  openSansFont,
+  poppinsFont,
+  ralewayFont,
+} from "@/lib/font";
 import Link from "next/link";
+import React from "react";
 
 interface TemplateType {
   isPreview?: boolean;
@@ -11,7 +19,61 @@ interface TemplateType {
   isLive?: boolean;
 }
 
+type HeaderContent = {
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  email?: string;
+  linkedin?: string;
+  github?: string;
+  summary?: string;
+};
+
+type EducationContent = {
+  education: {
+    courseName: string;
+    instituteName: string;
+    startMonth?: string;
+    startYear: string;
+    endMonth?: string;
+    endYear: string;
+    location?: string;
+  }[];
+};
+
+type ExperienceContent = {
+  experience: {
+    companyName: string;
+    role: string;
+    jobDescription: string;
+    location?: string;
+    startMonth?: string;
+    startYear: string;
+    endMonth?: string;
+    endYear: string;
+  }[];
+};
+
+type SkillsContent = {
+  content: {
+    skills: string[] | string;
+  };
+};
+
+type ProjectContent = {
+  projects: {
+    name: string;
+    description: string;
+    githuburl?: string;
+    liveurl?: string;
+  }[];
+};
+
 const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
+
+  const sectionArray = obj?.sections?.map((item) => item.type);
+
+
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className=" overflow-hidden">
       <div
@@ -36,29 +98,15 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColorClass = obj?.globalStyles?.primaryColor || "black";
 
-  const content = (
-    <div
-      id="resumeSection"
-      className={cn(
-        "bg-[white] text-black py-8 overflow-hidden overflow-x-hidden w-[210mm] h-[297mm] px-8 ",
-        isPreview &&
-          "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
-        isLive && "w-[210mm] h-[297mm]",
-        // obj?.globalStyles?.fontFamily === 'Inter' && interFont.className,
-        // obj?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
-        // obj?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
-        // obj?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
-        // obj?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
-        // obj?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
-        isPreview && !isLive && "w-[795px] h-[1122px]"
-      )}
-    >
-      <div>
-        {/* HEADER */}
-        {obj?.sections?.map((section, sectionIndex) => {
-          if (section?.type === "header") {
+  const renderSection = (type: string) => {
+    return obj?.sections?.map((item, index) => {
+      if (item.type === type) {
+        switch (type) {
+          case "header":
+            const headerContent = item.content as HeaderContent;
+
             return (
-              <div key={`header-section-${sectionIndex}`}>
+              <div key={`header-section-${index}`}>
                 <div
                   className={`py-0 border-b`}
                   style={{ borderBottom: `1px solid ${primaryColorClass}` }}
@@ -67,39 +115,39 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                     className={`text-4xl uppercase text-center font-bold`}
                     style={{ color: primaryTextColorClass }}
                   >
-                    {section?.content?.firstName} {section?.content?.lastName}
+                    {headerContent?.firstName} {headerContent?.lastName}
                   </h1>
                   <div className="flex items-center justify-center gap-4 flex-wrap pt-1 pb-2">
                     {[
                       {
                         type: "email",
                         icon: Mail,
-                        content: section?.content?.email,
+                        content: headerContent?.email,
                       },
                       {
                         type: "phone",
                         icon: PhoneCall,
-                        content: section?.content?.phone,
+                        content: headerContent?.phone,
                       },
                       {
                         type: "github",
                         icon: Github,
-                        content: section?.content?.github,
+                        content: headerContent?.github,
                       },
                       {
                         type: "linkedin",
                         icon: Linkedin,
-                        content: section?.content?.linkedin,
+                        content: headerContent?.linkedin,
                       },
                     ].map(
-                      (item, index) =>
-                        item.content && (
+                      (it, index) =>
+                        it.content && (
                           <h1
-                            key={`contact-${item.type}-${index}`}
+                            key={`contact-${it.type}-${index}`}
                             className="flex items-center justify-center gap-1"
                           >
-                            <item.icon size={16} />
-                            <span className="text-sm">{item.content}</span>
+                            <it.icon size={16} />
+                            <span className="text-sm">{it.content}</span>
                           </h1>
                         )
                     )}
@@ -120,30 +168,71 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                   <div
                     className="quill-content text-sm font-normal"
                     dangerouslySetInnerHTML={{
-                      __html: section?.content?.summary || "",
+                      __html: headerContent?.summary || "",
                     }}
                   />
                 </div>
               </div>
             );
-          }
-          return null;
-        })}
 
-        {/* EXPERIENCE */}
-        <div
-          className={`border-b pt-2`}
-          style={{ borderBottom: `1px solid ${primaryColorClass}` }}
-        >
-          <h1
-            className={`text-lg font-bold `}
-            style={{ color: primaryTextColorClass }}
-          >
-            WORK EXPERIENCE
-          </h1>
-          {obj?.sections?.map((item) => {
-            if (item?.type === "experience") {
-              return item?.content?.experience?.map((exp, index) => {
+          case "education":
+            const educationContent = item.content as EducationContent;
+
+            return (
+              <div
+                className={`py-2 border-b `}
+                style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+              >
+                {" "}
+                <h1
+                  className={`text-lg font-bold `}
+                  style={{ color: primaryTextColorClass }}
+                >
+                  EDUCATION
+                </h1>
+                <div key={index} className="flex flex-col gap-1">
+                  {educationContent?.education.map((edu, index2) => {
+                    return (
+                      <div
+                        key={index2}
+                        className="flex items-center text-sm justify-between"
+                      >
+                        <div>
+                          <h1 className="font-semibold text-sm">
+                            {edu?.courseName}
+                          </h1>
+                          <h1 className="text-sm">{edu?.instituteName}</h1>
+                        </div>
+                        <div>
+                          {edu?.startYear && edu?.endYear && (
+                            <h1 className="font-bold text-sm">
+                              {edu?.startMonth} {edu?.startYear} -{" "}
+                              {edu?.endMonth} {edu?.endYear}
+                            </h1>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+
+          case "experience" :
+            const experienceContent = item.content as ExperienceContent;
+
+            return(
+              <div
+              className={`border-b pt-2`}
+              style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+            >
+              <h1
+                className={`text-lg font-bold `}
+                style={{ color: primaryTextColorClass }}
+              >
+                WORK EXPERIENCE
+              </h1>
+                 {   experienceContent.experience?.map((exp, index) => {
                 return (
                   <div key={index}>
                     <div className="flex items-center justify-between gap-2">
@@ -170,48 +259,13 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                     />
                   </div>
                 );
-              });
-            }
-          })}
-        </div>
+              })}
+            </div>
+          )
 
-        {/* TECHNICAL SKILLS */}
-        {obj?.sections?.map((item, index) => {
-          if (item?.type === "skills") {
-            return (
-              <div
-                className={`py-2 border-b `}
-                style={{ borderBottom: `1px solid ${primaryColorClass}` }}
-                key={index}
-              >
-                {" "}
-                <h1
-                  className={`text-lg font-bold `}
-                  style={{ color: primaryTextColorClass }}
-                >
-                  SKILLS
-                </h1>
-                {item?.content?.type === "list" && (
-                  <div
-                    className={`mt-2 grid grid-cols-${item?.style?.columns}`}
-                  >
-                    {item?.content?.content?.skills?.map((skill, index) => {
-                      return (
-                        <li key={index} className="text-sm">
-                          {skill}
-                        </li>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          }
-        })}
+          case "projects":
 
-        {/* PROJECTS */}
-        {obj?.sections?.map((item, index) => {
-          if (item?.type === "projects") {
+            const projectContent = item.content as ProjectContent;
             return (
               <>
                 <div
@@ -227,7 +281,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                   </h1>
 
                   <div className="flex flex-col">
-                    {item?.content?.projects?.map((project, index) => {
+                    {projectContent?.projects?.map((project, index) => {
                       return (
                         <div key={index}>
                           <div className="flex items-center gap-2 justify-start">
@@ -269,53 +323,73 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                 </div>
               </>
             );
-          }
-        })}
 
-        {/* EDUCATION */}
-        <div
-          className={`py-2 border-b `}
-          style={{ borderBottom: `1px solid ${primaryColorClass}` }}
-        >
-          {" "}
-          <h1
-            className={`text-lg font-bold `}
-            style={{ color: primaryTextColorClass }}
-          >
-            EDUCATION
-          </h1>
-          {obj?.sections?.map((item, index) => {
-            if (item.type === "education") {
-              return (
-                <div key={index} className="flex flex-col gap-1">
-                  {item?.content?.education.map((edu, index2) => {
+          case "skills" :
+
+            const skillContent = item.content as SkillsContent;
+            const columns = obj.sections.filter(
+              (item) => item.type === "skills"
+            )[0].style?.columns;
+
+            return (
+              <div
+                className={`py-2 border-b `}
+                style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+                key={index}
+              >
+                {" "}
+                <h1
+                  className={`text-lg font-bold `}
+                  style={{ color: primaryTextColorClass }}
+                >
+                  SKILLS
+                </h1>
+                {Array.isArray(skillContent.content.skills) ? (
+                  <div
+                  className={`mt-2 grid grid-cols-${columns}`}
+                >
+                  {skillContent?.content?.skills?.map((skill, index) => {
                     return (
-                      <div
-                        key={index2}
-                        className="flex items-center text-sm justify-between"
-                      >
-                        <div>
-                          <h1 className="font-semibold text-sm">
-                            {edu?.courseName}
-                          </h1>
-                          <h1 className="text-sm">{edu?.instituteName}</h1>
-                        </div>
-                        <div>
-                          {edu?.startYear && edu?.endYear && (
-                            <h1 className="font-bold text-sm">
-                              {edu?.startMonth} {edu?.startYear} -{" "}
-                              {edu?.endMonth} {edu?.endYear}
-                            </h1>
-                          )}
-                        </div>
-                      </div>
+                      <li key={index} className="text-sm">
+                        {skill}
+                      </li>
                     );
                   })}
                 </div>
-              );
-            }
-          })}
-        </div>
+                ) : ""}
+              </div>
+            );
+
+        }
+      }
+    });
+  };
+
+  const content = (
+    <div
+      id="resumeSection"
+      className={cn(
+        "bg-[white] text-black py-8 overflow-hidden overflow-x-hidden w-[210mm] h-[297mm] px-8 ",
+        isPreview &&
+          "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
+        isLive && "w-[210mm] h-[297mm]",
+        // obj?.globalStyles?.fontFamily === 'Inter' && interFont.className,
+        // obj?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
+        // obj?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
+        // obj?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
+        // obj?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
+        // obj?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
+        isPreview && !isLive && "w-[795px] h-[1122px]"
+      )}
+    >
+      <div>
+      {sectionArray?.map((section) => {
+          return (
+            <React.Fragment key={section}>
+              {renderSection(section)}
+            </React.Fragment>
+          );
+        })}
       </div>
     </div>
   );
