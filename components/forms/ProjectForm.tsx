@@ -12,10 +12,10 @@ import { Input } from "../ui/input";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { debounce } from "lodash";
-import QuillEditorComponent from "../QuillEditor";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import QuillProjectEditor from "../QuillEditors/QuillProject";
+import { ProjectSection } from "@/types/templateTypes";
 
 interface ProjectType {
   name: string;
@@ -33,7 +33,7 @@ const ProjectForm = ({
   item,
 }: {
   resumeId: Id<"resumes">;
-  item: any;
+  item: ProjectSection;
 }) => {
   const emptyProject: ProjectType = {
     name: "",
@@ -48,7 +48,7 @@ const ProjectForm = ({
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
-      setProjects(item?.content);
+      setProjects(item?.content as ProjectContent);
     }
   }, [item?.content, pendingChangesRef]);
 
@@ -59,8 +59,7 @@ const ProjectForm = ({
     }, 400);
   }, [update, resumeId]);
 
-  const handleChange = useCallback(
-    (index: number) =>
+  const handleChange = useCallback(  (index: number) =>
       (
         e: ChangeEvent<HTMLInputElement> | string,
         field?: keyof ProjectType

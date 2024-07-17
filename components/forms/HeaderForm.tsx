@@ -1,13 +1,13 @@
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { debounce } from "lodash";
-import { useParams, useRouter } from "next/navigation";
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import QuillEditorComponent from "../QuillEditor";
 import {motion} from "framer-motion"
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { HeaderSection } from "@/types/templateTypes";
 
 interface HeaderContent {
   firstName: string;
@@ -36,29 +36,18 @@ const HeaderForm = ({
   item,
 }: {
   resumeId: Id<"resumes">;
-  item: any;
+  item: HeaderSection;
 }) => {
+
   const [header, setHeader] = useState<HeaderContent>(initialHeader);
   const update = useMutation(api.resume.updateHeader);
-  const params = useParams();
   const pendingChangesRef = useRef(false);
-  const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
-  const router = useRouter();
-
-  let sectionArray: string[] = [];
-  resume?.sections?.map((item) => sectionArray.push(item.type));
 
   useEffect(() => {
-    if (resume?.sections && !pendingChangesRef.current) {
-      const headerSection = resume.sections.find(
-        (item) => item.type === "header"
-      );
-      if (headerSection?.content) {
-        const savedHeader = headerSection.content as HeaderContent;
-        setHeader(savedHeader);
-      }
+    if (item?.content && !pendingChangesRef.current) {
+        setHeader(item.content as HeaderContent);
     }
-  }, [resume?.sections,pendingChangesRef]);
+  }, [item?.content,pendingChangesRef]);
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newHeader: HeaderContent) => {
@@ -67,12 +56,10 @@ const HeaderForm = ({
     }, 400);
   }, [update, resumeId]);
 
-  const handleChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement> | string, name?: string) => {
+  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement> | string) => {
       pendingChangesRef.current = true;
       setHeader((prevHeader) => {
         let newHeader;
-
         if (typeof e === "string") {
           newHeader = { ...prevHeader, summary: e };
         } else {
@@ -143,7 +130,7 @@ const HeaderForm = ({
             <QuillEditorComponent
               label="Summary"
               value={header.summary}
-              onChange={(content) => handleChange(content, "summary")}
+              onChange={(content) => handleChange(content)}
             />
           </div>
         )}

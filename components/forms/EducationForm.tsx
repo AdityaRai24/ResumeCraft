@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  ChangeEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -16,10 +15,9 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
-import DatePicker from "react-date-picker";
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
-
+import { EducationSection } from "@/types/templateTypes";
 
 interface EducationItem {
   courseName: string;
@@ -36,15 +34,12 @@ interface EducationContent {
 }
 
 interface EducationFormProps {
-  item: any;
+  item: EducationSection;
   resumeId: Id<"resumes">;
 }
 
-type ValuePiece = Date | null;
-
-type Value = ValuePiece | [ValuePiece, ValuePiece];
-
 const EducationForm = ({ item, resumeId }: EducationFormProps) => {
+
   const emptyEducation: EducationItem = {
     courseName: "",
     instituteName: "",
@@ -55,8 +50,6 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     endYear:""
   };
 
-  const [value, onChange] = useState<Value>(new Date());
-
   const [education, setEducation] = useState<EducationContent>({
     education: [],
   });
@@ -65,7 +58,7 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
-      setEducation(item?.content);
+      setEducation(item?.content as EducationContent);
     }
   }, [item?.content,pendingChangesRef]);
 
@@ -76,32 +69,8 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     }, 400);
   }, [update, resumeId]);
 
-  // const handleChange = useCallback(
-  //   (index: number) =>
-  //     (
-  //       e: ChangeEvent<HTMLInputElement> | string,
-  //       field?: keyof EducationItem
-  //     ) => {
-  //       pendingChangesRef.current = true;
-  //       setEducation((prev) => {
-  //         let newEducation = { ...prev };
-  //         if (typeof e === "string" && field) {
-  //           newEducation.education[index][field] = e;
-  //         } else if (typeof e !== "string") {
-  //           newEducation.education[index][
-  //             e.target.name as keyof EducationItem
-  //           ] = e.target.value;
-  //         }
-  //         debouncedUpdate(newEducation);
-  //         return newEducation;
-  //       });
-  //     },
-  //   [debouncedUpdate]
-  // );
 
-  const handleChange = useCallback(
-    (index: number) =>
-      (name: keyof EducationItem, value: string) => {
+  const handleChange = useCallback((index: number) =>(name: keyof EducationItem, value: string) => {
         pendingChangesRef.current = true;
         setEducation((prevEducation) => {
           const newEducation = { ...prevEducation };
@@ -115,7 +84,6 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
 
   const addEducation = () => {
     setEducation((prev) => ({
-      ...prev,
       education: [...prev.education, emptyEducation],
     }));
   };
@@ -126,8 +94,7 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     "July", "Aug", "Sept", "Oct", "Nov", "Dec"
   ];
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 50 }, (_, i) => (currentYear - i).toString());
-
+  const years = Array.from({ length: 30 }, (_, i) => (currentYear - i).toString());
 
   return (
     <>
@@ -250,7 +217,7 @@ const InputField: React.FC<InputFieldProps> = ({
         onChange={(e) => onChange(name, e.target.value)}
         className="border bg-[transparent] border-muted-foreground p-2 rounded"
       >
-        <option value="">{placeholder}</option>
+        <option value="" disabled>{placeholder}</option>
         {options?.map((option) => (
           <option key={option} value={option}>
             {option}

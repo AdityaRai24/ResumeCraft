@@ -30,6 +30,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
        atleast 0.5 lines...Use metrics in the job description...
 
       make sure the response should be in the form of array of points so that i can use JSON.parse() on that response..Dont add any text before or after it...
+      write description as you are supposed to write it in a resume describing the project and not explaining it to someone
 
       dont put a \n after [ and before ]
 
@@ -41,8 +42,9 @@ instantly and choose from various professional designs, boosting user engagement
     } else if (projectTitle && projectDescription) {
       prompt = `The title of the project is ${projectTitle} and its description is ${projectDescription}...Improve this project description and write it in 3 points ..each point 
         must not exceed 1.5-2lines and should be
-         atleast 0.5 lines...Use metrics in the job description this is very very important...
-  
+         atleast 0.5 lines...Use metrics in the job description this is very very important...if the description contains tech stack make sure to use it while you improve
+      write description as you are supposed to write it in a resume describing the project and not explaining it to someone
+
         make sure the response should be in the form of array of points so that i can use JSON.parse() on that response..Dont add any text before or after it...
   
         dont put a \n after [ and before ]

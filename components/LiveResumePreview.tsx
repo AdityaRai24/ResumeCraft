@@ -10,6 +10,8 @@ import { Skeleton } from "./ui/skeleton";
 import { ResumeTemplate } from "@/types/templateTypes";
 import Template1 from "@/templates/template1/template1";
 import Template2 from "@/templates/template2/template2";
+import { cn } from "@/lib/utils";
+import { montserratFont } from "@/lib/font";
 
 type TemplateComponentType = React.ComponentType<{
   obj: ResumeTemplate;
@@ -61,7 +63,7 @@ const LiveResumePreview = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
-        >
+    >
           <TemplateComponent obj={templateDetails as ResumeTemplate} isLive isPreview />
         </motion.div>
       </div>

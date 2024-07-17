@@ -41,7 +41,7 @@ interface DescriptionSkillSection {
   };
 }
 
-interface SkillSection extends BaseSection {
+export interface SkillSection extends BaseSection {
   type: "skills";
   content: DescriptionSkillSection | ListSkillSection;
   style?: {
@@ -49,7 +49,7 @@ interface SkillSection extends BaseSection {
   };
 }
 
-interface ProjectSection extends BaseSection {
+export interface ProjectSection extends BaseSection {
   type: "projects";
   content: {
     projects: {
@@ -62,7 +62,7 @@ interface ProjectSection extends BaseSection {
   style?: {};
 }
 
-interface ExperienceSection extends BaseSection {
+export interface ExperienceSection extends BaseSection {
   type: "experience";
   content: {
     experience: {
@@ -79,16 +79,16 @@ interface ExperienceSection extends BaseSection {
   style?: {};
 }
 
-interface EducationSection extends BaseSection {
+export interface EducationSection extends BaseSection {
   type: "education";
   content: {
     education: {
       courseName: string;
       instituteName: string;
       startMonth?: string;
-      startYear: string;
+      startYear?: string;
       endMonth?: string;
-      endYear: string;
+      endYear?: string;
       location?: string;
     }[];
   };
