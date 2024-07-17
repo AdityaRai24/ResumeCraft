@@ -22,10 +22,6 @@ const Page = () => {
     return <HeaderSkeleton />;
   }
 
-  let sectionArray: string[] = [];
-  resume?.sections?.map((item) => sectionArray.push(item.type));
-
-
   return (
     <>
       {resume?.sections?.map((item, index) => {

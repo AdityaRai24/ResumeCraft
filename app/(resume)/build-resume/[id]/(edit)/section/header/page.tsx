@@ -32,8 +32,7 @@ const Page = () => {
                 text="Include your full name and at least one way for employers to
                 reach you."
               />
-
-              <HeaderForm resumeId={resumeId} item={item} />
+              <HeaderForm  resumeId={resumeId} item={item} />
             </div>
           );
         }

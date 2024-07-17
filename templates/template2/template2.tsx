@@ -2,14 +2,6 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Github, Globe, Linkedin } from "lucide-react";
-import {
-  geologicaFont,
-  interFont,
-  montserratFont,
-  openSansFont,
-  poppinsFont,
-  ralewayFont,
-} from "@/lib/font";
 import React from "react";
 
 interface TemplateType {
@@ -317,14 +309,6 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
         isPreview && !isLive && "w-[795px] h-[1122px]",
-        // obj?.globalStyles?.fontFamily === "Inter" && interFont.className,
-        // obj?.globalStyles?.fontFamily === "Montserrat" &&
-        //   montserratFont.className,
-        // obj?.globalStyles?.fontFamily === "OpenSans" && openSansFont.className,
-        // obj?.globalStyles?.fontFamily === "Poppins" && poppinsFont.className,
-        // obj?.globalStyles?.fontFamily === "Geologica" &&
-        //   geologicaFont.className,
-        // obj?.globalStyles?.fontFamily === "Raleway" && ralewayFont.className,
         !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl",
         modalPreview && "scale-[0.6]"
       )}

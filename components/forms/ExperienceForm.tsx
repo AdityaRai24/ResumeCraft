@@ -48,6 +48,7 @@ const ExperienceForm = ({
   resumeId: Id<"resumes">;
   item: any;
 }) => {
+
   const pendingChangesRef = useRef(false);
   const [experience, setExperience] = useState<ExperienceContent>({
     experience: [],
@@ -83,7 +84,6 @@ const ExperienceForm = ({
 
   const addExperience = () => {
     setExperience((prev) => ({
-      ...prev,
       experience: [...prev.experience, emptyExperienceItem],
     }));
   };
@@ -93,7 +93,7 @@ const ExperienceForm = ({
     "July", "Aug", "Sept", "Oct", "Nov", "Dec"
   ];
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 50 }, (_, i) => (currentYear - i).toString());
+  const years = Array.from({ length: 30 }, (_, i) => (currentYear - i).toString());
 
   return (
     <>

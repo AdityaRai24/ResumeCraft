@@ -329,6 +329,8 @@ export const getUserResumes = query({
     userId: v.string(),
   },
   handler: async (ctx, args) => {
+
+    
     const resumes = await ctx.db
       .query("resumes")
       .filter((q) => q.eq(q.field("userId"), args.userId))
@@ -356,6 +358,16 @@ export const reorderSections = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
+    
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
+
     const resumeSections = resume?.sections;
 
     const sectionMap = new Map(
