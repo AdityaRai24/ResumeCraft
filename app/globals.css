@@ -1,12 +1,12 @@
 @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
   img {
     @apply inline-block;
   }
 }
-@tailwind components;
-@tailwind utilities;
-
 @layer base {
   :root {
     --background: 345 83% 97%;
@@ -93,4 +93,23 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+}
+
+@media print { 
+  #no-print{
+    display: none;
+  }
+  #pdf{
+    display: block;
+  }
+  body{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}
+
+@page{
+  size: auto;
+  margin: 0mm;
 }

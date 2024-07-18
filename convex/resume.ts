@@ -4,6 +4,7 @@ import {
   createSection,
   templateStructures,
 } from "@/templates/templateStructures";
+import { redirect } from "next/navigation";
 
 export const getTemplates = query({
   args: {},
@@ -46,6 +47,15 @@ export const updateHeader = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
+       
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
     const resumeSections = resume?.sections;
     let index = resumeSections.findIndex((obj) => obj.type === "header");
 
@@ -82,6 +92,7 @@ export const createUserResume = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
+    
 
     const templateSections: any = templateStructures[args.templateName];
     if (!templateSections) {
@@ -127,6 +138,15 @@ export const updateExperience = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
+       
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
     const resumeSections = resume?.sections;
     let index = resumeSections.findIndex((item) => item.type === "experience");
     if (index === -1) {
@@ -167,6 +187,15 @@ export const updateEducation = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
+       
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
     const resumeSections = resume?.sections;
     let index = resumeSections.findIndex((item) => item.type === "education");
     if (index === -1) {
@@ -198,6 +227,15 @@ export const updateSkills = mutation({
     const resume = await ctx.db.get(args.id);
     if (!resume) {
       throw new Error("Something went wrong");
+    }
+       
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
     }
     const resumeSections = resume?.sections;
     let index = resumeSections.findIndex((item) => item.type === "skills");
@@ -240,6 +278,15 @@ export const updateProjects = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
+       
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
     const resumeSections = resume?.sections;
     let projectsIndex = resumeSections.findIndex(
       (item) => item.type === "projects"
@@ -270,6 +317,15 @@ export const updateColor = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
+       
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
     const newGlobalStyles = {
       ...resume.globalStyles,
       primaryTextColor: args.color,
@@ -291,6 +347,16 @@ export const updateColorPC = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
+       
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
+    
     const newGlobalStyles = {
       ...resume.globalStyles,
       primaryColor: args.color,
@@ -311,6 +377,15 @@ export const updateFont = mutation({
     const resume = await ctx.db.get(args.id);
     if (!resume) {
       throw new Error("Something went wrong");
+    }
+    
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
     }
 
     const updatedResume = await ctx.db.patch(args.id, {

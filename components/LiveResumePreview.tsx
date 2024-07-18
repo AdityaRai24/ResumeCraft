@@ -11,7 +11,7 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import Template1 from "@/templates/template1/template1";
 import Template2 from "@/templates/template2/template2";
 import { cn } from "@/lib/utils";
-import { montserratFont } from "@/lib/font";
+import { geologicaFont, interFont, montserratFont, openSansFont, poppinsFont, ralewayFont } from "@/lib/font";
 
 type TemplateComponentType = React.ComponentType<{
   obj: ResumeTemplate;
@@ -56,6 +56,8 @@ const LiveResumePreview = () => {
     return <div>Error: Template not found</div>;
   }
 
+
+
   return (
     <>
       <div className="overflow-hidden w-full fixed h-[100%] mt-8 ">
@@ -63,6 +65,14 @@ const LiveResumePreview = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
+          className={cn(
+            templateDetails?.globalStyles?.fontFamily === 'Inter' && interFont.className,
+            templateDetails?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
+            templateDetails?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
+          templateDetails?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
+            templateDetails?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
+            templateDetails?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
+          )}
     >
           <TemplateComponent obj={templateDetails as ResumeTemplate} isLive isPreview />
         </motion.div>
