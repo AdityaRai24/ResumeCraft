@@ -1,10 +1,39 @@
+"use client"
 import LiveResumePreview from "@/components/LiveResumePreview";
 import VerticalTimeline from "@/components/VerticalTimeline";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { geologicaFont } from "@/lib/font";
 import { cn } from "@/lib/utils";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "convex/react";
+import { useParams, useRouter } from "next/navigation";
 import React from "react";
+import toast from "react-hot-toast";
 
 const ResumeBuilderLayout = ({ children }: { children: React.ReactNode }) => {
+
+  const params = useParams()
+
+  const resume = useQuery(api.resume.getTemplateDetails,{
+    id: params.id as Id<"resumes">
+  })
+  const {user,isLoaded} = useUser()  
+  const router = useRouter() 
+  
+  if(resume === undefined){
+    return null;
+  }
+  if(resume === null){
+    return <div>Template not found</div>
+  }
+
+  if(isLoaded && resume?.userId !== user?.id){
+    toast.error("Not authenticated")
+    return router.push("/")
+  }
+
+
   return (
     <>
       <div className="flex min-h-screen w-full">

@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { geologicaFont, interFont, montserratFont, openSansFont, poppinsFont, ralewayFont } from "@/lib/font";
 import { usePreview } from "@/lib/use-preview";
+import { cn } from "@/lib/utils";
 import { templateComponents } from "@/templates/templateStructures";
 import { ResumeTemplate } from "@/types/templateTypes";
 import { useUser } from "@clerk/nextjs";
@@ -71,10 +73,21 @@ const Page = () => {
                 key={index}
                 className="relative group inline-block w-[319px] h-[449px]"
               >
-                <TemplateComponent
+               <div 
+                className={cn(
+                  item?.globalStyles?.fontFamily === 'Inter' && interFont.className,
+                  item?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
+                  item?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
+                item?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
+                  item?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
+                  item?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
+                )}
+               >
+               <TemplateComponent
                   obj={item as ResumeTemplate}
                   isPreview={true}
                 />
+               </div>
                 <div className="absolute inset-0 w-full h-full p-10 flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
                   <Button
                     onClick={() => preview.onOpen(item as ResumeTemplate)}

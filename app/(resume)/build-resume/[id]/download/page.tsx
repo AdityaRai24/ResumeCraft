@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { Loader, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import { geologicaFont } from "@/lib/font";
+import { geologicaFont, interFont, montserratFont, openSansFont, poppinsFont, ralewayFont } from "@/lib/font";
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -53,60 +53,25 @@ const LiveResumePreview = () => {
     return <div>Error: Template not found</div>;
   }
 
-  const handlePrint = async () => {
-    try {
-      setLoading(true);
-      console.log("Initiating PDF download");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generatePdf`, {
-        body: JSON.stringify({ id: params.id }),
-        method: "POST",
-      });
-
-      console.log("Response received:", response.status, response.statusText);
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error response:", errorData);
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorData.error}, details: ${errorData.details}`
-        );
-      }
-
-      const blob = await response.blob();
-      console.log("Blob received, size:", blob.size);
-
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "resume.pdf";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      console.log("PDF download initiated");
-      setLoading(false);
-      toast.success("Pdf download started successfully");
-    } catch (error) {
-      setLoading(false);
-      toast.error("Failed to download PDF");
-      console.error("Failed to download PDF", error);
-    }
-  };
+  const handlePdfDownload = ()=>{
+    window.print()
+  }
 
   return (
     <div className="flex flex-col items-center mx-auto">
       {!resumeOnlyMode && (
-        <>
-          <div className="my-16">
+        <div id="no-print" className="w-full">
+       <Navbar />
+          <div  className="my-16">
             <h1
-              className={cn("text-6xl font-bold", geologicaFont.className)}
+              className={cn("text-6xl font-bold text-center", geologicaFont.className)}
             >
               Your Resume is Ready !!
             </h1>
             <div className="flex items-center justify-center mt-8">
               <Button
                 disabled={loading}
-                onClick={handlePrint}
+                onClick={handlePdfDownload}
                 className="hover:scale-[1.02] active:scale-[0.98] transition duration-300 ease-out text-xl py-8 px-32"
               >
                 {loading ? (
@@ -124,9 +89,19 @@ const LiveResumePreview = () => {
               </p>
             )}{" "}
           </div>
-        </>
+        </div>
       )}
-      <div className="resume-container no-scrollbar" id="pdf">
+      <div
+       className={cn(
+        "resume-container no-scrollbar",
+        templateDetails?.globalStyles?.fontFamily === 'Inter' && interFont.className,
+        templateDetails?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
+        templateDetails?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
+      templateDetails?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
+        templateDetails?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
+        templateDetails?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
+      )}
+      id="pdf">
       {templateDetails && (
           <TemplateComponent 
             obj={templateDetails} 
