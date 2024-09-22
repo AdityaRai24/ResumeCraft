@@ -43,6 +43,7 @@ const ChooseTemplates = () => {
         return router.push(`/build-resume/${res}/tips?sec=header`);
       })
       .catch((err) => {
+        console.log(err)
         toast.error("Something went wrong...");
       });
   };

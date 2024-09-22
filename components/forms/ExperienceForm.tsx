@@ -14,6 +14,7 @@ import { Input } from "../ui/input";
 import QuillExpEditor from "../QuillEditors/QuillExp";
 import { motion } from "framer-motion";
 import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
 
 interface ExperienceItem {
   companyName: string;
@@ -24,6 +25,7 @@ interface ExperienceItem {
   startYear: string;
   endMonth: string;
   endYear: string;
+  workingHere: boolean;
 }
 
 interface ExperienceContent {
@@ -39,6 +41,7 @@ const emptyExperienceItem: ExperienceItem = {
   startYear: "",
   endMonth: "",
   endYear: "",
+  workingHere: false,
 };
 
 const ExperienceForm = ({
@@ -48,7 +51,6 @@ const ExperienceForm = ({
   resumeId: Id<"resumes">;
   item: any;
 }) => {
-
   const pendingChangesRef = useRef(false);
   const [experience, setExperience] = useState<ExperienceContent>({
     experience: [],
@@ -59,7 +61,7 @@ const ExperienceForm = ({
     if (!pendingChangesRef.current) {
       setExperience(item?.content);
     }
-  }, [item?.content,pendingChangesRef]);
+  }, [item?.content, pendingChangesRef]);
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newExperience: ExperienceContent) => {
@@ -70,11 +72,22 @@ const ExperienceForm = ({
 
   const handleChange = useCallback(
     (index: number) =>
-      (name: keyof ExperienceItem, value: string) => {
+      (name: keyof ExperienceItem, value: string | boolean) => {
         pendingChangesRef.current = true;
         setExperience((prevExperience) => {
           const newExperience = { ...prevExperience };
-          newExperience.experience[index][name] = value;
+          const updatedItem = { ...newExperience.experience[index] };
+
+          if (name === "workingHere") {
+            updatedItem.workingHere = value as boolean;
+            if (updatedItem.workingHere) {
+              updatedItem.endMonth = "";
+              updatedItem.endYear = "Present";
+            }
+          } else {
+            updatedItem[name] = value as string;
+          }
+          newExperience.experience[index] = updatedItem;
           debouncedUpdate(newExperience);
           return newExperience;
         });
@@ -89,11 +102,23 @@ const ExperienceForm = ({
   };
 
   const months = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "July",
+    "Aug",
+    "Sept",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 30 }, (_, i) => (currentYear - i).toString());
+  const years = Array.from({ length: 30 }, (_, i) =>
+    (currentYear - i).toString()
+  );
 
   return (
     <>
@@ -147,6 +172,7 @@ const ExperienceForm = ({
               placeholder="Select Month"
               type="select"
               options={months}
+              disabled={exp.workingHere}
             />
             <InputField
               label="End Year"
@@ -156,7 +182,23 @@ const ExperienceForm = ({
               placeholder="Select Year or Present"
               type="select"
               options={[...years, "Present"]}
+              disabled={exp.workingHere}
             />
+            <div className="flex items-center mt-8 space-x-2">
+              <Checkbox
+                id={`workingHere-${index}`}
+                checked={item.workingHere}
+                onCheckedChange={(checked) =>
+                  handleChange(index)("workingHere", checked)
+                }
+              />
+              <Label
+                htmlFor={`workingHere-${index}`}
+                className="text-lg font-normal"
+              >
+                I currently work here
+              </Label>
+            </div>
           </div>
           <div className="mt-8 w-[85%]">
             <QuillExpEditor
@@ -164,7 +206,9 @@ const ExperienceForm = ({
               companyName={exp.companyName}
               role={exp.role}
               value={exp.jobDescription}
-              onChange={(content) => handleChange(index)("jobDescription", content)}
+              onChange={(content) =>
+                handleChange(index)("jobDescription", content)
+              }
             />
           </div>
         </motion.form>
@@ -194,6 +238,7 @@ interface InputFieldProps {
   placeholder: string;
   type?: string;
   options?: string[];
+  disabled?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -204,6 +249,7 @@ const InputField: React.FC<InputFieldProps> = ({
   placeholder,
   type = "text",
   options,
+  disabled = false,
 }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.8 }}
@@ -221,8 +267,11 @@ const InputField: React.FC<InputFieldProps> = ({
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
         className="border bg-[transparent] border-muted-foreground p-2 rounded"
+        disabled={disabled}
       >
-        <option value="">{placeholder}</option>
+        <option value="" disabled>
+          {placeholder}
+        </option>
         {options?.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -238,6 +287,7 @@ const InputField: React.FC<InputFieldProps> = ({
         onChange={(e) => onChange(name, e.target.value)}
         placeholder={placeholder}
         className="border border-muted-foreground"
+        disabled={disabled}
       />
     )}
   </motion.div>
