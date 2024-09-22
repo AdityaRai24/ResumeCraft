@@ -1,68 +1,19 @@
-import { ResumeTemplate } from "@/types/templateTypes";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Github, Globe, Linkedin } from "lucide-react";
 import React from "react";
-
-interface TemplateType {
-  isPreview?: boolean;
-  obj: ResumeTemplate;
-  isLive?: boolean;
-  modalPreview?: boolean;
-}
-
-type HeaderContent = {
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  github?: string;
-};
-
-type EducationContent = {
-  education: {
-    courseName: string;
-    instituteName: string;
-    startMonth?: string;
-    startYear: string;
-    endMonth?: string;
-    endYear: string;
-    location?: string;
-  }[];
-};
-
-type ExperienceContent = {
-  experience: {
-    companyName: string;
-    role: string;
-    jobDescription: string;
-    location?: string;
-    startMonth?: string;
-    startYear: string;
-    endMonth?: string;
-    endYear: string;
-  }[];
-};
-
-type SkillsContent = {
-  content: {
-    skills: string[] | string;
-  };
-};
-
-type ProjectContent = {
-  projects: {
-    name: string;
-    description: string;
-    githuburl?: string;
-    liveurl?: string;
-  }[];
-};
+import {
+  TemplateType,
+  HeaderContent,
+  EducationContent,
+  SkillsContent,
+  ExperienceContent,
+  ProjectContent,
+} from "./temp2Types";
 
 const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
+  console.log(obj);
   const sectionArray = obj?.sections?.map((item) => item.type);
-
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className="overflow-hidden">
       <div
@@ -163,8 +114,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                         {edu?.location && edu?.location}
                       </p>
                       <p className="text-sm text-right italic">
-                        {`${edu?.startMonth} ${edu.startYear} -`}
-                        {edu?.endMonth} {edu?.endYear}
+                      {`${edu?.startMonth ? `${edu.startMonth} ` : ''}${edu?.startYear ? edu.startYear : ''}${!edu?.studyingHere && edu?.endMonth && edu?.endYear ? ` - ${edu.endMonth} ${edu.endYear}` : edu?.studyingHere ? ' - Present' : ''}`}
                       </p>
                     </div>
                   </div>
@@ -292,6 +242,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                 ))}
               </div>
             );
+
           default:
             return null;
         }

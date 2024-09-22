@@ -74,6 +74,7 @@ export const temp1Obj: ResumeTemplate = {
             role: "Senior Software Engineer",
             startYear: "2024",
             endYear: "2024",
+            workingHere: false
           },
           {
             companyName: "Web Innovations LLC",
@@ -83,6 +84,7 @@ export const temp1Obj: ResumeTemplate = {
             role: "Full Stack Developer",
             startYear: "2024",
             endYear: "2024",
+            workingHere: false,
           },
         ],
       },
@@ -99,7 +101,9 @@ export const temp1Obj: ResumeTemplate = {
             startMonth: "Feb",
             startYear: "2022",
             endMonth: "March",
-            endYear: "2023"
+            endYear: "2023",
+            studyingHere: false,
+            grade: "8.2 CGPA"
           },
           {
             courseName: "Master of Science in Software Engineering",
@@ -108,7 +112,9 @@ export const temp1Obj: ResumeTemplate = {
             startMonth: "Feb",
             startYear: "2022",
             endMonth: "March",
-            endYear: "2023"
+            endYear: "2023",
+            studyingHere: false,
+            grade: "8.2 CGPA"
           },
         ],
       },

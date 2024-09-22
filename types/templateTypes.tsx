@@ -74,6 +74,7 @@ export interface ExperienceSection extends BaseSection {
       startYear: string;
       endMonth?: string;
       endYear: string;
+      workingHere : false
     }[];
   };
   style?: {};
@@ -90,6 +91,8 @@ export interface EducationSection extends BaseSection {
       endMonth?: string;
       endYear?: string;
       location?: string;
+      studyingHere : boolean;
+      grade? : string;
     }[];
   };
   style?: {};

@@ -2,14 +2,6 @@
 import { cn } from "@/lib/utils";
 import { ResumeTemplate } from "@/types/templateTypes";
 import { Github, Globe, Linkedin, Mail, PhoneCall } from "lucide-react";
-import {
-  geologicaFont,
-  interFont,
-  montserratFont,
-  openSansFont,
-  poppinsFont,
-  ralewayFont,
-} from "@/lib/font";
 import Link from "next/link";
 import React from "react";
 
@@ -38,6 +30,8 @@ type EducationContent = {
     endMonth?: string;
     endYear: string;
     location?: string;
+    grade? : string;
+    studyingHere : boolean;
   }[];
 };
 
@@ -51,6 +45,7 @@ type ExperienceContent = {
     startYear: string;
     endMonth?: string;
     endYear: string;
+    workingHere: boolean;
   }[];
 };
 
@@ -73,14 +68,13 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
   const sectionArray = obj?.sections?.map((item) => item.type);
 
-
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className=" overflow-hidden">
       <div
         className={cn(
           "transform origin-top-left scale-[1] ",
           isLive &&
-            "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
+            "flex items-center justify-center w-[1122px] h-full scale-[0.5]",
           isPreview && !isLive && "scale-[0.4]"
         )}
       >

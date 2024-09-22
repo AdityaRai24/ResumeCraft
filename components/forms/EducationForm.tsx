@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import debounce from "lodash/debounce";
@@ -15,18 +9,21 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
-import 'react-date-picker/dist/DatePicker.css';
-import 'react-calendar/dist/Calendar.css';
+import "react-date-picker/dist/DatePicker.css";
+import "react-calendar/dist/Calendar.css";
 import { EducationSection } from "@/types/templateTypes";
+import { Checkbox } from "../ui/checkbox";
 
 interface EducationItem {
   courseName: string;
   instituteName: string;
   location: string;
-  startMonth : string;
-  startYear :string;
-  endMonth : string;
-  endYear : string;
+  grade: string;
+  startMonth: string;
+  startYear: string;
+  endMonth: string;
+  endYear: string;
+  studyingHere: boolean;
 }
 
 interface EducationContent {
@@ -38,16 +35,17 @@ interface EducationFormProps {
   resumeId: Id<"resumes">;
 }
 
-const EducationForm = ({ item, resumeId }: EducationFormProps) => {
-
+const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
   const emptyEducation: EducationItem = {
     courseName: "",
     instituteName: "",
     location: "",
-    startMonth:"",
-    startYear:"",
-    endMonth:"",
-    endYear:""
+    grade: "",
+    startMonth: "",
+    startYear: "",
+    endMonth: "",
+    endYear: "",
+    studyingHere: false,
   };
 
   const [education, setEducation] = useState<EducationContent>({
@@ -60,7 +58,7 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     if (!pendingChangesRef.current) {
       setEducation(item?.content as EducationContent);
     }
-  }, [item?.content,pendingChangesRef]);
+  }, [item?.content, pendingChangesRef]);
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newEducation: EducationContent) => {
@@ -69,16 +67,27 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     }, 400);
   }, [update, resumeId]);
 
+  const handleChange = useCallback( (index: number) => (name: keyof EducationItem, value: string | boolean) => {
+      pendingChangesRef.current = true;
+      setEducation((prevEducation) => {
+        const newEducation = { ...prevEducation };
+        const updatedItem = { ...newEducation.education[index] };
 
-  const handleChange = useCallback((index: number) =>(name: keyof EducationItem, value: string) => {
-        pendingChangesRef.current = true;
-        setEducation((prevEducation) => {
-          const newEducation = { ...prevEducation };
-          newEducation.education[index][name] = value;
-          debouncedUpdate(newEducation);
-          return newEducation;
-        });
-      },
+        if (name === "studyingHere") {
+          updatedItem.studyingHere = value as boolean;
+          if (updatedItem.studyingHere) {
+            updatedItem.endMonth = "";
+            updatedItem.endYear = "Present";
+          }
+        } else {
+          updatedItem[name] = value as string;
+        }
+
+        newEducation.education[index] = updatedItem;
+        debouncedUpdate(newEducation);
+        return newEducation;
+      });
+    },
     [debouncedUpdate]
   );
 
@@ -88,43 +97,47 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
     }));
   };
 
-  
   const months = [
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "July", "Aug", "Sept", "Oct", "Nov", "Dec"
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   ];
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 30 }, (_, i) => (currentYear - i).toString());
 
   return (
-    <>
-      {education?.education?.map((item, index) => {
-        return (
-          <motion.form key={index} className="mt-8">
-            <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
-              <InputField
-                label="Institue Name"
-                name="instituteName"
-                value={item.instituteName}
-                onChange={handleChange(index)}
-                placeholder="University of California, Berkeley"
-              />
-
-              <InputField
-                label="Course Name"
-                name="courseName"
-                value={item.courseName}
-                onChange={handleChange(index)}
-                placeholder="Bachelor of Science"
-              />
-              <InputField
-                label="Location"
-                name="location"
-                value={item.location}
-                onChange={handleChange(index)}
-                placeholder="California, USA"
-              />
-              <InputField
+    <div className="mb-16">
+      {education?.education?.map((item, index) => (
+        <motion.form key={index} className="mt-8">
+          <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
+            <InputField
+              label="Institute Name"
+              name="instituteName"
+              value={item.instituteName}
+              onChange={handleChange(index)}
+              placeholder="University of California, Berkeley"
+            />
+            <InputField
+              label="Course Name"
+              name="courseName"
+              value={item.courseName}
+              onChange={handleChange(index)}
+              placeholder="Bachelor of Science"
+            />
+            <InputField
+              label="Location"
+              name="location"
+              value={item.location}
+              onChange={handleChange(index)}
+              placeholder="California, USA"
+            />
+            <InputField
+              label="Grade"
+              name="grade"
+              value={item.grade}
+              onChange={handleChange(index)}
+              placeholder="8.2 CGPA"
+            />
+            <InputField
               label="Start Month"
               name="startMonth"
               value={item.startMonth}
@@ -150,6 +163,7 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
               placeholder="Select Month"
               type="select"
               options={months}
+              disabled={item.studyingHere}
             />
             <InputField
               label="End Year"
@@ -159,11 +173,19 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
               placeholder="Select Year or Present"
               type="select"
               options={[...years, "Present"]}
+              disabled={item.studyingHere}
             />
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id={`studyingHere-${index}`}
+                checked={item.studyingHere}
+                onCheckedChange={(checked) => handleChange(index)("studyingHere", checked)}
+              />
+              <Label htmlFor={`studyingHere-${index}`} className="text-lg font-normal">I currently study here</Label>
             </div>
-          </motion.form>
-        );
-      })}
+          </div>
+        </motion.form>
+      ))}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -177,7 +199,7 @@ const EducationForm = ({ item, resumeId }: EducationFormProps) => {
           Add Another Education
         </Button>
       </motion.div>
-    </>
+    </div>
   );
 };
 
@@ -187,8 +209,9 @@ interface InputFieldProps {
   value: string;
   onChange: (name: keyof EducationItem, value: string) => void;
   placeholder: string;
-  type?: string;
+  type?: "text" | "select";
   options?: string[];
+  disabled?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -199,6 +222,7 @@ const InputField: React.FC<InputFieldProps> = ({
   placeholder,
   type = "text",
   options,
+  disabled = false,
 }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.8 }}
@@ -216,8 +240,11 @@ const InputField: React.FC<InputFieldProps> = ({
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
         className="border bg-[transparent] border-muted-foreground p-2 rounded"
+        disabled={disabled}
       >
-        <option value="" disabled>{placeholder}</option>
+        <option value="" disabled>
+          {placeholder}
+        </option>
         {options?.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -233,10 +260,10 @@ const InputField: React.FC<InputFieldProps> = ({
         onChange={(e) => onChange(name, e.target.value)}
         placeholder={placeholder}
         className="border border-muted-foreground"
+        disabled={disabled}
       />
     )}
   </motion.div>
 );
-
 
 export default EducationForm;

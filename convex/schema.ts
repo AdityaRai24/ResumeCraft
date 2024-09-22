@@ -59,6 +59,7 @@ const sectionContentSchema = v.union(
           startYear: v.string(),
           endMonth: v.optional(v.string()),
           endYear: v.string(),
+          workingHere: v.boolean()
         })
       ),
     }),
@@ -76,6 +77,8 @@ const sectionContentSchema = v.union(
           startYear: v.optional(v.string()),
           endMonth : v.optional(v.string()),
           endYear: v.optional(v.string()),
+          studyingHere : v.boolean(),
+          grade: v.optional(v.string())
         })
       ),
     }),

@@ -103,6 +103,7 @@ export const createUserResume = mutation({
       createSection(section.type, section.fields)
     );
 
+
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
       userId: args.userId,
@@ -129,6 +130,7 @@ export const updateExperience = mutation({
           startYear: v.string(),
           endMonth: v.optional(v.string()),
           endYear: v.string(),
+          workingHere: v.boolean()
         })
       ),
     }),
@@ -178,6 +180,8 @@ export const updateEducation = mutation({
           endMonth: v.optional(v.string()),
           endYear: v.optional(v.string()),
           location: v.string(),
+          grade: v.optional(v.string()),
+          studyingHere: v.boolean()
         })
       ),
     }),

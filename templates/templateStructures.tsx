@@ -25,6 +25,7 @@ export const allSectionFields : any = {
         endMonth: "",
         startYear:"",
         endYear:"",
+        workingHere: false,
       },
     ],
   },
@@ -38,6 +39,8 @@ export const allSectionFields : any = {
         endMonth :"",
         endYear : "",
         location: "",
+        grade: "",
+        studyingHere: false,
       },
     ],
   },
@@ -110,7 +113,6 @@ export const templateStructures : any = {
     { type: "projects", fields: ["projects"] },
     { type: "skills", fields: ["type", "content"] },
   ],
-  // Add more templates as needed
 };
 
 export type TemplateComponentType = React.ComponentType<{
