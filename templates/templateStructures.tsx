@@ -1,8 +1,8 @@
 import { ResumeTemplate } from "@/types/templateTypes";
-import Template1 from "./template1/template1";
-import Template2 from "./template2/template2";
+import Template1 from "./template1/Template1";
+import Template2 from "./template2/Template2";
 
-export const allSectionFields : any = {
+export const allSectionFields: any = {
   header: {
     firstName: "",
     lastName: "",
@@ -23,8 +23,8 @@ export const allSectionFields : any = {
         location: "",
         startMonth: "",
         endMonth: "",
-        startYear:"",
-        endYear:"",
+        startYear: "",
+        endYear: "",
         workingHere: false,
       },
     ],
@@ -34,10 +34,10 @@ export const allSectionFields : any = {
       {
         courseName: "",
         instituteName: "",
-        startMonth : "",
+        startMonth: "",
         startYear: "",
-        endMonth :"",
-        endYear : "",
+        endMonth: "",
+        endYear: "",
         location: "",
         grade: "",
         studyingHere: false,
@@ -45,10 +45,7 @@ export const allSectionFields : any = {
     ],
   },
   skills: {
-    type: "list",
-    content: {
-      skills: [],
-    },
+    description: "",
   },
   projects: {
     projects: [
@@ -62,20 +59,11 @@ export const allSectionFields : any = {
   },
 };
 
-export function createSection(type : any, fields: string[]) {
+export function createSection(type: any, fields: string[]) {
   let content: any = {};
   fields.forEach((field) => {
     content[field] = allSectionFields[type][field];
   });
-
-  if (type === "skills") {
-    content = {
-      type: "list",
-      content: {
-        skills: [],
-      },
-    };
-  }
 
   return {
     type,
@@ -84,7 +72,7 @@ export function createSection(type : any, fields: string[]) {
   };
 }
 
-export const templateStructures : any = {
+export const templateStructures: any = {
   Template1: [
     {
       type: "header",
@@ -99,7 +87,7 @@ export const templateStructures : any = {
       ],
     },
     { type: "experience", fields: ["experience"] },
-    { type: "skills", fields: ["type", "content"] },
+    { type: "skills", fields: ["description"] },
     { type: "projects", fields: ["projects"] },
     { type: "education", fields: ["education"] },
   ],
@@ -111,7 +99,7 @@ export const templateStructures : any = {
     { type: "education", fields: ["education"] },
     { type: "experience", fields: ["experience"] },
     { type: "projects", fields: ["projects"] },
-    { type: "skills", fields: ["type", "content"] },
+    { type: "skills", fields: ["description"] },
   ],
 };
 
@@ -120,8 +108,7 @@ export type TemplateComponentType = React.ComponentType<{
   isPreview: boolean;
 }>;
 
-
-export const templateComponents : Record<string, TemplateComponentType> = {
+export const templateComponents: Record<string, TemplateComponentType> = {
   Template1: Template1,
   Template2: Template2,
 };

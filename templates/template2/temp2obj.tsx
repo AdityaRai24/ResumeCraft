@@ -29,7 +29,7 @@ export const temp2Obj: ResumeTemplate = {
             endMonth: "March",
             endYear: "2023",
             grade: "8.2 CGPA",
-            studyingHere: false
+            studyingHere: false,
           },
           {
             courseName: "Master of Science in Software Engineering",
@@ -40,7 +40,7 @@ export const temp2Obj: ResumeTemplate = {
             endMonth: "Dec",
             endYear: "2022",
             grade: "8.2 CGPA",
-            studyingHere: false
+            studyingHere: false,
           },
         ],
       },
@@ -80,7 +80,7 @@ export const temp2Obj: ResumeTemplate = {
             role: "Senior Software Engineer",
             startYear: "2024",
             endYear: "2024",
-            workingHere : false,
+            workingHere: false,
           },
           {
             companyName: "Web Innovations LLC",
@@ -90,7 +90,7 @@ export const temp2Obj: ResumeTemplate = {
             role: "Full Stack Developer",
             startYear: "2024",
             endYear: "2024",
-            workingHere : false,
+            workingHere: false,
           },
         ],
       },
@@ -99,24 +99,9 @@ export const temp2Obj: ResumeTemplate = {
     },
     {
       content: {
-        content: {
-          skills: [
-            "HTML , CSS",
-            "Tailwind CSS, Shadcn UI",
-            "Javascript, Typescript",
-            "React JS, Next JS",
-            "Redux Toolkit, Context API",
-            "Node JS, MongoDB",
-            "Prisma, Drizzle ORM",
-            "AWS",
-            "Framer Motions, GSAP",
-            "Docker",
-            "Git , Github",
-          ],
-        },
-        type: "list",
+        description: "ADitya",
       },
-      style: { columns: 3 },
+      style: {},
       type: "skills",
     },
   ],
@@ -130,81 +115,3 @@ export const temp2Obj: ResumeTemplate = {
   },
 };
 
-export const Template2Sec = {
-  sections: [
-    {
-      type: "header",
-      content: {
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        github: "",
-        linkedin: "",
-      },
-      style: {},
-    },
-
-    {
-      type: "skills",
-      content: {
-        type: "list",
-        content: {
-          skills: [],
-        },
-      },
-      style: {
-        columns: 3,
-      },
-    },
-
-    {
-      type: "projects",
-      content: {
-        projects: [
-          {
-            name: "",
-            description: ``,
-            githuburl: "",
-            liveurl: "",
-          },
-        ],
-      },
-      style: {},
-    },
-
-    {
-      type: "experience",
-      content: {
-        experience: [
-          {
-            companyName: "",
-            role: "",
-            jobDescription: ``,
-            location: "",
-            startDate: "",
-            endDate: "",
-          },
-        ],
-      },
-      style: {},
-    },
-    {
-      type: "education",
-      content: {
-        education: [
-          {
-            courseName: "",
-            instituteName: "",
-            startMonth : "",
-            endMonth : "",
-            startYear: "",
-            endYear: "",
-            location: "",
-          },
-        ],
-      },
-      style: {},
-    },
-  ],
-};

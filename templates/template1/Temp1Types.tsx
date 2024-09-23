@@ -1,6 +1,5 @@
 
 
-
 export type HeaderContent = {
   firstName: string;
   lastName: string;
@@ -8,6 +7,7 @@ export type HeaderContent = {
   email?: string;
   linkedin?: string;
   github?: string;
+  summary?: string;
 };
 
 export type EducationContent = {
@@ -40,7 +40,7 @@ export type ExperienceContent = {
 
 export type SkillsContent = {
   content: {
-    description : string;
+    description: string;
   };
 };
 

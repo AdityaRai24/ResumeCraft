@@ -55,7 +55,6 @@ export default function QuillExpEditor({
         `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generateJD`,
         { companyName: companyName, role: role, jobDescription: tempValue }
       );
-      // Convert the array of strings to an HTML list
       const listItems = response.data.textArray
         .map((item: string) => `<li>${item}</li>`)
         .join("");

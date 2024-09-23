@@ -8,8 +8,8 @@ import { motion } from "framer-motion";
 import ContineBtn from "./ContineBtn";
 import { Skeleton } from "./ui/skeleton";
 import { ResumeTemplate } from "@/types/templateTypes";
-import Template1 from "@/templates/template1/template1";
-import Template2 from "@/templates/template2/template2";
+import Template1 from "@/templates/template1/Template1";
+import Template2 from "@/templates/template2/Template2";
 import { cn } from "@/lib/utils";
 import { geologicaFont, interFont, montserratFont, openSansFont, poppinsFont, ralewayFont } from "@/lib/font";
 

@@ -1,4 +1,4 @@
-import { ResumeTemplate, SectionTypes } from "@/types/templateTypes";
+import { ResumeTemplate } from "@/types/templateTypes";
 
 export const temp1Obj: ResumeTemplate = {
   isTemplate: true,
@@ -21,26 +21,12 @@ export const temp1Obj: ResumeTemplate = {
     },
     {
       content: {
-        content: {
-          skills: [
-            "HTML , CSS",
-            "Tailwind CSS, Shadcn UI",
-            "Javascript, Typescript",
-            "React JS, Next JS",
-            "Redux Toolkit, Context API",
-            "Node JS, MongoDB",
-            "Prisma, Drizzle ORM",
-            "AWS",
-            "Framer Motions, GSAP",
-            "Docker",
-            "Git , Github",
-          ],
-        },
-        type: "list",
+        description: "Aditya"
       },
-      style: { columns: 3 },
+      style: {},
       type: "skills",
     },
+
     {
       content: {
         projects: [
