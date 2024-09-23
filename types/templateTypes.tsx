@@ -27,25 +27,12 @@ export interface HeaderSection extends BaseSection {
   style?: {};
 }
 
-interface ListSkillSection {
-  type: "list";
-  content: {
-    skills: string[];
-  };
-}
-
-interface DescriptionSkillSection {
-  type: "description";
-  content: {
-    skills: string;
-  };
-}
-
 export interface SkillSection extends BaseSection {
   type: "skills";
-  content: DescriptionSkillSection | ListSkillSection;
-  style?: {
-    columns?: number;
+  content: {
+    description : string,
+  };
+  style: {
   };
 }
 

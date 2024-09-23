@@ -30,6 +30,7 @@ export default function QuillEditorComponent({
   onChange,
   label,
 }: QuillEditorComponentProps) {
+  
   const quillModules = {
     toolbar: [
       ["bold", "italic", "underline"],

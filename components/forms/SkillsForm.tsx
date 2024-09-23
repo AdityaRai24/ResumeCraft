@@ -1,26 +1,9 @@
-import React, {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { Input } from "../ui/input";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { debounce } from "lodash";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Button } from "../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Label } from "../ui/label";
-import { motion } from "framer-motion";
+import QuillEditorComponent from "../QuillEditor";
 
 const SkillsForm = ({
   item,
@@ -31,185 +14,40 @@ const SkillsForm = ({
   resumeId: Id<"resumes">;
   styles: any;
 }) => {
-
-  const initialSkillPlaceholders = [
-    "HTML, CSS, Bootstrap",
-    "React JS, Javascript, Typescript",
-    "Node JS, Express JS",
-    "Mongo DB, Firebase",
-    "AWS, GCP, Azure",
-    "Docker, Kubernetes",
-  ];
-
-  interface SkillContent {
-    skills: string[];
-  }
-
-  const [skills, setSkills] = useState<SkillContent>({
-    skills: Array(6).fill(""),
-  });
-  const [columns, setColumns] = useState<number>(2);
+  const [skillDescription, setSkillDescription] = useState<string>("");
   const pendingChangesRef = useRef(false);
-
   const update = useMutation(api.resume.updateSkills);
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
-      const contentSkills = item?.content?.content?.skills || [];
-      setSkills({
-        skills: [
-          ...contentSkills,
-          ...Array(Math.max(6 - contentSkills.length, 0)).fill(""),
-        ],
-      });
-      setColumns(styles?.columns || 2);
+      setSkillDescription(item?.content?.description || "");
     }
-  }, [item?.content?.content?.skills, styles?.columns,pendingChangesRef]);
+  }, [item?.content?.description]);
 
-  const debouncedUpdate = useMemo(() => {
-    return debounce((newSkills: string[], newColumns?: number) => {
-      update({
-        id: resumeId,
-        content: {
-          type: "list",
-          content: {
-            skills: newSkills
-          }
-        },
-        columns: newColumns
-      });
-      pendingChangesRef.current = false;
-    }, 400);
-  }, [update, resumeId]);
+  const debouncedUpdate = useMemo(
+    () =>
+      debounce((newSkills: string) => {
+        update({ id: resumeId, content: { description: newSkills } });
+        pendingChangesRef.current = false;
+      }, 400),
+    [update, resumeId]
+  );
 
   const handleChange = useCallback(
-    (index: number, value: string) => {
+    (description: string) => {
       pendingChangesRef.current = true;
-      setSkills((prevSkills) => {
-        const newSkills = [...prevSkills.skills];
-        newSkills[index] = value;
-        const updatedSkills = newSkills.filter((skill) => skill !== "");
-        debouncedUpdate(updatedSkills, columns);
-        return { skills: newSkills };
-      });
+      setSkillDescription(description);
+      debouncedUpdate(description);
     },
-    [debouncedUpdate, columns]
+    [debouncedUpdate]
   );
-  const handleColumnChange = useCallback(
-    (e: string) => {
-      const newColumns = Number(e);
-      setColumns(newColumns);
-      update({
-        id: resumeId,
-        content: {
-          type: "list",
-          content: {
-            skills: skills.skills.filter(skill => skill !== "")
-          }
-        },
-        columns: newColumns
-      });
-    },
-    [resumeId, update, skills]
-  );
-  const addSkillField = () => {
-    setSkills((prevSkills) => ({
-      skills: [...prevSkills.skills, ""],
-    }));
-  };
 
   return (
-    <>
-      <form className="mt-8">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            duration: 0.4,
-            delay: 0.5,
-            ease: [0, 0.71, 0.2, 1.01],
-          }}
-        >
-          <Label>Number of Columns</Label>
-          <Select
-            onValueChange={(e) => handleColumnChange(e)}
-            value={columns.toString()}
-          >
-            <SelectTrigger className="w-[40.4%] mt-2 mb-8 border border-muted-foreground">
-              <SelectValue placeholder="Number of Columns" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1</SelectItem>
-              <SelectItem value="2">2</SelectItem>
-              <SelectItem value="3">3</SelectItem>
-            </SelectContent>
-          </Select>
-        </motion.div>
-        <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
-          {skills.skills.map((skill, index) => (
-            <InputField
-              key={index}
-              name={`skill-${index}`}
-              value={skill}
-              onChange={(e) => handleChange(index, e.target.value)}
-              placeholder={initialSkillPlaceholders[index] || "Enter a skill"}
-              type="text"
-            />
-          ))}
-        </div>{" "}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{
-            duration: 0.4,
-            delay: 0.5,
-            ease: [0, 0.71, 0.2, 1.01],
-          }}
-        >
-          <Button type="button" onClick={addSkillField} className="mt-4">
-            Add More Skills
-          </Button>
-        </motion.div>
-      </form>
-    </>
-  );
-};
-
-interface InputFieldProps {
-  name: string;
-  value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  placeholder: string;
-  type?: string;
-}
-
-const InputField: React.FC<InputFieldProps> = ({
-  name,
-  value,
-  onChange,
-  placeholder,
-  type,
-}) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{
-        duration: 0.4,
-        delay: 0.5,
-        ease: [0, 0.71, 0.2, 1.01],
-      }}
-      className="flex flex-col justify-center gap-2"
-    >
-      <Input
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        name={name}
-        className="border border-muted-foreground"
-      />
-    </motion.div>
+    <QuillEditorComponent
+      value={skillDescription}
+      onChange={handleChange}
+      label="Description"
+    />
   );
 };
 

@@ -4,68 +4,15 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import { Github, Globe, Linkedin, Mail, PhoneCall } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { EducationContent, ExperienceContent, HeaderContent, ProjectContent, SkillsContent } from "./Temp1Types";
 
-interface TemplateType {
+export interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
   isLive?: boolean;
 }
 
-type HeaderContent = {
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  email?: string;
-  linkedin?: string;
-  github?: string;
-  summary?: string;
-};
-
-type EducationContent = {
-  education: {
-    courseName: string;
-    instituteName: string;
-    startMonth?: string;
-    startYear: string;
-    endMonth?: string;
-    endYear: string;
-    location?: string;
-    grade? : string;
-    studyingHere : boolean;
-  }[];
-};
-
-type ExperienceContent = {
-  experience: {
-    companyName: string;
-    role: string;
-    jobDescription: string;
-    location?: string;
-    startMonth?: string;
-    startYear: string;
-    endMonth?: string;
-    endYear: string;
-    workingHere: boolean;
-  }[];
-};
-
-type SkillsContent = {
-  content: {
-    skills: string[] | string;
-  };
-};
-
-type ProjectContent = {
-  projects: {
-    name: string;
-    description: string;
-    githuburl?: string;
-    liveurl?: string;
-  }[];
-};
-
 const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
-
   const sectionArray = obj?.sections?.map((item) => item.type);
 
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -88,14 +35,15 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
   );
 
   const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
-
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColorClass = obj?.globalStyles?.primaryColor || "black";
 
   const renderSection = (type: string) => {
+    
     return obj?.sections?.map((item, index) => {
       if (item.type === type) {
-        switch (type) { 
+        switch (type) {
+
           case "header":
             const headerContent = item.content as HeaderContent;
 
@@ -212,53 +160,54 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
               </div>
             );
 
-          case "experience" :
+          case "experience":
             const experienceContent = item.content as ExperienceContent;
 
-            return(
+            return (
               <div
-              className={`border-b pt-2`}
-              style={{ borderBottom: `1px solid ${primaryColorClass}` }}
-            >
-              <h1
-                className={`text-lg font-bold `}
-                style={{ color: primaryTextColorClass }}
+                className={`border-b pt-2`}
+                style={{ borderBottom: `1px solid ${primaryColorClass}` }}
               >
-                WORK EXPERIENCE
-              </h1>
-                 {   experienceContent.experience?.map((exp, index) => {
-                return (
-                  <div key={index}>
-                    <div className="flex items-center justify-between gap-2">
-                      <h1 className="font-semibold text-base">
-                        {exp?.role} {exp?.role && exp?.companyName && ","}{" "}
-                        {exp?.companyName}
-                      </h1>
-                      <div className="flex items-center text-sm gap-2">
-                        {exp?.startMonth &&
-                          exp?.startYear &&
-                          exp?.endMonth &&
-                          exp?.endYear && (
-                            <h1>
-                              {exp?.startMonth}, {exp?.startYear} -{" "}
-                              {exp?.endMonth}, {exp?.endYear}
-                            </h1>
-                          )}
+                <h1
+                  className={`text-lg font-bold `}
+                  style={{ color: primaryTextColorClass }}
+                >
+                  WORK EXPERIENCE
+                </h1>
+                {experienceContent.experience?.map((exp, index) => {
+                  return (
+                    <div key={index}>
+                      <div className="flex items-center justify-between gap-2">
+                        <h1 className="font-semibold text-base">
+                          {exp?.role} {exp?.role && exp?.companyName && ","}{" "}
+                          {exp?.companyName}
+                        </h1>
+                        <div className="flex items-center text-sm gap-2">
+                          {exp?.startMonth &&
+                            exp?.startYear &&
+                            exp?.endMonth &&
+                            exp?.endYear && (
+                              <h1>
+                                {exp?.startMonth}, {exp?.startYear} -{" "}
+                                {exp?.endMonth}, {exp?.endYear}
+                              </h1>
+                            )}
+                        </div>
+                        {/* <h1 className="text-sm">{exp?.location}</h1> */}
                       </div>
-                      {/* <h1 className="text-sm">{exp?.location}</h1> */}
+                      <div
+                        className="quill-content text-sm"
+                        dangerouslySetInnerHTML={{
+                          __html: exp?.jobDescription,
+                        }}
+                      />
                     </div>
-                    <div
-                      className="quill-content text-sm"
-                      dangerouslySetInnerHTML={{ __html: exp?.jobDescription }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          )
+                  );
+                })}
+              </div>
+            );
 
           case "projects":
-
             const projectContent = item.content as ProjectContent;
             return (
               <>
@@ -318,12 +267,8 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
               </>
             );
 
-          case "skills" :
-
-            const skillContent = item.content as SkillsContent;
-            const columns = obj.sections.filter(
-              (item) => item.type === "skills"
-            )[0].style?.columns;
+          case "skills":
+            const skillsContent = item as SkillsContent;
 
             return (
               <div
@@ -338,23 +283,18 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                 >
                   SKILLS
                 </h1>
-                {Array.isArray(skillContent.content.skills) ? (
+                <div>
                   <div
-                  className={`mt-2 grid grid-cols-${columns}`}
-                >
-                  {skillContent?.content?.skills?.map((skill, index) => {
-                    return (
-                      <li key={index} className="text-sm">
-                        {skill}
-                      </li>
-                    );
-                  })}
+                    className="quill-content text-sm"
+                    dangerouslySetInnerHTML={{
+                      __html: skillsContent.content.description,
+                    }}
+                  />{" "}
                 </div>
-                ) : ""}
               </div>
             );
-
-        }
+      
+          }
       }
     });
   };
@@ -367,14 +307,14 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
-       
-        isPreview && !isLive && "w-[795px] h-[1122px]",
+
+        isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >
       <div>
-      {sectionArray?.map((section) => {
+        {sectionArray?.map((section,index) => {
           return (
-            <React.Fragment key={section}>
+            <React.Fragment key={index}>
               {renderSection(section)}
             </React.Fragment>
           );

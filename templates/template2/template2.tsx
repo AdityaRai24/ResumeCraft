@@ -3,17 +3,25 @@ import Link from "next/link";
 import { Github, Globe, Linkedin } from "lucide-react";
 import React from "react";
 import {
-  TemplateType,
   HeaderContent,
   EducationContent,
   SkillsContent,
   ExperienceContent,
   ProjectContent,
 } from "./temp2Types";
+import { ResumeTemplate } from "@/types/templateTypes";
+
+interface TemplateType {
+  isPreview?: boolean;
+  obj: ResumeTemplate;
+  isLive?: boolean;
+  modalPreview?: boolean;
+}
 
 const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
-  console.log(obj);
+
   const sectionArray = obj?.sections?.map((item) => item.type);
+
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className="overflow-hidden">
       <div
@@ -28,7 +36,6 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
       </div>
     </div>
   );
-
   const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className="flex items-center justify-center ">{children}</div>
   );
@@ -163,10 +170,8 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
             );
 
           case "skills":
-            const skillsContent = item.content as SkillsContent;
-            const columns = obj.sections.filter(
-              (item) => item.type === "skills"
-            )[0].style?.columns;
+            const skillsContent = item as SkillsContent;
+
             return (
               <div className={`py-2`} key={index}>
                 <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
@@ -177,22 +182,12 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                     SKILLS
                   </h1>
                 </div>
-                {Array.isArray(skillsContent.content.skills) ? (
-                  <div className={`mt-2 grid grid-cols-${columns}`}>
-                    {skillsContent.content.skills.map((skill, index) => (
-                      <li key={index} className="text-sm">
-                        {skill}
-                      </li>
-                    ))}
-                  </div>
-                ) : (
                   <div
-                    className="quill-content text-sm"
+                    className="quill-content text-sm mt-3"
                     dangerouslySetInnerHTML={{
-                      __html: skillsContent.content.skills,
+                      __html: skillsContent.content.description,
                     }}
                   />
-                )}
               </div>
             );
 
@@ -265,9 +260,9 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
       )}
     >
       <div>
-        {sectionArray?.map((section) => {
+        {sectionArray?.map((section,index) => {
           return (
-            <React.Fragment key={section}>
+            <React.Fragment key={index}>
               {renderSection(section)}
             </React.Fragment>
           );

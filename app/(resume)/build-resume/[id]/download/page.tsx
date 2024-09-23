@@ -1,12 +1,12 @@
 "use client";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useRef, useState } from "react";
-import Template1 from "@/templates/template1/template1";
+import Template1 from "@/templates/template1/Template1";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { ResumeTemplate } from "@/types/templateTypes";
-import Template2 from "@/templates/template2/template2";
+import Template2 from "@/templates/template2/Template2";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";

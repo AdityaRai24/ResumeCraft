@@ -4,7 +4,6 @@ import {
   createSection,
   templateStructures,
 } from "@/templates/templateStructures";
-import { redirect } from "next/navigation";
 
 export const getTemplates = query({
   args: {},
@@ -93,7 +92,6 @@ export const createUserResume = mutation({
       throw new Error("Something went wrong");
     }
     
-
     const templateSections: any = templateStructures[args.templateName];
     if (!templateSections) {
       throw new Error("Invalid template name");
@@ -102,6 +100,7 @@ export const createUserResume = mutation({
     const initialSections = templateSections.map((section: any) =>
       createSection(section.type, section.fields)
     );
+    console.log(initialSections)
 
 
     const newResume = await ctx.db.insert("resumes", {
@@ -220,14 +219,11 @@ export const updateSkills = mutation({
   args: {
     id: v.id("resumes"),
     content: v.object({
-      type: v.literal("list"),
-      content: v.object({
-        skills: v.array(v.string()),
-      }),
+        description: v.string(),
     }),
-    columns: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+
     const resume = await ctx.db.get(args.id);
     if (!resume) {
       throw new Error("Something went wrong");
@@ -249,10 +245,6 @@ export const updateSkills = mutation({
       resumeSections[index].content = {
         ...resumeSections[index].content,
         ...args.content,
-      };
-      resumeSections[index].style = {
-        ...resumeSections[index].style,
-        columns: args.columns,
       };
     }
     const newResume = await ctx.db.patch(args.id, {
