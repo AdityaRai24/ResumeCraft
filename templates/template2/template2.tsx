@@ -183,7 +183,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                   </h1>
                 </div>
                   <div
-                    className="quill-content text-sm mt-3"
+                    className="quill-content  text-sm mt-3"
                     dangerouslySetInnerHTML={{
                       __html: skillsContent.content.description,
                     }}

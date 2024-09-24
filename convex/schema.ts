@@ -20,19 +20,13 @@ const sectionContentSchema = v.union(
     style: v.optional(v.any()),
   }),
 
-
   v.object({
     type: v.literal("skills"),
     content: v.object({
       description : v.string()
     }),
-    style: v.optional(
-      v.object({
-        columns: v.optional(v.number()),
-      })
-    ),
+    style: v.optional(v.any()),
   }),
-
   
   v.object({
     type: v.literal("projects"),
@@ -48,6 +42,7 @@ const sectionContentSchema = v.union(
     }),
     style: v.optional(v.any()),
   }),
+
   v.object({
     type: v.literal("experience"),
     content: v.object({
@@ -67,6 +62,7 @@ const sectionContentSchema = v.union(
     }),
     style: v.optional(v.any()),
   }),
+
   v.object({
     type: v.literal("education"),
     content: v.object({
@@ -85,7 +81,23 @@ const sectionContentSchema = v.union(
       ),
     }),
     style: v.optional(v.any()),
+  }),
+
+  v.object({
+    type: v.literal("custom"),
+    content: v.object({
+      allSections : v.array(
+        v.object({
+          sectionTitle: v.string(),
+          sectionDescription : v.string(),
+          isVisible: v.boolean()
+        })
+      )
+    }),
+    style: v.optional(v.any()),
   })
+
+
 );
 
 export default defineSchema({

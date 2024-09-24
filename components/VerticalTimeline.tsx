@@ -8,6 +8,7 @@ import {
   FolderKanban,
   GraduationCap,
   LineChart,
+  PenToolIcon,
   User,
 } from "lucide-react";
 import { redirect, useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -46,6 +47,7 @@ const VerticalTimeline = () => {
     skills: Brain,
     projects: FolderKanban,
     final: Baseline,
+    custom : PenToolIcon
   };
 
   return (

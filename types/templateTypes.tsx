@@ -3,7 +3,8 @@ type SectionType =
   | "education"
   | "skills"
   | "projects"
-  | "experience";
+  | "experience"
+  | "custom";
 
 interface BaseSection {
   type: SectionType;
@@ -85,12 +86,26 @@ export interface EducationSection extends BaseSection {
   style?: {};
 }
 
+export interface CustomSection extends BaseSection {
+  type: "custom";
+  content :{
+    allSections : [
+      {
+        sectionTitle : string;
+        sectionDescription : string;
+        isVisible : boolean
+      }
+    ]
+  }
+}
+
 export type SectionTypes =
   | HeaderSection
   | SkillSection
   | ProjectSection
   | ExperienceSection
-  | EducationSection;
+  | EducationSection
+  | CustomSection;
 
 export interface ResumeTemplate {
   isTemplate: boolean;

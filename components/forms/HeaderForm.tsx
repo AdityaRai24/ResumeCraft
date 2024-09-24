@@ -3,7 +3,7 @@ import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { debounce } from "lodash";
 import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import QuillEditorComponent from "../QuillEditor";
+import QuillEditorComponent from "../QuillEditors/QuillEditor";
 import {motion} from "framer-motion"
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";

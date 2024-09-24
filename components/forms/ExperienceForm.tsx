@@ -184,7 +184,16 @@ const ExperienceForm = ({
               options={[...years, "Present"]}
               disabled={exp.workingHere}
             />
-            <div className="flex items-center mt-8 space-x-2">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.4,
+                delay: 0.5,
+                ease: [0, 0.71, 0.2, 1.01],
+              }}
+              className="flex items-center mt-8 space-x-2"
+            >
               <Checkbox
                 id={`workingHere-${index}`}
                 checked={item.workingHere}
@@ -198,7 +207,7 @@ const ExperienceForm = ({
               >
                 I currently work here
               </Label>
-            </div>
+            </motion.div>
           </div>
           <div className="mt-8 w-[85%]">
             <QuillExpEditor

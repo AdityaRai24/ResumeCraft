@@ -57,6 +57,13 @@ export const allSectionFields: any = {
       },
     ],
   },
+  custom : {
+    allSections : [{
+      sectionTitle : "",
+      sectionDescription : "",
+      isVisible: false,
+    }]
+  }
 };
 
 export function createSection(type: any, fields: string[]) {
@@ -90,6 +97,7 @@ export const templateStructures: any = {
     { type: "skills", fields: ["description"] },
     { type: "projects", fields: ["projects"] },
     { type: "education", fields: ["education"] },
+    { type: "custom", fields: ["allSections"] },
   ],
   Template2: [
     {
@@ -100,6 +108,7 @@ export const templateStructures: any = {
     { type: "experience", fields: ["experience"] },
     { type: "projects", fields: ["projects"] },
     { type: "skills", fields: ["description"] },
+    { type: "custom", fields: ["allSections"] },
   ],
 };
 

@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import debounce from "lodash/debounce";
@@ -67,7 +73,8 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
     }, 400);
   }, [update, resumeId]);
 
-  const handleChange = useCallback( (index: number) => (name: keyof EducationItem, value: string | boolean) => {
+  const handleChange = useCallback(
+    (index: number) => (name: keyof EducationItem, value: string | boolean) => {
       pendingChangesRef.current = true;
       setEducation((prevEducation) => {
         const newEducation = { ...prevEducation };
@@ -98,11 +105,23 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
   };
 
   const months = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
   ];
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 30 }, (_, i) => (currentYear - i).toString());
+  const years = Array.from({ length: 30 }, (_, i) =>
+    (currentYear - i).toString()
+  );
 
   return (
     <div className="mb-16">
@@ -175,14 +194,30 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
               options={[...years, "Present"]}
               disabled={item.studyingHere}
             />
-            <div className="flex items-center space-x-2">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                duration: 0.4,
+                delay: 0.5,
+                ease: [0, 0.71, 0.2, 1.01],
+              }}
+              className="flex items-center space-x-2"
+            >
               <Checkbox
                 id={`studyingHere-${index}`}
                 checked={item.studyingHere}
-                onCheckedChange={(checked) => handleChange(index)("studyingHere", checked)}
+                onCheckedChange={(checked) =>
+                  handleChange(index)("studyingHere", checked)
+                }
               />
-              <Label htmlFor={`studyingHere-${index}`} className="text-lg font-normal">I currently study here</Label>
-            </div>
+              <Label
+                htmlFor={`studyingHere-${index}`}
+                className="text-lg font-normal"
+              >
+                I currently study here
+              </Label>
+            </motion.div>
           </div>
         </motion.form>
       ))}

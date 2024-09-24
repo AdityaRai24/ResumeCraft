@@ -13,6 +13,7 @@ export const temp1Obj: ResumeTemplate = {
         linkedin: "john-doe",
         location: "New York, NY",
         phone: "+1-555-123-4567",
+        photo: "",
         summary:
           "Experienced software developer with a strong background in full-stack development and a passion for creating innovative solutions.",
       },
@@ -21,7 +22,8 @@ export const temp1Obj: ResumeTemplate = {
     },
     {
       content: {
-        description: "Aditya"
+        description:
+          "JavaScript, React, Node.js, MongoDB, Express.js, RESTful APIs, Git",
       },
       style: {},
       type: "skills",
@@ -60,7 +62,9 @@ export const temp1Obj: ResumeTemplate = {
             role: "Senior Software Engineer",
             startYear: "2024",
             endYear: "2024",
-            workingHere: false
+            workingHere: false,
+            startMonth: "Feb",
+            endMonth: "Dec",
           },
           {
             companyName: "Web Innovations LLC",
@@ -71,6 +75,8 @@ export const temp1Obj: ResumeTemplate = {
             startYear: "2024",
             endYear: "2024",
             workingHere: false,
+            startMonth: "Feb",
+            endMonth: "Dec",
           },
         ],
       },
@@ -89,7 +95,7 @@ export const temp1Obj: ResumeTemplate = {
             endMonth: "March",
             endYear: "2023",
             studyingHere: false,
-            grade: "8.2 CGPA"
+            grade: "8.2 CGPA",
           },
           {
             courseName: "Master of Science in Software Engineering",
@@ -100,12 +106,25 @@ export const temp1Obj: ResumeTemplate = {
             endMonth: "March",
             endYear: "2023",
             studyingHere: false,
-            grade: "8.2 CGPA"
+            grade: "8.2 CGPA",
           },
         ],
       },
       style: {},
       type: "education",
+    },
+    {
+      content: {
+        allSections: [
+          {
+            sectionTitle: "About Me",
+            sectionDescription: "Summary",
+            isVisible: false,
+          },
+        ],
+      },
+      style: {},
+      type: "custom",
     },
   ],
   templateName: "Template1",
