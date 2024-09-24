@@ -1,5 +1,6 @@
 "use client";
 
+import CustomSectionForm from "@/components/forms/CustomSectionForm";
 import SkillsForm from "@/components/forms/SkillsForm";
 import HeaderSkeleton from "@/components/HeaderSkeleton";
 import SectionInfo from "@/components/SectionInfo";
@@ -29,11 +30,11 @@ const Page = () => {
           return (
             <div key={index} className="mt-24 mx-16">
               <SectionInfo
-                heading="Showcase Your Skills"
-                text="Highlight your technical abilities and showcase your expertise in key technologies and tools for building modern applications."
+                heading="Add a custom section"
+                text="Add any custom section that you want to."
               />
 
-              <SkillsForm
+              <CustomSectionForm
                 resumeId={resumeId as Id<"resumes">}
                 styles={item?.style}
                 item={item}

@@ -15,10 +15,11 @@ import { ChevronDown } from "lucide-react";
 import SortableList, { SortableItem } from "react-easy-sort";
 import { arrayMoveImmutable } from "array-move";
 
-type SectionName = "header" | "skills" | "projects" | "experience" | "education";
+type SectionName = "header" | "skills" | "projects" | "experience" | "education" | "custom";
 
 
 const Page = () => {
+  
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");
   const [primaryColor, setPrimaryColor] = useColor("#000");
   const [showPrimaryTextColorBox, setShowPrimaryTextColorBox] = useState(false);

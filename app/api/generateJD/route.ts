@@ -2,13 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 function parseStringToArray(str: string) {
-  // Remove leading and trailing brackets
   str = str.trim().slice(1, -1);
-
-  // Split the string by comma and newline
   let items = str.split(/,\s*\n/);
-
-  // Clean each item and remove surrounding quotes
   items = items.map((item) => item.trim().replace(/^"|"$/g, ""));
 
   return items;

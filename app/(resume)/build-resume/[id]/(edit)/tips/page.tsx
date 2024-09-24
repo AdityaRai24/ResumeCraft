@@ -76,7 +76,7 @@ const Page = () => {
 
         {/* BUTTONS DIV */}
         <motion.div
-          variants={item}
+          variants={item} 
           className="flex items-center mt-8 justify-between"
         >
           <ContineBtn

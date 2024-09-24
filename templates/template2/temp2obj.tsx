@@ -13,6 +13,8 @@ export const temp2Obj: ResumeTemplate = {
         linkedin: "john-doe",
         location: "New York, NY",
         phone: "+1-555-123-4567",
+        summary :undefined,
+        photo : undefined
       },
       style: {},
       type: "header",
@@ -81,6 +83,8 @@ export const temp2Obj: ResumeTemplate = {
             startYear: "2024",
             endYear: "2024",
             workingHere: false,
+            endMonth : undefined,
+            startMonth: undefined
           },
           {
             companyName: "Web Innovations LLC",
@@ -91,6 +95,8 @@ export const temp2Obj: ResumeTemplate = {
             startYear: "2024",
             endYear: "2024",
             workingHere: false,
+            endMonth : undefined,
+            startMonth: undefined
           },
         ],
       },
@@ -104,6 +110,19 @@ export const temp2Obj: ResumeTemplate = {
       style: {},
       type: "skills",
     },
+    {
+      content : {
+        allSections : [{
+          sectionTitle : "Custom Section",
+          sectionDescription : "This is a custom section",
+          isVisible : true
+        }]
+      },
+      style: {
+        columns : 2
+      },
+      type: "custom",
+    }
   ],
   templateName: "Template2",
   globalStyles: {
@@ -114,4 +133,3 @@ export const temp2Obj: ResumeTemplate = {
     primaryTextColor: "#000",
   },
 };
-
