@@ -19,6 +19,7 @@ import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
 import { EducationSection } from "@/types/templateTypes";
 import { Checkbox } from "../ui/checkbox";
+import { XIcon } from "lucide-react";
 
 interface EducationItem {
   courseName: string;
@@ -104,6 +105,17 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
     }));
   };
 
+  const removeEducation = useCallback((index: number)=>{
+    setEducation((prev)=>{
+      const newEducation = {
+        ...prev,
+        education : prev.education.filter((_,i)=>i!==index)
+      }
+      debouncedUpdate(newEducation);
+      return newEducation;
+    })
+  },[debouncedUpdate])
+
   const months = [
     "Jan",
     "Feb",
@@ -126,7 +138,17 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
   return (
     <div className="mb-16">
       {education?.education?.map((item, index) => (
-        <motion.form key={index} className="mt-8">
+        <motion.form
+          key={index}
+          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-8 rounded-lg shadow shadow-primary"
+        >
+          {index !== 0 && (
+            <XIcon
+              width={20}
+              onClick={() => removeEducation(index)}
+              className="right-8 top-4 absolute cursor-pointer"
+            />
+          )}
           <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
             <InputField
               label="Institute Name"
@@ -274,7 +296,7 @@ const InputField: React.FC<InputFieldProps> = ({
         id={name}
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
-        className="border bg-[transparent] border-muted-foreground p-2 rounded"
+        className="border bg-[#FFF5F5] border-muted-foreground p-2 rounded"
         disabled={disabled}
       >
         <option value="" disabled>
@@ -294,7 +316,7 @@ const InputField: React.FC<InputFieldProps> = ({
         value={value}
         onChange={(e) => onChange(name, e.target.value)}
         placeholder={placeholder}
-        className="border border-muted-foreground"
+        className="border bg-[#FFF5F5] border-muted-foreground"
         disabled={disabled}
       />
     )}

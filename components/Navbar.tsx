@@ -22,12 +22,6 @@ const Navbar = () => {
         </h1></Link>
       </div>
 
-      <div className="flex items-center justify-center gap-8">
-          <h1 className="flex items-center gap-1">Platform  <ChevronDown size={15}/> </h1>
-          <h1 className="flex items-center gap-1">Resources <ChevronDown size={15}/></h1>
-          <h1>Pricing</h1>
-      </div>
-
       {!isLoaded && <h1>Loading...</h1>}
       {isSignedIn && (
         <div className="flex items-center gap-4">

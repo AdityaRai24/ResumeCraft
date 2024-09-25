@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import QuillProjectEditor from "../QuillEditors/QuillProject";
 import { ProjectSection } from "@/types/templateTypes";
+import { XIcon } from "lucide-react";
 
 interface ProjectType {
   name: string;
@@ -87,12 +88,22 @@ const ProjectForm = ({
     }));
   };
 
+  const removeProject = useCallback((index : number)=>{
+    setProjects((prev)=>{
+      const newProjects = {...prev, projects: prev.projects.filter((_,i)=>i!==index)}
+      debouncedUpdate(newProjects)
+      return newProjects
+    })
+  },[debouncedUpdate])
+
   return (
     <>
+
       {projects?.projects.map((item, index) => {
         return (
           <div key={index}>
-            <form className="mt-8">
+            <form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-8 rounded-lg shadow-sm shadow-primary">
+              {index !== 0 && <XIcon width={20} onClick={()=>removeProject(index)} className="right-8 top-4 absolute cursor-pointer"/>}
               <div className="grid grid-cols-2 max-w-[85%]  gap-8">
                 <InputField
                   label="Project Title"
@@ -183,7 +194,7 @@ const InputField: React.FC<InputFieldProps> = ({
         onChange={onChange}
         placeholder={placeholder}
         type="text"
-        className="border border-muted-foreground"
+        className="border bg-[#FFF5F5] border-muted-foreground"
       />
     </motion.div>
   );
