@@ -54,4 +54,11 @@ export const tipsData: TipsType[] = [
     bottomText:
       "Include personal, academic, or professional projects to illustrate your skills in real-world scenarios.",
   },
+  {
+    sec: "custom",
+    topText: "Tailor your resume with a custom section",
+    mainText: "Add any additional details to personalize your resume",
+    bottomMainText: "Whether it's achievements, hackathons, certifications, or any unique experience—make your resume truly yours.",
+    bottomText: "Highlight what sets you apart by adding specialized sections that showcase your unique qualifications."
+  }
 ];

@@ -10,7 +10,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import {container, item} from "@/lib/motion"
 import TipsSkeleton from "@/components/TipsSkeleton";
-import { geologicaFont } from "@/lib/font";
+import { geologicaFont, poppinsFont } from "@/lib/font";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -51,7 +51,7 @@ const Page = () => {
         variants={container}
         initial="hidden"
         animate="visible"
-        className={cn("mt-24",geologicaFont.className)}
+        className={cn("mt-24",poppinsFont.className)}
       >
         <div className="flex flex-col gap-4">
           <motion.h2 variants={item} className="text-lg">
@@ -66,10 +66,10 @@ const Page = () => {
               {currentTips?.mainText}
             </h1>
             <div className="flex flex-col items-start gap-1 mt-4">
-              <h2 className="font-normal text-2xl">
+              <h2 className="font-medium text-xl">
                 {currentTips?.bottomMainText}
               </h2>
-              <p className="font-normal text-base">{currentTips?.bottomText}</p>
+              <p className="font-normal text-gray-500 text-base">{currentTips?.bottomText}</p>
             </div>
           </motion.div>
         </div>

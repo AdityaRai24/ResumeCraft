@@ -113,3 +113,6 @@
   size: auto;
   margin: 0mm;
 }
+.radial{
+  background: radial-gradient(circle, #fff, #ffe4e6);
+}

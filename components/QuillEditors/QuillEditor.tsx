@@ -32,9 +32,6 @@ export default function QuillEditorComponent({
   
   const quillFormats = ["bold", "italic", "underline", "list", "bullet"];
 
-  
-  console.log(value)
-
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}

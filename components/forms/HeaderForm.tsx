@@ -2,9 +2,16 @@ import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { debounce } from "lodash";
-import React, { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import QuillEditorComponent from "../QuillEditors/QuillEditor";
-import {motion} from "framer-motion"
+import { motion } from "framer-motion";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { HeaderSection } from "@/types/templateTypes";
@@ -38,16 +45,15 @@ const HeaderForm = ({
   resumeId: Id<"resumes">;
   item: HeaderSection;
 }) => {
-
   const [header, setHeader] = useState<HeaderContent>(initialHeader);
   const update = useMutation(api.resume.updateHeader);
   const pendingChangesRef = useRef(false);
 
   useEffect(() => {
     if (item?.content && !pendingChangesRef.current) {
-        setHeader(item.content as HeaderContent);
+      setHeader(item.content as HeaderContent);
     }
-  }, [item?.content,pendingChangesRef]);
+  }, [item?.content, pendingChangesRef]);
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newHeader: HeaderContent) => {
@@ -56,7 +62,8 @@ const HeaderForm = ({
     }, 400);
   }, [update, resumeId]);
 
-  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement> | string) => {
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement> | string) => {
       pendingChangesRef.current = true;
       setHeader((prevHeader) => {
         let newHeader;
@@ -74,7 +81,7 @@ const HeaderForm = ({
 
   return (
     <>
-      <motion.form className="mt-8">
+      <motion.form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-8 rounded-lg shadow shadow-primary">
         <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
           <InputField
             label="First Name"

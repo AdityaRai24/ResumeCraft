@@ -209,11 +209,55 @@ export const updateEducation = mutation({
         ...args.content,
       };
     }
-    const newResume = await ctx.db.patch(args.id, {
+    await ctx.db.patch(args.id, {
       sections: resumeSections,
     });
   },
 });
+
+export const updateCustomSection = mutation({
+  args:{
+    id: v.id("resumes"),
+    content: v.object({
+      allSections: v.array(
+        v.object({
+          sectionTitle: v.string(),
+          sectionDescription: v.string(),
+          isVisible: v.boolean(),
+        })
+      ),
+    }),
+  },
+  handler: async(ctx,args)=>{
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
+    }
+    
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if(identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const resumeSections = resume?.sections;
+    let index = resumeSections?.findIndex((item) => item.type === "custom")
+    if(index === -1){
+      throw new Error("Something went wrong index");
+    }else{
+      resumeSections[index].content = args.content
+    }
+
+    await ctx.db.patch(args.id, {
+      sections : resumeSections,
+    });
+
+  }
+})
+
 
 export const updateSkills = mutation({
   args: {
@@ -302,6 +346,7 @@ export const updateProjects = mutation({
     return newResume;
   },
 });
+
 
 export const updateColor = mutation({
   args: {
@@ -394,6 +439,8 @@ export const updateFont = mutation({
     return updatedResume;
   },
 });
+
+
 
 export const getUserResumes = query({
   args: {
