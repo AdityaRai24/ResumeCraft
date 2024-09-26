@@ -4,7 +4,14 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import { Github, Globe, Linkedin, Mail, PhoneCall } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { EducationContent, ExperienceContent, HeaderContent, ProjectContent, SkillsContent } from "./Temp1Types";
+import {
+  EducationContent,
+  ExperienceContent,
+  HeaderContent,
+  ProjectContent,
+  SkillsContent,
+} from "./Temp1Types";
+import { CustomContent } from "../template1/Temp1Types";
 
 export interface TemplateType {
   isPreview?: boolean;
@@ -39,18 +46,16 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
   const primaryColorClass = obj?.globalStyles?.primaryColor || "black";
 
   const renderSection = (type: string) => {
-    
     return obj?.sections?.map((item, index) => {
       if (item.type === type) {
         switch (type) {
-
           case "header":
             const headerContent = item.content as HeaderContent;
 
             return (
               <div key={`header-section-${index}`}>
                 <div
-                  className={`py-0 border-b`}
+                  className={`border-b`}
                   style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                 >
                   <h1
@@ -98,7 +103,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
                 {/* SUMMARY */}
                 <div
-                  className={`py-2 border-b`}
+                  className={`py-2`}
                   style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                 >
                   <h1
@@ -122,7 +127,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
             return (
               <div
-                className={`py-2 border-b `}
+                className={`py-2 `}
                 style={{ borderBottom: `1px solid ${primaryColorClass}` }}
               >
                 {" "}
@@ -165,7 +170,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
             return (
               <div
-                className={`border-b pt-2`}
+                className={`border-b py-2`}
                 style={{ borderBottom: `1px solid ${primaryColorClass}` }}
               >
                 <h1
@@ -193,7 +198,6 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                               </h1>
                             )}
                         </div>
-                        {/* <h1 className="text-sm">{exp?.location}</h1> */}
                       </div>
                       <div
                         className="quill-content text-sm"
@@ -212,7 +216,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
             return (
               <>
                 <div
-                  className={`border-b pt-2`}
+                  className={`border-b py-2`}
                   style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                   key={index}
                 >
@@ -272,14 +276,16 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
             return (
               <div
-                className={`py-2 border-b `}
+                className={`py-2 `}
                 style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                 key={index}
               >
                 {" "}
                 <h1
                   className={`text-lg font-bold `}
-                  style={{ color: primaryTextColorClass }}
+                  style={{
+                    color: primaryTextColorClass,
+                  }}
                 >
                   SKILLS
                 </h1>
@@ -293,8 +299,40 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                 </div>
               </div>
             );
-      
-          }
+
+          case "custom":
+            if ("allSections" in item.content) {
+              const customSections = item.content as CustomContent;
+              const allSections = customSections.allSections;
+              if (allSections.length > 0 && allSections[0].sectionTitle) {
+                return allSections.map((item) => {
+                  return (
+                    <div className={`py-2`}
+                    style={{borderBottom: `1px solid ${primaryColorClass}`}}
+                    key={index}>
+                      {" "}
+                      <h1
+                        className={`text-lg font-bold `}
+                        style={{
+                          color: primaryTextColorClass,
+                        }}
+                      >
+                        {item.sectionTitle}
+                      </h1>
+                      <div>
+                        <div
+                          className="quill-content text-sm"
+                          dangerouslySetInnerHTML={{
+                            __html: item.sectionDescription,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                });
+              }
+            }
+        }
       }
     });
   };
@@ -312,7 +350,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
       )}
     >
       <div>
-        {sectionArray?.map((section,index) => {
+        {sectionArray?.map((section, index) => {
           return (
             <React.Fragment key={index}>
               {renderSection(section)}

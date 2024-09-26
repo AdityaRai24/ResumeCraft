@@ -29,7 +29,7 @@ const Page = () => {
               <Link href={"/"} className="w-[45%]">
                 <Button
                   variant={"outline"}
-                  className="py-[28px] w-full px-6 hover:border-primary border-2 hover:scale-[1.03] active:scale-[0.97] transition duration-300 ease"
+                  className="py-[28px] w-full px-6 border-primary border-2 hover:scale-[1.03] active:scale-[0.97] transition duration-300 ease"
                 >
                   Back
                 </Button>{" "}

@@ -52,3 +52,13 @@ export type ProjectContent = {
     liveurl?: string;
   }[];
 };
+
+export type CustomContent = {
+  allSections : [
+    {
+      sectionTitle : string;
+      sectionDescription : string;
+      isVisible : boolean
+    }
+  ]
+}

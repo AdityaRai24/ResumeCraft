@@ -458,23 +458,29 @@ export const getUserResumes = query({
   },
 });
 
+const SectionType = v.union(
+  v.literal("header"),
+  v.literal("skills"),
+  v.literal("projects"),
+  v.literal("experience"),
+  v.literal("education"),
+  v.literal("custom")
+);
+
 export const reorderSections = mutation({
   args: {
     id: v.id("resumes"),
     sections: v.array(
-      v.union(
-        v.literal("header"),
-        v.literal("skills"),
-        v.literal("projects"),
-        v.literal("experience"),
-        v.literal("education")
-      )
+      v.object({
+        type: SectionType,
+        title: v.string(),
+      })
     ),
   },
   handler: async (ctx, args) => {
     const resume = await ctx.db.get(args.id);
     if (!resume) {
-      throw new Error("Something went wrong");
+      throw new Error("Resume not found");
     }
     
     const identity = await ctx.auth.getUserIdentity();
@@ -482,39 +488,57 @@ export const reorderSections = mutation({
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
 
-    const resumeSections = resume?.sections;
+    console.log(args.sections)
 
-    const sectionMap = new Map(
-      resumeSections.map((section) => [section.type, section])
-    );
+    // const resumeSections = resume.sections;
 
-    // Create the new array based on the user's order
-    const rearrangedSections = args.sections
-      .map((type) => {
-        const section = sectionMap.get(type);
-        if (!section) {
-          console.warn(`Section type "${type}" not found in resumeSections`);
-          return null;
-        }
-        return section;
-      })
-      .filter((section) => section !== null);
+    // // Create a map of existing sections for quick lookup
+    // const sectionMap = new Map(
+    //   resumeSections.map((section) => [section.type, section])
+    // );
 
-    // Add any sections that were in resumeSections but not in userOrder
-    resumeSections.forEach((section) => {
-      if (!args.sections.includes(section.type)) {
-        rearrangedSections.push(section);
-      }
-    });
+    // // Create the new array based on the user's order
+    // const rearrangedSections = args.sections
+    //   .map((inputSection) => {
+    //     const existingSection = sectionMap.get(inputSection.type);
+    //     if (!existingSection) {
+    //       console.warn(`Section type "${inputSection.type}" not found in resumeSections`);
+    //       return null;
+    //     }
+        
+    //     // For custom sections, update the title
+    //     if (inputSection.type === "custom") {
+    //       return {
+    //         ...existingSection,
+    //         content: {
+    //           ...existingSection.content,
+    //           sectionTitle: inputSection.title
+    //         }
+    //       };
+    //     }
+        
+    //     // For standard sections, keep the existing section data
+    //     return existingSection;
+    //   })
+    //   .filter((section): section is NonNullable<typeof section> => section !== null);
 
-    const newResume = await ctx.db.patch(args.id, {
-      sections: rearrangedSections,
-    });
+    // // Add any sections that were in resumeSections but not in the input order
+    // resumeSections.forEach((section) => {
+    //   if (!args.sections.some(inputSection => inputSection.type === section.type)) {
+    //     rearrangedSections.push(section);
+    //   }
+    // });
 
-    return newResume;
+    // console.log(rearrangedSections)
+
+    // const newResume = await ctx.db.patch(args.id, {
+    //   sections: rearrangedSections,
+    // });
+
+    // return newResume;
   },
 });
