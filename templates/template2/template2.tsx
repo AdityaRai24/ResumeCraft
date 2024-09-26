@@ -8,6 +8,7 @@ import {
   SkillsContent,
   ExperienceContent,
   ProjectContent,
+  CustomContent,
 } from "./temp2Types";
 import { ResumeTemplate } from "@/types/templateTypes";
 
@@ -19,7 +20,6 @@ interface TemplateType {
 }
 
 const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
-
   const sectionArray = obj?.sections?.map((item) => item.type);
 
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -39,6 +39,8 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
   const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className="flex items-center justify-center ">{children}</div>
   );
+
+  const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
 
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColorClass = obj?.globalStyles?.primaryColor || "black";
@@ -121,7 +123,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                         {edu?.location && edu?.location}
                       </p>
                       <p className="text-sm text-right italic">
-                      {`${edu?.startMonth ? `${edu.startMonth} ` : ''}${edu?.startYear ? edu.startYear : ''}${!edu?.studyingHere && edu?.endMonth && edu?.endYear ? ` - ${edu.endMonth} ${edu.endYear}` : edu?.studyingHere ? ' - Present' : ''}`}
+                        {`${edu?.startMonth ? `${edu.startMonth} ` : ""}${edu?.startYear ? edu.startYear : ""}${!edu?.studyingHere && edu?.endMonth && edu?.endYear ? ` - ${edu.endMonth} ${edu.endYear}` : edu?.studyingHere ? " - Present" : ""}`}
                       </p>
                     </div>
                   </div>
@@ -173,7 +175,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
             const skillsContent = item as SkillsContent;
 
             return (
-              <div className={`py-2`} key={index}>
+              <div className={`mt-2`} key={index}>
                 <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
                   <h1
                     className="text-lg"
@@ -182,12 +184,12 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                     SKILLS
                   </h1>
                 </div>
-                  <div
-                    className="quill-content  text-sm mt-3"
-                    dangerouslySetInnerHTML={{
-                      __html: skillsContent.content.description,
-                    }}
-                  />
+                <div
+                  className="quill-content  text-sm mt-3"
+                  dangerouslySetInnerHTML={{
+                    __html: skillsContent.content.description,
+                  }}
+                />
               </div>
             );
 
@@ -238,6 +240,37 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
               </div>
             );
 
+          case "custom":
+            if ("allSections" in item.content) {
+              const customSections = item.content as CustomContent;
+              const allSections = customSections.allSections;
+              if (allSections.length > 0 && allSections[0].sectionTitle) {
+                return allSections.map((item) => {
+                  return (
+                    <div className="mt-2">
+                      <div
+                        style={{
+                          borderBottom: `1px solid ${primaryColorClass}`,
+                        }}
+                      >
+                        <h1
+                          className="text-lg"
+                          style={{ color: primaryTextColorClass }}
+                        >
+                          {item?.sectionTitle}
+                        </h1>
+                      </div>
+                      <div
+                        className="quill-content  text-sm mt-3"
+                        dangerouslySetInnerHTML={{
+                          __html: item.sectionDescription,
+                        }}
+                      />
+                    </div>
+                  );
+                });
+              }
+          }
           default:
             return null;
         }
@@ -260,18 +293,16 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
       )}
     >
       <div>
-        {sectionArray?.map((section,index) => {
+        {sectionArray?.map((section, index) => {
           return (
-            <React.Fragment key={index}>
+            <div key={index}>
               {renderSection(section)}
-            </React.Fragment>
+            </div>
           );
         })}
       </div>
     </div>
   );
-
-  const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
 
   return <Wrapper>{content}</Wrapper>;
 };

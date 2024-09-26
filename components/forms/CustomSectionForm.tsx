@@ -64,6 +64,12 @@ const SkillsForm: React.FC<SkillsFormProps> = ({ item, resumeId, styles }) => {
     [debouncedUpdate]
   );
 
+  useEffect(()=>{
+    if(!pendingChangesRef.current){
+      setSectionContent(item?.content.allSections);
+    }
+  },[item?.content.allSections])
+
   const addNewSection = () => {
     setSectionContent((prev) => [...prev, { ...initialSection }]);
   };

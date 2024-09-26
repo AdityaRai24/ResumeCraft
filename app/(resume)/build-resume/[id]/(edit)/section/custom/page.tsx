@@ -26,7 +26,7 @@ const Page = () => {
   return (
     <>
       {resume?.sections?.map((item, index) => {
-        if (item?.type === "skills") {
+        if (item?.type === "custom") {
           return (
             <div key={index} className="mt-24 mx-16">
               <SectionInfo

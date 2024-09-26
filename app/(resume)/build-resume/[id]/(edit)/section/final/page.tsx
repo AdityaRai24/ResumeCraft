@@ -15,16 +15,17 @@ import { ChevronDown } from "lucide-react";
 import SortableList, { SortableItem } from "react-easy-sort";
 import { arrayMoveImmutable } from "array-move";
 
-type SectionName = "header" | "skills" | "projects" | "experience" | "education" | "custom";
-
+interface Section {
+  type: string;
+  title: string;
+}
 
 const Page = () => {
-  
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");
   const [primaryColor, setPrimaryColor] = useColor("#000");
   const [showPrimaryTextColorBox, setShowPrimaryTextColorBox] = useState(false);
   const [showPrimaryColorBox, setShowPrimaryColorBox] = useState(false);
-  const [sections, setSections] = useState<SectionName[]>([]);
+  const [sections, setSections] = useState<Section[]>([]);
 
   const params = useParams();
   const resumeId = params.id;
@@ -39,12 +40,28 @@ const Page = () => {
 
   useEffect(() => {
     if (resume?.sections) {
-      const sectionArray = resume?.sections?.map((item) => item.type);
-      setSections(sectionArray);
+      const mainSections = resume.sections
+        .filter((item) => item.type !== "custom")
+        .map((item) => ({
+          type: item.type,
+          title: item.type,
+        }));
+
+      const customSections =
+        resume.sections
+          .find((item) => item.type === "custom")
+          ?.content.allSections.map((item) => ({
+            type: "custom",
+            title: item.sectionTitle,
+          })) || [];
+
+      setSections([...mainSections, ...customSections]);
     }
   }, [resume]);
 
-  const handleReorder = (sections: SectionName[]) => {
+  console.log(sections);
+
+  const handleReorder = (sections: Section[]) => {
     reorder({ id: resumeId as Id<"resumes">, sections });
   };
 
@@ -102,10 +119,9 @@ const Page = () => {
 
   const currentFont = resume?.globalStyles?.fontFamily || "Inter";
 
- 
-  
   return (
     <FinalLayout>
+      hello
       <div className="max-w-[70%] mt-16 mx-16">
         <div className="mb-8">
           <h1 className="text-6xl font-bold">Almost Done !!</h1>
@@ -124,17 +140,15 @@ const Page = () => {
             className="list"
             draggedItemClassName="dragged"
           >
-            
-
-            {sections.map((item,index) => {
+            {sections.map((item, index) => {
               return (
-                <SortableItem key={item}>
+                <SortableItem key={index}>
                   <div className="flex items-center gap-1">
                     <div className=" w-[35px] bg-[white] shadow-sm hover:cursor-move border flex items-center justify-center border-black/30 p-[10px] my-[4px]">
-                      {index+1}
+                      {index + 1}
                     </div>
                     <div className="w-[60%] bg-white shadow-sm border hover:cursor-move border-black/30 p-[10px]  my-[4px]">
-                      {item}
+                      {item.title}
                     </div>
                   </div>
                 </SortableItem>
