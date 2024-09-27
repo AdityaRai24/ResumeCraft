@@ -54,11 +54,7 @@ export type ProjectContent = {
 };
 
 export type CustomContent = {
-  allSections : [
-    {
-      sectionTitle : string;
-      sectionDescription : string;
-      isVisible : boolean
-    }
-  ]
+  sectionTitle: string;
+  sectionDescription: string;
+  sectionNumber: string;
 }

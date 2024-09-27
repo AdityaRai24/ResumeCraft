@@ -1,15 +1,17 @@
-import { ResumeTemplate } from "@/types/templateTypes";
+import { v } from "convex/values";
 
-export const temp1Obj: ResumeTemplate = {
+const convertedResumeObject = {
   isTemplate: true,
   userId: "admin",
+  templateName: "Template1",
   sections: [
     {
+      type: "header",
       content: {
         email: "john.doe@example.com",
         firstName: "John",
-        github: "johndoe",
         lastName: "Doe",
+        github: "johndoe",
         linkedin: "john-doe",
         location: "New York, NY",
         phone: "+1-555-123-4567",
@@ -17,41 +19,46 @@ export const temp1Obj: ResumeTemplate = {
         summary:
           "Experienced software developer with a strong background in full-stack development and a passion for creating innovative solutions.",
       },
+      isVisible: true,
+      orderNumber : 0,
       style: {},
-      type: "header",
     },
     {
+      type: "skills",
       content: {
         description:
           "JavaScript, React, Node.js, MongoDB, Express.js, RESTful APIs, Git",
       },
+      isVisible: true,
+      orderNumber : 1,
       style: {},
-      type: "skills",
     },
-
     {
+      type: "projects",
       content: {
         projects: [
           {
+            name: "E-commerce Website Using MERN Stack",
             description:
               "<p>Developed a full-featured eCommerce platform with user authentication, product management, and secure payment processing using MongoDB, Express.js, React, and Node.js, resulting in a 40% increase in user engagement.</p><p>Integrated advanced search and filtering capabilities, enhancing the user experience by reducing product search time by 50%, and implemented a real-time order tracking system.</p>",
             githuburl: "https://github.com/johndoe/ecommerce",
             liveurl: "https://johndoe.com",
-            name: "E-commerce Website Using MERN Stack",
           },
           {
+            name: "Currency Converter in React",
             description:
               "<p>Built a dynamic currency converter application in React, leveraging third-party APIs to provide real-time exchange rates for over 150 currencies, resulting in a 25% increase in user satisfaction.</p><p>Implemented a responsive and intuitive user interface, ensuring seamless performance across various devices and improving usability scores by 30%.</p>",
             githuburl: "https://github.com/johndoe/ecommerce",
             liveurl: "https://ecommerce.johndoe.com",
-            name: "Currency Converter in React",
           },
         ],
       },
+      isVisible: true,
+      orderNumber : 2,
       style: {},
-      type: "projects",
     },
     {
+      type: "experience",
       content: {
         experience: [
           {
@@ -80,10 +87,12 @@ export const temp1Obj: ResumeTemplate = {
           },
         ],
       },
+      isVisible: true,
+      orderNumber : 3,
       style: {},
-      type: "experience",
     },
     {
+      type: "education",
       content: {
         education: [
           {
@@ -110,29 +119,29 @@ export const temp1Obj: ResumeTemplate = {
           },
         ],
       },
+      isVisible: true,
+      orderNumber : 4,
       style: {},
-      type: "education",
     },
     {
-      content: {
-        allSections: [
-          {
-            sectionTitle: "About Me",
-            sectionDescription: "Summary",
-            isVisible: false,
-          },
-        ],
-      },
-      style: {},
       type: "custom",
+      content: {
+        sectionTitle: "About Me",
+        sectionDescription: "Summary",
+        sectionNumber : 0
+      },
+      isVisible: false,
+      orderNumber : 5,
+      style: {},
     },
   ],
-  templateName: "Template1",
   globalStyles: {
-    columns: 2,
     fontFamily: "Geologica",
-    photo: false,
-    primaryColor: "#C026D3",
     primaryTextColor: "#C026D3",
+    primaryColor: "#C026D3",
+    photo: false,
+    columns: 2,
   },
 };
+
+export default convertedResumeObject;

@@ -57,16 +57,14 @@ export const allSectionFields: any = {
       },
     ],
   },
-  custom : {
-    allSections : [{
-      sectionTitle : "",
-      sectionDescription : "",
-      isVisible: false,
-    }]
-  }
 };
 
-export function createSection(type: any, fields: string[]) {
+export function createSection(
+  type: any,
+  fields: string[],
+  orderNumber: number,
+  isVisible: boolean
+) {
   let content: any = {};
   fields.forEach((field) => {
     content[field] = allSectionFields[type][field];
@@ -75,6 +73,8 @@ export function createSection(type: any, fields: string[]) {
   return {
     type,
     content,
+    orderNumber: orderNumber,
+    isVisible: isVisible,
     style: {},
   };
 }
@@ -92,23 +92,55 @@ export const templateStructures: any = {
         "linkedin",
         "summary",
       ],
+      orderNumber: 0,
+      isVisible: true,
     },
-    { type: "experience", fields: ["experience"] },
-    { type: "skills", fields: ["description"] },
-    { type: "projects", fields: ["projects"] },
-    { type: "education", fields: ["education"] },
-    { type: "custom", fields: ["allSections"] },
+    {
+      type: "experience",
+      fields: ["experience"],
+      orderNumber: 3,
+      isVisible: true,
+    },
+    {
+      type: "skills",
+      fields: ["description"],
+      orderNumber: 1,
+      isVisible: true,
+    },
+    { type: "projects", fields: ["projects"], orderNumber: 2, isVisible: true },
+    {
+      type: "education",
+      fields: ["education"],
+      orderNumber: 4,
+      isVisible: true,
+    },
   ],
   Template2: [
     {
       type: "header",
       fields: ["firstName", "lastName", "email", "phone", "github", "linkedin"],
+      orderNumber: 0,
+      isVisible: true,
     },
-    { type: "education", fields: ["education"] },
-    { type: "experience", fields: ["experience"] },
-    { type: "projects", fields: ["projects"] },
-    { type: "skills", fields: ["description"] },
-    { type: "custom", fields: ["allSections"] },
+    {
+      type: "education",
+      fields: ["education"],
+      orderNumber: 1,
+      isVisible: true,
+    },
+    {
+      type: "experience",
+      fields: ["experience"],
+      orderNumber: 2,
+      isVisible: true,
+    },
+    { type: "projects", fields: ["projects"], orderNumber: 3, isVisible: true },
+    {
+      type: "skills",
+      fields: ["description"],
+      orderNumber: 4,
+      isVisible: true,
+    },
   ],
 };
 

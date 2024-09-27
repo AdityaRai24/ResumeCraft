@@ -25,53 +25,45 @@ const Page = () => {
   const [primaryColor, setPrimaryColor] = useColor("#000");
   const [showPrimaryTextColorBox, setShowPrimaryTextColorBox] = useState(false);
   const [showPrimaryColorBox, setShowPrimaryColorBox] = useState(false);
-  const [sections, setSections] = useState<Section[]>([]);
 
   const params = useParams();
   const resumeId = params.id;
+  const resume = useQuery(api.resume.getTemplateDetails, {
+    id: resumeId as Id<"resumes">,
+  });
+
+  const sortedSections = resume?.sections.sort(
+    (a: any, b: any) => a.orderNumber - b.orderNumber
+  );
+  const [sections, setSections] = useState<any>(sortedSections);
 
   const reorder = useMutation(api.resume.reorderSections);
   const update = useMutation(api.resume.updateColor);
   const updatePC = useMutation(api.resume.updateColorPC);
   const updateFont = useMutation(api.resume.updateFont);
-  const resume = useQuery(api.resume.getTemplateDetails, {
-    id: resumeId as Id<"resumes">,
-  });
 
   useEffect(() => {
     if (resume?.sections) {
-      const mainSections = resume.sections
-        .filter((item) => item.type !== "custom")
-        .map((item) => ({
-          type: item.type,
-          title: item.type,
-        }));
-
-      const customSections =
-        resume.sections
-          .find((item) => item.type === "custom")
-          ?.content.allSections.map((item) => ({
-            type: "custom",
-            title: item.sectionTitle,
-          })) || [];
-
-      setSections([...mainSections, ...customSections]);
+      const mainSections = resume.sections.filter(item => item.type !== "custom");
+      const customSections = resume.sections.filter(item => item.type === "custom");
+      const updatedSections = [...mainSections, ...customSections].sort((a : any, b : any) => a.orderNumber - b.orderNumber);
+      setSections(updatedSections);
     }
   }, [resume]);
 
-  console.log(sections);
-
-  const handleReorder = (sections: Section[]) => {
-    reorder({ id: resumeId as Id<"resumes">, sections });
-  };
-
   const onSortEnd = (oldIndex: number, newIndex: number) => {
-    setSections((prev) => {
+    setSections((prev : any) => {
       const newSections = arrayMoveImmutable(prev, oldIndex, newIndex);
-      handleReorder(newSections);
-      return newSections;
+      const updatedSections = newSections.map((section : any, index : number) => ({
+        ...section,
+        orderNumber: index
+      }));
+      
+      reorder({ id: resumeId as Id<"resumes">, updatedSections: updatedSections });
+      return updatedSections;
     });
   };
+
 
   const handlePrimaryTextColorChange = useMemo(() => {
     return debounce((color: any) => {
@@ -121,7 +113,6 @@ const Page = () => {
 
   return (
     <FinalLayout>
-      hello
       <div className="max-w-[70%] mt-16 mx-16">
         <div className="mb-8">
           <h1 className="text-6xl font-bold">Almost Done !!</h1>
@@ -140,15 +131,17 @@ const Page = () => {
             className="list"
             draggedItemClassName="dragged"
           >
-            {sections.map((item, index) => {
+            {sections?.map((item: any, index: number) => {
               return (
                 <SortableItem key={index}>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 uppercase">
                     <div className=" w-[35px] bg-[white] shadow-sm hover:cursor-move border flex items-center justify-center border-black/30 p-[10px] my-[4px]">
-                      {index + 1}
+                      {item?.orderNumber + 1}
                     </div>
                     <div className="w-[60%] bg-white shadow-sm border hover:cursor-move border-black/30 p-[10px]  my-[4px]">
-                      {item.title}
+                      {item.type === "custom"
+                        ? item.content.sectionTitle
+                        : item.type}
                     </div>
                   </div>
                 </SortableItem>

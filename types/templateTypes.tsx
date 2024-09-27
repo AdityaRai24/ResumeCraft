@@ -25,16 +25,19 @@ export interface HeaderSection extends BaseSection {
     summary?: string;
     photo?: string;
   };
+  isVisible: boolean;
+  orderNumber: number;
   style?: {};
 }
 
 export interface SkillSection extends BaseSection {
   type: "skills";
   content: {
-    description : string,
+    description: string;
   };
-  style: {
-  };
+  isVisible: boolean;
+  orderNumber: number;
+  style?: {};
 }
 
 export interface ProjectSection extends BaseSection {
@@ -47,6 +50,8 @@ export interface ProjectSection extends BaseSection {
       liveurl?: string;
     }[];
   };
+  isVisible: boolean;
+  orderNumber: number;
   style?: {};
 }
 
@@ -62,9 +67,11 @@ export interface ExperienceSection extends BaseSection {
       startYear: string;
       endMonth?: string;
       endYear: string;
-      workingHere : false
+      workingHere: false;
     }[];
   };
+  isVisible: boolean;
+  orderNumber: number;
   style?: {};
 }
 
@@ -79,24 +86,25 @@ export interface EducationSection extends BaseSection {
       endMonth?: string;
       endYear?: string;
       location?: string;
-      studyingHere : boolean;
-      grade? : string;
+      studyingHere: boolean;
+      grade?: string;
     }[];
   };
+  isVisible: boolean;
+  orderNumber: number;
   style?: {};
 }
 
 export interface CustomSection extends BaseSection {
   type: "custom";
-  content :{
-    allSections : [
-      {
-        sectionTitle : string;
-        sectionDescription : string;
-        isVisible : boolean
-      }
-    ]
-  }
+  content: {
+    sectionTitle : string;
+    sectionDescription : string;
+    sectionNumber : number;
+  };
+  isVisible: boolean;
+  orderNumber: number;
+  style?: {};
 }
 
 export type SectionTypes =

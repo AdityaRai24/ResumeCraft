@@ -5,6 +5,8 @@ import "react-quill/dist/quill.snow.css";
 import { motion } from "framer-motion";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { poppinsFont } from "@/lib/font";
+import { Label } from "../ui/label";
 
 const QuillEditor = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -13,6 +15,7 @@ interface QuillEditorComponentProps {
   onChange: (content: string) => void;
   label: string;
   currentFormat?: string;
+  placeholder?: string;
 }
 
 export default function QuillEditorComponent({
@@ -20,6 +23,7 @@ export default function QuillEditorComponent({
   onChange,
   label,
   currentFormat,
+  placeholder
 }: QuillEditorComponentProps) {
 
 
@@ -38,13 +42,14 @@ export default function QuillEditorComponent({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
     >
+      <Label>{label}</Label>
       <QuillEditor
         value={value}
         onChange={onChange}
         modules={quillModules}
         formats={quillFormats}
-        className="bg-white"
-        placeholder={"Write Something about your skills..."}
+        className={`${poppinsFont.className} bg-white mt-2`}
+        placeholder={placeholder}
       />
     </motion.div>
   );

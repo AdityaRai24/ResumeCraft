@@ -147,7 +147,7 @@ const ProjectForm = ({
                 ease: [0, 0.71, 0.2, 1.01],
               }}
             >
-              <Button onClick={addProject} className="mt-4">
+              <Button onClick={addProject} className="my-4">
                 Add Another Project
               </Button>
             </motion.div>

@@ -11,7 +11,13 @@ import {
   PenToolIcon,
   User,
 } from "lucide-react";
-import { redirect, useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  redirect,
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import React from "react";
 import {
   Tooltip,
@@ -24,7 +30,7 @@ import { Button } from "./ui/button";
 
 const VerticalTimeline = () => {
   const params = useParams();
-  const router = useRouter()
+  const router = useRouter();
   const resumeId = params.id;
   const resume = useQuery(api.resume.getTemplateDetails, {
     id: resumeId as Id<"resumes">,
@@ -37,27 +43,38 @@ const VerticalTimeline = () => {
   const sec = searchParams.get("sec");
 
   let sectionArray: string[] = [];
-  resume?.sections?.map((item) => sectionArray.push(item.type));
+  resume?.sections?.map((item) => {
+    item.type !== "custom" && sectionArray.push(item.type);
+  });
+  sectionArray.push("custom");
   sectionArray.push("final");
 
-  const sectionIconMap : any = {
+  const sectionIconMap: any = {
     header: User,
     experience: LineChart,
     education: GraduationCap,
     skills: Brain,
     projects: FolderKanban,
     final: Baseline,
-    custom : PenToolIcon
+    custom: PenToolIcon,
   };
 
   return (
-    <div className="h-full flex flex-col items-center justify-center py-8">
-       <Button variant={'ghost'} className="text-white underline" onClick={()=>router.push('/build-resume/templates')}>Back</Button>
+    <div className="h-full flex fixed pl-10 flex-col items-center justify-center py-8">
+      <Button
+        variant={"ghost"}
+        className="text-white underline"
+        onClick={() => router.push("/build-resume/templates")}
+      >
+        Back
+      </Button>
       <div className="relative h-full mt-16">
         <div className="absolute left-1/2 h-[80%] w-0.5  bg-gray-300 transform -translate-x-1/2"></div>
         <div className="">
           {sectionArray.map((section, index) => {
             const SectionIcon = sectionIconMap[section];
+
+           
 
             return (
               <div key={index} className="relative mb-16">

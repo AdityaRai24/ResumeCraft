@@ -43,7 +43,7 @@ const ChooseTemplates = () => {
         return router.push(`/build-resume/${res}/tips?sec=header`);
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
         toast.error("Something went wrong...");
       });
   };
@@ -51,8 +51,8 @@ const ChooseTemplates = () => {
   return (
     <div className="grid grid-cols-3 gap-6 mt-5">
       {templates?.map((item, index) => {
-
-        const TemplateComponent: TemplateComponentType = templateComponents[item.templateName];
+        const TemplateComponent: TemplateComponentType =
+          templateComponents[item.templateName];
 
         if (!TemplateComponent) {
           console.error(
@@ -64,7 +64,7 @@ const ChooseTemplates = () => {
         return (
           <div
             key={index}
-            className={cn("relative group inline-block w-[319px] h-[449px]")}
+            className={cn("relative group inline-block w-[319px] h-[456px]")}
           >
             <TemplateComponent obj={item as ResumeTemplate} isPreview={true} />
             <div className="absolute inset-0 w-full h-full p-10 flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
@@ -97,7 +97,7 @@ const ChooseSkeleton = () => {
         {[0, 1, 2].map((item, index) => (
           <Skeleton
             key={index}
-            className=" w-[319px] h-[449px] bg-slate-500/20"
+            className=" w-[319px] h-[456px] bg-slate-500/20"
           />
         ))}
       </div>

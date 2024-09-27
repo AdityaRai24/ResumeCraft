@@ -46,13 +46,13 @@ export const updateHeader = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-       
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
     const resumeSections = resume?.sections;
@@ -91,17 +91,20 @@ export const createUserResume = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-    
+
     const templateSections: any = templateStructures[args.templateName];
     if (!templateSections) {
       throw new Error("Invalid template name");
     }
 
     const initialSections = templateSections.map((section: any) =>
-      createSection(section.type, section.fields)
+      createSection(
+        section.type,
+        section.fields,
+        section.orderNumber,
+        section.isVisible
+      )
     );
-    console.log(initialSections)
-
 
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
@@ -129,7 +132,7 @@ export const updateExperience = mutation({
           startYear: v.string(),
           endMonth: v.optional(v.string()),
           endYear: v.string(),
-          workingHere: v.boolean()
+          workingHere: v.boolean(),
         })
       ),
     }),
@@ -139,13 +142,13 @@ export const updateExperience = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-       
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
     const resumeSections = resume?.sections;
@@ -180,7 +183,7 @@ export const updateEducation = mutation({
           endYear: v.optional(v.string()),
           location: v.string(),
           grade: v.optional(v.string()),
-          studyingHere: v.boolean()
+          studyingHere: v.boolean(),
         })
       ),
     }),
@@ -190,13 +193,13 @@ export const updateEducation = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-       
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
     const resumeSections = resume?.sections;
@@ -216,69 +219,145 @@ export const updateEducation = mutation({
 });
 
 export const updateCustomSection = mutation({
-  args:{
+  args: {
     id: v.id("resumes"),
     content: v.object({
-      allSections: v.array(
-        v.object({
-          sectionTitle: v.string(),
-          sectionDescription: v.string(),
-          isVisible: v.boolean(),
-        })
-      ),
+      sectionTitle: v.string(),
+      sectionDescription: v.string(),
+      sectionNumber: v.number(),
     }),
   },
-  handler: async(ctx,args)=>{
+  handler: async (ctx, args) => {
     const resume = await ctx.db.get(args.id);
     if (!resume) {
       throw new Error("Something went wrong");
     }
-    
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
+    const resumeSections = resume?.sections;
+    const customSection = resumeSections.filter(
+      (item) => item.type === "custom"
+    );
+
+    const currentCustomSectionIndex = customSection.findIndex(
+      (item) => item.content.sectionNumber === args.content.sectionNumber
+    );
+
+    const allOrderNumbers =
+      resumeSections?.map((item) => item.orderNumber) || [];
+    const maxNumber = Math.max(...allOrderNumbers);
+
+    if (
+      args.content.sectionTitle.trim() === "" &&
+      (args.content.sectionDescription.trim() === "<p><br></p>" ||
+        args.content.sectionDescription.trim() === "")
+    ) {
+      const updatedSections = resumeSections.filter(
+        (item) =>
+          !(
+            item.type === "custom" &&
+            item.content.sectionNumber === args.content.sectionNumber
+          )
+      );
+      return await ctx.db.patch(args.id, {
+        sections: updatedSections,
+      });
+    }
+
+    if (currentCustomSectionIndex === -1) {
+      resumeSections.push({
+        type: "custom",
+        content: {
+          sectionTitle: args.content.sectionTitle,
+          sectionDescription: args.content.sectionDescription,
+          sectionNumber: args.content.sectionNumber,
+        },
+        orderNumber: maxNumber + 1,
+        isVisible: true,
+      });
+      await ctx.db.patch(args.id, {
+        sections: resumeSections,
+      });
+    } else {
+      customSection[currentCustomSectionIndex].content = args.content;
+      await ctx.db.patch(args.id, {
+        sections: resumeSections,
+      });
+    }
+  },
+});
+
+export const removeCustomSection = mutation({
+  args: {
+    id: v.id("resumes"),
+    sectionNumber: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
+    }
+
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
 
     const resumeSections = resume?.sections;
-    let index = resumeSections?.findIndex((item) => item.type === "custom")
-    if(index === -1){
-      throw new Error("Something went wrong index");
-    }else{
-      resumeSections[index].content = args.content
+    const customSection = resumeSections.filter(
+      (item) => item.type === "custom"
+    );
+    const currentCustomSection = customSection.find(
+      (item) => item.content.sectionNumber === args.sectionNumber
+    );
+
+    const orderNumberRemoved = currentCustomSection?.orderNumber;
+
+    if (!orderNumberRemoved) {
+      throw new Error("Something went wrong");
     }
 
+    const updatedCustomSections = resumeSections.filter(
+      (item) => item.orderNumber !== orderNumberRemoved
+    );
+
     await ctx.db.patch(args.id, {
-      sections : resumeSections,
+      sections: updatedCustomSections,
     });
-
-  }
-})
-
+  },
+});
 
 export const updateSkills = mutation({
   args: {
     id: v.id("resumes"),
     content: v.object({
-        description: v.string(),
+      description: v.string(),
     }),
   },
   handler: async (ctx, args) => {
-
     const resume = await ctx.db.get(args.id);
     if (!resume) {
       throw new Error("Something went wrong");
     }
-       
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
     const resumeSections = resume?.sections;
@@ -318,13 +397,13 @@ export const updateProjects = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-       
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
     const resumeSections = resume?.sections;
@@ -347,7 +426,6 @@ export const updateProjects = mutation({
   },
 });
 
-
 export const updateColor = mutation({
   args: {
     id: v.id("resumes"),
@@ -358,13 +436,13 @@ export const updateColor = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-       
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
     const newGlobalStyles = {
@@ -388,16 +466,16 @@ export const updateColorPC = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-       
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
-    
+
     const newGlobalStyles = {
       ...resume.globalStyles,
       primaryColor: args.color,
@@ -419,13 +497,13 @@ export const updateFont = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-    
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    if(identity.subject !== resume.userId) {
+    if (identity.subject !== resume.userId) {
       throw new Error("Unauthorized");
     }
 
@@ -440,21 +518,46 @@ export const updateFont = mutation({
   },
 });
 
-
-
 export const getUserResumes = query({
   args: {
     userId: v.string(),
   },
   handler: async (ctx, args) => {
-
-    
     const resumes = await ctx.db
       .query("resumes")
       .filter((q) => q.eq(q.field("userId"), args.userId))
       .collect();
 
     return resumes;
+  },
+});
+
+export const getCustomSections = query({
+  args: {
+    id: v.id("resumes"),
+  },
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Resume not found");
+    }
+
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if (identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const resumeSections = resume?.sections;
+
+    const customSection = resumeSections.filter(
+      (item) => item.type === "custom"
+    );
+
+    return customSection;
   },
 });
 
@@ -470,19 +573,14 @@ const SectionType = v.union(
 export const reorderSections = mutation({
   args: {
     id: v.id("resumes"),
-    sections: v.array(
-      v.object({
-        type: SectionType,
-        title: v.string(),
-      })
-    ),
+    updatedSections: v.any(),
   },
   handler: async (ctx, args) => {
     const resume = await ctx.db.get(args.id);
     if (!resume) {
       throw new Error("Resume not found");
     }
-    
+
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
@@ -492,53 +590,9 @@ export const reorderSections = mutation({
       throw new Error("Unauthorized");
     }
 
-    console.log(args.sections)
-
-    // const resumeSections = resume.sections;
-
-    // // Create a map of existing sections for quick lookup
-    // const sectionMap = new Map(
-    //   resumeSections.map((section) => [section.type, section])
-    // );
-
-    // // Create the new array based on the user's order
-    // const rearrangedSections = args.sections
-    //   .map((inputSection) => {
-    //     const existingSection = sectionMap.get(inputSection.type);
-    //     if (!existingSection) {
-    //       console.warn(`Section type "${inputSection.type}" not found in resumeSections`);
-    //       return null;
-    //     }
-        
-    //     // For custom sections, update the title
-    //     if (inputSection.type === "custom") {
-    //       return {
-    //         ...existingSection,
-    //         content: {
-    //           ...existingSection.content,
-    //           sectionTitle: inputSection.title
-    //         }
-    //       };
-    //     }
-        
-    //     // For standard sections, keep the existing section data
-    //     return existingSection;
-    //   })
-    //   .filter((section): section is NonNullable<typeof section> => section !== null);
-
-    // // Add any sections that were in resumeSections but not in the input order
-    // resumeSections.forEach((section) => {
-    //   if (!args.sections.some(inputSection => inputSection.type === section.type)) {
-    //     rearrangedSections.push(section);
-    //   }
-    // });
-
-    // console.log(rearrangedSections)
-
-    // const newResume = await ctx.db.patch(args.id, {
-    //   sections: rearrangedSections,
-    // });
-
-    // return newResume;
+    const updatedResume = await ctx.db.patch(args.id, {
+      sections: args.updatedSections,
+    });
+    return updatedResume;
   },
 });

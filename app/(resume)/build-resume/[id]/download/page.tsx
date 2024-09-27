@@ -93,7 +93,7 @@ const LiveResumePreview = () => {
       )}
       <div
        className={cn(
-        "resume-container no-scrollbar",
+        "resume-container no-scrollbar shadow-md shadow-primary rounded-lg mb-8",
         templateDetails?.globalStyles?.fontFamily === 'Inter' && interFont.className,
         templateDetails?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
         templateDetails?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,

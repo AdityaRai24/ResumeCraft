@@ -1,6 +1,6 @@
 "use client";
 
-import CustomSectionForm from "@/components/forms/CustomSectionForm";
+import CustomForm from "@/components/forms/CustomForm";
 import SkillsForm from "@/components/forms/SkillsForm";
 import HeaderSkeleton from "@/components/HeaderSkeleton";
 import SectionInfo from "@/components/SectionInfo";
@@ -24,26 +24,18 @@ const Page = () => {
   }
 
   return (
-    <>
-      {resume?.sections?.map((item, index) => {
-        if (item?.type === "custom") {
-          return (
-            <div key={index} className="mt-24 mx-16">
-              <SectionInfo
-                heading="Add a custom section"
-                text="Add any custom section that you want to."
-              />
+    <div className="mt-24 mx-16">
+      <SectionInfo
+        heading="Create a Custom Section"
+        text="Use this space to elaborate on specific projects, certifications, or contributions that demonstrate your expertise if you want to."
+      />
 
-              <CustomSectionForm
-                resumeId={resumeId as Id<"resumes">}
-                styles={item?.style}
-                item={item}
-              />
-            </div>
-          );
-        }
-      })}
-    </>
+      <CustomForm
+        resumeId={resumeId as Id<"resumes">}
+        styles={"sadf"}
+        item={"asdf"}
+      />
+    </div>
   );
 };
 

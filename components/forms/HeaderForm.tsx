@@ -136,6 +136,7 @@ const HeaderForm = ({
           <div className="mt-8 w-[85%] ">
             <QuillEditorComponent
               label="Summary"
+              placeholder="Write something about yourself..."
               value={header.summary}
               onChange={(content) => handleChange(content)}
             />
