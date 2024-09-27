@@ -5,6 +5,7 @@ import SectionInfo from "@/components/SectionInfo";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { ProjectSection } from "@/types/templateTypes";
 import { useMutation, useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
@@ -38,7 +39,7 @@ const Page = () => {
                 heading="Time to showcase your projects !!"
                 text="Write about any of your projects or past work to impress your employer."
               />
-              <ProjectForm resumeId={resumeId as Id<"resumes">} item={item} />
+              <ProjectForm resumeId={resumeId as Id<"resumes">} item={item as ProjectSection} />
             </div>
           );
         }
