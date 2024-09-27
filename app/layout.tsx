@@ -3,6 +3,7 @@ import "./globals.css";
 import ConvexAndClerk from "@/providers/ConvexAndClerk";
 import { Toaster } from "react-hot-toast";
 import { poppinsFont } from "@/lib/font";
+import ScreenProvider from "@/providers/ScreenProvider";
 
 export const metadata: Metadata = {
   title: "Resume Craft",
@@ -18,8 +19,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppinsFont.className}>
         <ConvexAndClerk>
+          <ScreenProvider>
+            {" "}
             <Toaster />
-          {children}</ConvexAndClerk>
+            {children}
+          </ScreenProvider>
+        </ConvexAndClerk>
       </body>
     </html>
   );
