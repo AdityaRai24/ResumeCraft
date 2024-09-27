@@ -4,7 +4,7 @@ import { Edit, Eye } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Id } from "@/convex/_generated/dataModel";
 import { Skeleton } from "./ui/skeleton";
@@ -31,7 +31,9 @@ const ChooseTemplates = () => {
   if (templates === undefined) {
     return <ChooseSkeleton />;
   }
-  if (!user) return null;
+  if (!user){
+    return redirect("/sign-up");
+  };
 
   const selectResume = async (id: Id<"resumes">, templateName: string) => {
     const promise = createUserResume({
