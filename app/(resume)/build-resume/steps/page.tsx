@@ -81,7 +81,7 @@ const Page = () => {
                 Step-3: Customize and polish
               </h1>
               <p>
-                Fine-tune your resume's layout, style, and content to make it
+                Fine-tune your resume`&apos;s layout, style, and content to make it
                 uniquely yours and stand out to employers.{" "}
               </p>
             </div>
