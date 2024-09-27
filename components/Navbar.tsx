@@ -36,11 +36,11 @@ const Navbar = () => {
       {!isSignedIn && isLoaded && (
         <div className="flex items-center justify-center gap-4">
           <Button className="cursor-pointer" variant="ghost">
-            <div className="hover:scale-[1.1] active:scale-[0.97] transition duration-300 ease-in-out">
+            <div className="hover:scale-[1.02] active:scale-[0.97] transition duration-300 ease-in-out">
               <SignInButton>Login</SignInButton>
             </div>
           </Button>
-          <div className="hover:scale-[1.1] active:scale-[0.97] transition duration-300 ease-in-out">
+          <div className="hover:scale-[1.02] active:scale-[0.97] transition duration-300 ease-in-out">
             <Button className="cursor-pointer">
               <SignUpButton>
                 <h1 className="text-[13px]">Create Free Account</h1>
