@@ -36,7 +36,7 @@ const Page = () => {
   const index = sectionArray.findIndex((item) => item === sec);
   const currentTips = tipsData.find((item) => item.sec === sec);
 
-  const nextSection = sectionArray[index];
+  const nextSection =  sec === "custom" ? "custom" : sectionArray[index];
 
   const prevSection = sectionArray[index - 1]
     ? sectionArray[index - 1]
@@ -44,7 +44,7 @@ const Page = () => {
 
   const nexturl =  `/build-resume/${resumeId}/section/${nextSection}`
   const prevurl = sec === 'header' ? `/build-resume/${resumeId}/tips?sec=header` : `/build-resume/${resumeId}/section/${prevSection}`
-
+  
   return (
     <div className="flex items-center justify-start max-w-[80%] mx-16">
       <motion.div

@@ -3,20 +3,23 @@ import { ResumeTemplate } from "@/types/templateTypes";
 export const temp2Obj: ResumeTemplate = {
   isTemplate: true,
   userId: "admin",
+  templateName: "Template2",
   sections: [
     {
       content: {
         email: "john.doe@example.com",
         firstName: "John",
-        github: "johndoe",
         lastName: "Doe",
+        github: "johndoe",
         linkedin: "john-doe",
         location: "New York, NY",
         phone: "+1-555-123-4567",
-        summary :undefined,
-        photo : undefined
+        photo: "",
+        summary: "",
       },
       style: {},
+      isVisible: true,
+      orderNumber: 0,
       type: "header",
     },
     {
@@ -47,6 +50,8 @@ export const temp2Obj: ResumeTemplate = {
         ],
       },
       style: {},
+      isVisible: true,
+      orderNumber: 1,
       type: "education",
     },
     {
@@ -69,6 +74,8 @@ export const temp2Obj: ResumeTemplate = {
         ],
       },
       style: {},
+      isVisible: true,
+      orderNumber: 3,
       type: "projects",
     },
     {
@@ -83,8 +90,8 @@ export const temp2Obj: ResumeTemplate = {
             startYear: "2024",
             endYear: "2024",
             workingHere: false,
-            endMonth : undefined,
-            startMonth: undefined
+            endMonth: undefined,
+            startMonth: undefined,
           },
           {
             companyName: "Web Innovations LLC",
@@ -95,12 +102,14 @@ export const temp2Obj: ResumeTemplate = {
             startYear: "2024",
             endYear: "2024",
             workingHere: false,
-            endMonth : undefined,
-            startMonth: undefined
+            endMonth: undefined,
+            startMonth: undefined,
           },
         ],
       },
       style: {},
+      isVisible: true,
+      orderNumber: 2,
       type: "experience",
     },
     {
@@ -108,23 +117,11 @@ export const temp2Obj: ResumeTemplate = {
         description: "ADitya",
       },
       style: {},
+      isVisible: true,
+      orderNumber: 4,
       type: "skills",
     },
-    {
-      content : {
-        allSections : [{
-          sectionTitle : "Custom Section",
-          sectionDescription : "This is a custom section",
-          isVisible : true
-        }]
-      },
-      style: {
-        columns : 2
-      },
-      type: "custom",
-    }
   ],
-  templateName: "Template2",
   globalStyles: {
     columns: 2,
     fontFamily: "Geologica",

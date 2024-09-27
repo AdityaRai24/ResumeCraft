@@ -1,9 +1,7 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-
 const sectionContentSchema = v.union(
-
   v.object({
     type: v.literal("header"),
     content: v.object({
@@ -17,17 +15,21 @@ const sectionContentSchema = v.union(
       summary: v.optional(v.string()),
       photo: v.optional(v.string()),
     }),
+    isVisible : v.boolean(),
+    orderNumber: v.optional(v.number()),
     style: v.optional(v.any()),
   }),
 
   v.object({
     type: v.literal("skills"),
     content: v.object({
-      description : v.string()
+      description: v.string(),
     }),
+    isVisible : v.boolean(),
+    orderNumber: v.optional(v.number()),
     style: v.optional(v.any()),
   }),
-  
+
   v.object({
     type: v.literal("projects"),
     content: v.object({
@@ -40,6 +42,8 @@ const sectionContentSchema = v.union(
         })
       ),
     }),
+    isVisible : v.boolean(),
+    orderNumber: v.optional(v.number()),
     style: v.optional(v.any()),
   }),
 
@@ -56,10 +60,12 @@ const sectionContentSchema = v.union(
           startYear: v.string(),
           endMonth: v.optional(v.string()),
           endYear: v.string(),
-          workingHere: v.boolean()
+          workingHere: v.boolean(),
         })
       ),
     }),
+    isVisible : v.boolean(),
+    orderNumber: v.optional(v.number()),
     style: v.optional(v.any()),
   }),
 
@@ -71,33 +77,31 @@ const sectionContentSchema = v.union(
           courseName: v.string(),
           instituteName: v.string(),
           location: v.optional(v.string()),
-          startMonth : v.optional(v.string()),
+          startMonth: v.optional(v.string()),
           startYear: v.optional(v.string()),
-          endMonth : v.optional(v.string()),
+          endMonth: v.optional(v.string()),
           endYear: v.optional(v.string()),
-          studyingHere : v.boolean(),
-          grade: v.optional(v.string())
+          studyingHere: v.boolean(),
+          grade: v.optional(v.string()),
         })
       ),
     }),
+    isVisible : v.boolean(),
+    orderNumber: v.optional(v.number()),
     style: v.optional(v.any()),
   }),
 
   v.object({
     type: v.literal("custom"),
     content: v.object({
-      allSections : v.array(
-        v.object({
-          sectionTitle: v.string(),
-          sectionDescription : v.string(),
-          isVisible: v.boolean()
-        })
-      )
+      sectionTitle: v.optional(v.string()),
+      sectionDescription: v.optional(v.string()),
+      sectionNumber : v.optional(v.number()),
     }),
+    isVisible : v.boolean(),
+    orderNumber: v.optional(v.number()),
     style: v.optional(v.any()),
   })
-
-
 );
 
 export default defineSchema({

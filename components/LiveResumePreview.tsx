@@ -11,7 +11,14 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import Template1 from "@/templates/template1/Template1";
 import Template2 from "@/templates/template2/Template2";
 import { cn } from "@/lib/utils";
-import { geologicaFont, interFont, montserratFont, openSansFont, poppinsFont, ralewayFont } from "@/lib/font";
+import {
+  geologicaFont,
+  interFont,
+  montserratFont,
+  openSansFont,
+  poppinsFont,
+  ralewayFont,
+} from "@/lib/font";
 
 type TemplateComponentType = React.ComponentType<{
   obj: ResumeTemplate;
@@ -43,20 +50,22 @@ const LiveResumePreview = () => {
   if (templateDetails === undefined) {
     return <ResumeSkeleton />;
   }
-
   const backLocation = `/build-resume/${params.id}/tips?sec=${sectionArray[currentIndex]}`;
-  const nextLocation = sectionArray[currentIndex + 1]
-    ? `/build-resume/${params.id}/tips?sec=${sectionArray[currentIndex + 1]}`
-    : `/build-resume/${params.id}/section/final`;
+  const nextLocation =
+    sectionType === "custom"
+      ? `/build-resume/${params.id}/section/final`
+      : sectionArray[currentIndex + 1]
+        ? `/build-resume/${params.id}/tips?sec=${sectionArray[currentIndex + 1]}`
+        : `/build-resume/${params.id}/section/custom`;
 
-  const TemplateComponent = templateComponents[templateDetails.templateName];
+        const TemplateComponent = templateComponents[templateDetails.templateName];
 
   if (!TemplateComponent) {
-    console.error(`No component found for template: ${templateDetails.templateName}`);
+    console.error(
+      `No component found for template: ${templateDetails.templateName}`
+    );
     return <div>Error: Template not found</div>;
   }
-
-
 
   return (
     <>
@@ -66,15 +75,25 @@ const LiveResumePreview = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
           className={cn(
-            templateDetails?.globalStyles?.fontFamily === 'Inter' && interFont.className,
-            templateDetails?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
-            templateDetails?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
-          templateDetails?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
-            templateDetails?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
-            templateDetails?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Inter" &&
+              interFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Montserrat" &&
+              montserratFont.className,
+            templateDetails?.globalStyles?.fontFamily === "OpenSans" &&
+              openSansFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Poppins" &&
+              poppinsFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Geologica" &&
+              geologicaFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Raleway" &&
+              ralewayFont.className
           )}
-    >
-          <TemplateComponent obj={templateDetails as ResumeTemplate} isLive isPreview />
+        >
+          <TemplateComponent
+            obj={templateDetails as ResumeTemplate}
+            isLive
+            isPreview
+          />
         </motion.div>
       </div>
 
@@ -89,26 +108,26 @@ const LiveResumePreview = () => {
           }}
           className="fixed bottom-5 right-10"
         >
-         <div className="flex items-center justify-center gap-24">
-         <ContineBtn
-            type="outline"
-            text="Back"
-            path={
-              sectionType === "final"
-                ? `/build-resume/${params.id}/tips?sec=${sectionArray[sectionArray.length - 1]}`
-                : backLocation
-            }
-          />
-          <ContineBtn
-            type="default"
-            text="Next"
-            path={
-              sectionType === "final"
-                ? `/build-resume/${params.id}/download`
-                : nextLocation
-            }
-          />
-         </div>
+          <div className="flex items-center justify-center gap-24">
+            <ContineBtn
+              type="outline"
+              text="Back"
+              path={
+                sectionType === "final"
+                  ? `/build-resume/${params.id}/tips?sec=${sectionArray[sectionArray.length - 1]}`
+                  : backLocation
+              }
+            />
+            <ContineBtn
+              type="default"
+              text="Next"
+              path={
+                sectionType === "final"
+                  ? `/build-resume/${params.id}/download`
+                  : nextLocation
+              }
+            />
+          </div>
         </motion.div>
       )}
     </>

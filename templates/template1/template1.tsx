@@ -44,9 +44,18 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
   const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColorClass = obj?.globalStyles?.primaryColor || "black";
+  const sortedSections = [...obj.sections].sort(
+    (a, b) => a.orderNumber - b.orderNumber
+  );
+
+  const visitedCustoms: number[] = [];
+
+  const uniqueSectionTypes = Array.from(
+    new Set(sortedSections.map((item) => item.type))
+  );
 
   const renderSection = (type: string) => {
-    return obj?.sections?.map((item, index) => {
+    return sortedSections?.map((item, index) => {
       if (item.type === type) {
         switch (type) {
           case "header":
@@ -299,39 +308,35 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                 </div>
               </div>
             );
-
           case "custom":
-            if ("allSections" in item.content) {
-              const customSections = item.content as CustomContent;
-              const allSections = customSections.allSections;
-              if (allSections.length > 0 && allSections[0].sectionTitle) {
-                return allSections.map((item) => {
-                  return (
-                    <div className={`py-2`}
-                    style={{borderBottom: `1px solid ${primaryColorClass}`}}
-                    key={index}>
-                      {" "}
-                      <h1
-                        className={`text-lg font-bold `}
-                        style={{
-                          color: primaryTextColorClass,
-                        }}
-                      >
-                        {item.sectionTitle}
-                      </h1>
-                      <div>
-                        <div
-                          className="quill-content text-sm"
-                          dangerouslySetInnerHTML={{
-                            __html: item.sectionDescription,
-                          }}
-                        />
-                      </div>
-                    </div>
-                  );
-                });
+            return sortedSections.map((item, index) => {
+              if (item.type === "custom") {
+                if (visitedCustoms.includes(item.orderNumber)) return;
+                visitedCustoms.push(item.orderNumber);
+
+                return (
+                  <div
+                    key={`custom-${index}-${item.content.sectionTitle}`}
+                    className={`py-2`}
+                    style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+                  >
+                    <h1
+                      className={`text-lg font-bold`}
+                      style={{ color: primaryTextColorClass }}
+                    >
+                      {item.content.sectionTitle}
+                    </h1>
+                    <div
+                      className="quill-content text-sm"
+                      dangerouslySetInnerHTML={{
+                        __html: item.content.sectionDescription,
+                      }}
+                    />
+                  </div>
+                );
               }
-            }
+              return null;
+            });
         }
       }
     });
@@ -345,12 +350,11 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
-
         isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >
       <div>
-        {sectionArray?.map((section, index) => {
+        {uniqueSectionTypes?.map((section, index) => {
           return (
             <React.Fragment key={index}>
               {renderSection(section)}

@@ -45,6 +45,14 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColorClass = obj?.globalStyles?.primaryColor || "black";
 
+  const sortedSections = [...obj.sections].sort(
+    (a, b) => a.orderNumber - b.orderNumber
+  );
+  const visitedCustoms: number[] = [];
+  const uniqueSectionTypes = Array.from(
+    new Set(sortedSections.map((item) => item.type))
+  );
+
   const renderSection = (type: string) => {
     return obj?.sections?.map((item, index) => {
       if (item.type === type) {
@@ -114,9 +122,9 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                   >
                     <div>
                       <h1 className="text-base font-semibold">
-                        {edu?.instituteName}
+                        {edu?.instituteName} 
                       </h1>
-                      <p className="text-sm italic">{edu?.courseName}</p>
+                      <p className="text-sm italic">{edu?.courseName} - {edu?.grade}</p>
                     </div>
                     <div>
                       <p className="text-base text-right">
@@ -153,8 +161,8 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                       <div className="text-right">
                         {exp?.startYear && exp?.endYear && (
                           <p className="text-base ">
-                            {exp?.startMonth}, {exp?.startYear} -{" "}
-                            {exp?.endMonth}, {exp?.endYear}
+                            {exp?.startMonth} {exp?.startYear} - {" "}
+                            {exp?.endMonth} {exp?.endYear}
                           </p>
                         )}{" "}
                         {exp?.location && (
@@ -241,36 +249,37 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
             );
 
           case "custom":
-            if ("allSections" in item.content) {
-              const customSections = item.content as CustomContent;
-              const allSections = customSections.allSections;
-              if (allSections.length > 0 && allSections[0].sectionTitle) {
-                return allSections.map((item) => {
-                  return (
+            return sortedSections.map((item, index) => {
+              if (item.type === "custom") {
+                if (visitedCustoms.includes(item.orderNumber)) return;
+                visitedCustoms.push(item.orderNumber);
+                return (
+                  <>
+                    <div
+                      className="mt-2"
+                      style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+                    >
+                      <h1
+                        className="text-lg"
+                        style={{ color: primaryTextColorClass }}
+                      >
+                        {item.content.sectionTitle}
+                      </h1>
+                    </div>
                     <div className="mt-2">
                       <div
-                        style={{
-                          borderBottom: `1px solid ${primaryColorClass}`,
-                        }}
-                      >
-                        <h1
-                          className="text-lg"
-                          style={{ color: primaryTextColorClass }}
-                        >
-                          {item?.sectionTitle}
-                        </h1>
-                      </div>
-                      <div
-                        className="quill-content  text-sm mt-3"
+                        className="quill-content text-sm"
                         dangerouslySetInnerHTML={{
-                          __html: item.sectionDescription,
+                          __html: item.content.sectionDescription,
                         }}
                       />
                     </div>
-                  );
-                });
+                  </>
+                );
               }
-          }
+              return null;
+            });
+
           default:
             return null;
         }
@@ -293,12 +302,8 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
       )}
     >
       <div>
-        {sectionArray?.map((section, index) => {
-          return (
-            <div key={index}>
-              {renderSection(section)}
-            </div>
-          );
+        {uniqueSectionTypes?.map((section, index) => {
+          return <div key={index}>{renderSection(section)}</div>;
         })}
       </div>
     </div>
