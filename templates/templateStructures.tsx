@@ -1,6 +1,6 @@
 import { ResumeTemplate } from "@/types/templateTypes";
-import Template1 from "./template1/Template1";
-import Template2 from "./template2/Template2";
+import Template1 from "@/templates/template1/Template1";
+import Template2 from "@/templates/template2/Template2";
 
 export const allSectionFields: any = {
   header: {
