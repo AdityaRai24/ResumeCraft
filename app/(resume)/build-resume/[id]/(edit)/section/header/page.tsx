@@ -7,6 +7,7 @@ import React from "react";
 import SectionInfo from "@/components/SectionInfo";
 import HeaderSkeleton from "@/components/HeaderSkeleton";
 import HeaderForm from "@/components/forms/HeaderForm";
+import { HeaderSection } from "@/types/templateTypes";
 
 const Page = () => {
   const params = useParams();
@@ -32,7 +33,7 @@ const Page = () => {
                 text="Include your full name and at least one way for employers to
                 reach you."
               />
-              <HeaderForm  resumeId={resumeId} item={item} />
+              <HeaderForm  resumeId={resumeId} item={item as HeaderSection} />
             </div>
           );
         }

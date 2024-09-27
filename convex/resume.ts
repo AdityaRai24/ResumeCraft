@@ -250,7 +250,7 @@ export const updateCustomSection = mutation({
       (item) => item.content.sectionNumber === args.content.sectionNumber
     );
 
-    const allOrderNumbers =
+    const allOrderNumbers: any =
       resumeSections?.map((item) => item.orderNumber) || [];
     const maxNumber = Math.max(...allOrderNumbers);
 

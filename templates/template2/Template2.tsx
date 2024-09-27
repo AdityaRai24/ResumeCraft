@@ -124,7 +124,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                       <h1 className="text-base font-semibold">
                         {edu?.instituteName} 
                       </h1>
-                      <p className="text-sm italic">{edu?.courseName} - {edu?.grade}</p>
+                      <p className="text-sm italic">{edu?.courseName} {edu?.grade && "-"} {edu?.grade}</p>
                     </div>
                     <div>
                       <p className="text-base text-right">
@@ -161,7 +161,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                       <div className="text-right">
                         {exp?.startYear && exp?.endYear && (
                           <p className="text-base ">
-                            {exp?.startMonth} {exp?.startYear} - {" "}
+                            {exp?.startMonth} {exp?.startYear} {(exp?.startYear || exp?.startMonth) &&  (exp?.endYear || exp?.endMonth) && "-"}
                             {exp?.endMonth} {exp?.endYear}
                           </p>
                         )}{" "}

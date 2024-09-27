@@ -4,6 +4,7 @@ import HeaderSkeleton from "@/components/HeaderSkeleton";
 import SectionInfo from "@/components/SectionInfo";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { EducationSection } from "@/types/templateTypes";
 import { useQuery } from "convex/react";
 import { useParams, useRouter } from "next/navigation";
 import React from "react";
@@ -25,6 +26,7 @@ const Page = () => {
     <>
       {resume?.sections?.map((item, idx) => {
         if (item?.type === "education") {
+          console.log(item)
           return (
             <div key={idx} className="mt-24 mx-16">
               <SectionInfo
@@ -32,7 +34,7 @@ const Page = () => {
                 text="Tell us about any colleges, vocational programs, or 
                 training courses you took. Even if you didn't finish, it's important to list them."
               />
-              <EducationForm resumeId={resumeId as Id<"resumes">} item={item} />
+              <EducationForm resumeId={resumeId as Id<"resumes">} item={item as EducationSection} />
             </div>
           );
         }

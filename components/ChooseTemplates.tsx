@@ -18,7 +18,7 @@ import PreviewModal from "./PreviewModal";
 import { cn } from "@/lib/utils";
 
 const ChooseTemplates = () => {
-
+  
   const { user } = useUser();
   const createUserResume = useMutation(api.resume.createUserResume);
   const router = useRouter();
@@ -64,7 +64,7 @@ const ChooseTemplates = () => {
         return (
           <div
             key={index}
-            className={cn("relative group inline-block w-[319px] h-[456px]")}
+            className={cn("relative group inline-block w-[319px] h-[449px]")}
           >
             <TemplateComponent obj={item as ResumeTemplate} isPreview={true} />
             <div className="absolute inset-0 w-full h-full p-10 flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
@@ -97,7 +97,7 @@ const ChooseSkeleton = () => {
         {[0, 1, 2].map((item, index) => (
           <Skeleton
             key={index}
-            className=" w-[319px] h-[456px] bg-slate-500/20"
+            className=" w-[319px] h-[449px] bg-slate-500/20"
           />
         ))}
       </div>
