@@ -16,6 +16,7 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import { usePreview } from "@/lib/use-preview";
 import PreviewModal from "./PreviewModal";
 import { cn } from "@/lib/utils";
+import React from "react";
 
 const ChooseTemplates = () => {
   

@@ -26,7 +26,6 @@ const Page = () => {
     <>
       {resume?.sections?.map((item, idx) => {
         if (item?.type === "education") {
-          console.log(item)
           return (
             <div key={idx} className="mt-24 mx-16">
               <SectionInfo

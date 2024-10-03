@@ -1,7 +1,16 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { ResumeTemplate } from "@/types/templateTypes";
-import { Github, Globe, Linkedin, Mail, PhoneCall } from "lucide-react";
+import {
+  Github,
+  Globe,
+  Link2,
+  Linkedin,
+  Mail,
+  Phone,
+  PhoneCall,
+  Twitter,
+} from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import {
@@ -21,6 +30,14 @@ export interface TemplateType {
 
 const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
   const sectionArray = obj?.sections?.map((item) => item.type);
+
+  const headerLogoMap: any = {
+    github: <Github size={18} className="mt-[2px]" />,
+    linkedin: <Linkedin size={18} className="mt-[2px]" />,
+    portfolio: <Globe size={18} className="mt-[2px]" />,
+    twitter: <Twitter size={18} className="mt-[2px]" />,
+    other: <Link2 size={18} className="mt-[2px]" />,
+  };
 
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div className=" overflow-hidden">
@@ -64,8 +81,6 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
             return (
               <div key={`header-section-${index}`}>
                 <div
-                  className={`border-b`}
-                  style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                 >
                   <h1
                     className={`text-4xl uppercase text-center font-bold`}
@@ -73,47 +88,42 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                   >
                     {headerContent?.firstName} {headerContent?.lastName}
                   </h1>
-                  <div className="flex items-center justify-center gap-4 flex-wrap pt-1 pb-2">
-                    {[
-                      {
-                        type: "email",
-                        icon: Mail,
-                        content: headerContent?.email,
-                      },
-                      {
-                        type: "phone",
-                        icon: PhoneCall,
-                        content: headerContent?.phone,
-                      },
-                      {
-                        type: "github",
-                        icon: Github,
-                        content: headerContent?.github,
-                      },
-                      {
-                        type: "linkedin",
-                        icon: Linkedin,
-                        content: headerContent?.linkedin,
-                      },
-                    ].map(
-                      (it, index) =>
-                        it.content && (
-                          <h1
-                            key={`contact-${it.type}-${index}`}
-                            className="flex items-center justify-center gap-1"
-                          >
-                            <it.icon size={16} />
-                            <span className="text-sm">{it.content}</span>
-                          </h1>
-                        )
+
+                  <div className="flex items-center flex-wrap justify-center gap-4 my-2">
+                    {headerContent.phone && (
+                      <div className="flex gap-1 items-center">
+                        <Phone size={18} className="mt-[2px]" />
+                        <p>{`${headerContent.phone}`} </p>
+                      </div>
                     )}
+                    {headerContent.email && (
+                      <div className="flex gap-1 items-center">
+                        <Mail size={18} className="mt-[2px]" />
+                        <p className="underline underline-offset-2">
+                          {`${headerContent.email}`}
+                        </p>
+                      </div>
+                    )}
+                    {headerContent.socialLinks.map((item) => {
+                      return (
+                        <div className="flex items-center justify-center gap-1">
+                          {headerLogoMap[item.type]}
+                          <a
+                            href={item.url}
+                            className="underline underline-offset-2"
+                          >
+                            {item.name}
+                          </a>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
                 {/* SUMMARY */}
                 <div
                   className={`py-2`}
-                  style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+                  style={{ borderTop: `1px solid ${primaryColorClass}` }}
                 >
                   <h1
                     className={`text-lg font-bold`}
@@ -137,7 +147,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
             return (
               <div
                 className={`py-2 `}
-                style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+                style={{ borderTop: `1px solid ${primaryColorClass}` }}
               >
                 {" "}
                 <h1
@@ -179,8 +189,8 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
             return (
               <div
-                className={`border-b py-2`}
-                style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+                className={`border-t py-2`}
+                style={{ borderTop: `1px solid ${primaryColorClass}` }}
               >
                 <h1
                   className={`text-lg font-bold `}
@@ -225,8 +235,8 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
             return (
               <>
                 <div
-                  className={`border-b py-2`}
-                  style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+                  className={`border-t py-2`}
+                  style={{ borderTop: `1px solid ${primaryColorClass}` }}
                   key={index}
                 >
                   <h1
@@ -285,8 +295,8 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
             return (
               <div
-                className={`py-2 `}
-                style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+                className={`py-2 border-t`}
+                style={{ borderTop: `1px solid ${primaryColorClass}` }}
                 key={index}
               >
                 {" "}
@@ -318,7 +328,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                   <div
                     key={`custom-${index}-${item.content.sectionTitle}`}
                     className={`py-2`}
-                    style={{ borderBottom: `1px solid ${primaryColorClass}` }}
+                    style={{ borderTop: `1px solid ${primaryColorClass}` }}
                   >
                     <h1
                       className={`text-lg font-bold`}

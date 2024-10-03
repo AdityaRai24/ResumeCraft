@@ -8,8 +8,7 @@ export const allSectionFields: any = {
     lastName: "",
     email: "",
     phone: "",
-    github: "",
-    linkedin: "",
+    socialLinks: [],
     summary: "",
     location: "",
     photo: undefined,
@@ -88,8 +87,7 @@ export const templateStructures: any = {
         "lastName",
         "email",
         "phone",
-        "github",
-        "linkedin",
+        "socialLinks",
         "summary",
       ],
       orderNumber: 0,
@@ -118,7 +116,7 @@ export const templateStructures: any = {
   Template2: [
     {
       type: "header",
-      fields: ["firstName", "lastName", "email", "phone", "github", "linkedin"],
+      fields: ["firstName", "lastName", "email", "phone", "socialLinks"],
       orderNumber: 0,
       isVisible: true,
     },

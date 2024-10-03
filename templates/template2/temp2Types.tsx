@@ -1,4 +1,4 @@
-
+import { SocialLink } from "@/types/templateTypes";
 
 
 export type HeaderContent = {
@@ -6,8 +6,7 @@ export type HeaderContent = {
   lastName: string;
   phone?: string;
   email?: string;
-  linkedin?: string;
-  github?: string;
+  socialLinks : SocialLink[]
 };
 
 export type EducationContent = {

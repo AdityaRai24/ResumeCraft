@@ -15,16 +15,30 @@ import { motion } from "framer-motion";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { HeaderSection } from "@/types/templateTypes";
+import {
+  Github,
+  Globe,
+  Link,
+  Linkedin,
+  Plus,
+  Twitter,
+  XIcon,
+} from "lucide-react";
+
+interface SocialLink {
+  type: string;
+  name: string;
+  url: string;
+}
 
 interface HeaderContent {
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
-  github: string;
-  linkedin: string;
   location: string;
   summary: string;
+  socialLinks: SocialLink[];
 }
 
 const initialHeader: HeaderContent = {
@@ -32,10 +46,9 @@ const initialHeader: HeaderContent = {
   lastName: "",
   email: "",
   phone: "",
-  github: "",
-  linkedin: "",
   location: "",
   summary: "",
+  socialLinks: [],
 };
 
 const HeaderForm = ({
@@ -46,6 +59,9 @@ const HeaderForm = ({
   item: HeaderSection;
 }) => {
   const [header, setHeader] = useState<HeaderContent>(initialHeader);
+  const [activeLink, setActiveLink] = useState("");
+  const [activeLinkValue, setActiveLinkValue] = useState("");
+
   const update = useMutation(api.resume.updateHeader);
   const pendingChangesRef = useRef(false);
 
@@ -78,6 +94,64 @@ const HeaderForm = ({
     },
     [debouncedUpdate]
   );
+
+  const handleSocialChange = useCallback(
+    (index: number, name: string, value: string) => {
+      pendingChangesRef.current = true;
+      setHeader((prevHeader) => {
+        const newSocialLinks = [...prevHeader.socialLinks];
+        newSocialLinks[index] = { ...newSocialLinks[index], [name]: value };
+        const newHeader = { ...prevHeader, socialLinks: newSocialLinks };
+        debouncedUpdate(newHeader);
+        return newHeader;
+      });
+    },
+    [debouncedUpdate]
+  );
+
+  const handleAddSocialLink = useCallback(
+    (type: string) => {
+      pendingChangesRef.current = true;
+      setHeader((prevHeader) => {
+        const existingLink = prevHeader.socialLinks.find(
+          (link) => link.type === type && link.type !== "other"
+        );
+        if (existingLink) {
+          return prevHeader;
+        }
+        const newSocialLinks = [
+          ...prevHeader.socialLinks,
+          { type, name: "", url: "" },
+        ];
+        const newHeader = { ...prevHeader, socialLinks: newSocialLinks };
+        debouncedUpdate(newHeader);
+        return newHeader;
+      });
+    },
+    [debouncedUpdate]
+  );
+
+  const handleRemoveSocialLink = useCallback(
+    (index: number) => {
+      pendingChangesRef.current = true;
+      setHeader((prevHeader) => {
+        const newSocialLinks = [...prevHeader.socialLinks];
+        const filteredArray = newSocialLinks.filter((_, i) => i !== index);
+        const newHeader = { ...prevHeader, socialLinks: filteredArray };
+        debouncedUpdate(newHeader);
+        return newHeader;
+      });
+    },
+    [debouncedUpdate]
+  );
+
+  const socialOptions = [
+    { value: "github", label: "GitHub", icon: Github },
+    { value: "linkedin", label: "LinkedIn", icon: Linkedin },
+    { value: "portfolio", label: "Portfolio", icon: Globe },
+    { value: "twitter", label: "Twitter", icon: Twitter },
+    { value: "other", label: "Other", icon: Link },
+  ];
 
   return (
     <>
@@ -115,23 +189,57 @@ const HeaderForm = ({
             placeholder="9876543210"
             type="tel"
           />
-          <InputField
-            label="Github Username"
-            name="github"
-            value={header.github}
-            onChange={handleChange}
-            placeholder="JohnDoe56"
-            type="text"
-          />
-          <InputField
-            label="Linkedin"
-            name="linkedin"
-            value={header.linkedin}
-            onChange={handleChange}
-            placeholder="linkedin.com/JohnDoe56"
-            type="text"
-          />
         </div>
+
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold mb-2">Social Links</h3>
+          {header?.socialLinks?.map((link, index) => (
+            <div key={link.type} className="mb-4 flex items-center gap-6">
+              <InputField
+                label={link.type}
+                name={`socialLinks`}
+                value={link.name}
+                onChange={(e) =>
+                  handleSocialChange(index, "name", e.target.value)
+                }
+                placeholder={`Enter ${link.type}`}
+              />
+              <InputField
+                label="URL"
+                name={`socialLinks`}
+                value={link.url}
+                onChange={(e) =>
+                  handleSocialChange(index, "url", e.target.value)
+                }
+                placeholder={`Enter your ${link.type} URL`}
+              />
+              <button
+                type="button"
+                className="mb-8"
+                onClick={() => handleRemoveSocialLink(index)}
+              >
+                <XIcon className="w-5 h-5" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-start gap-4 my-4 flex-wrap">
+          {socialOptions.map((option) => (
+            <span
+              key={option.value}
+              onClick={() => handleAddSocialLink(option.value)}
+              className={`flex items-center gap-2 bg-[#FFF5F5] shadow-sm shadow-primary/40 cursor-pointer border-2 ${
+                header?.socialLinks?.some((link) => link.type === option.value)
+                  ? "border-primary/60"
+                  : "border-transparent hover:border-primary/60"
+              } transition duration-300 ease rounded-lg p-2`}
+            >
+              <Plus className="w-5 h-5" /> {option.label}
+            </span>
+          ))}
+        </div>
+
         {item?.content?.summary !== undefined && (
           <div className="mt-8 w-[85%] ">
             <QuillEditorComponent
@@ -172,7 +280,7 @@ const InputField: React.FC<InputFieldProps> = ({
     transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
     className="flex flex-col justify-center gap-2"
   >
-    <Label htmlFor={name} className="text-md">
+    <Label htmlFor={name} className="text-base font-normal capitalize">
       {label}
       {required && "*"}
     </Label>

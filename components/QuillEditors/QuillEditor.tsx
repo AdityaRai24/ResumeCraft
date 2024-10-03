@@ -42,7 +42,7 @@ export default function QuillEditorComponent({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
     >
-      <Label>{label}</Label>
+      <Label className="text-base font-normal">{label}</Label>
       <QuillEditor
         value={value}
         onChange={onChange}
