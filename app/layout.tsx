@@ -5,6 +5,8 @@ import { Toaster } from "react-hot-toast";
 import { poppinsFont } from "@/lib/font";
 import ScreenProvider from "@/providers/ScreenProvider";
 import React from "react";
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export const metadata: Metadata = {
   title: "Resume Craft",
@@ -21,6 +23,8 @@ export default function RootLayout({
       <body className={poppinsFont.className}>
         <ConvexAndClerk>
           <ScreenProvider>
+            <Analytics />
+            <SpeedInsights />
             {" "}
             <Toaster />
             {children}
