@@ -1,6 +1,16 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Github, Globe, Linkedin } from "lucide-react";
+import {
+  Github,
+  Globe,
+  Globe2,
+  Link2,
+  Linkedin,
+  Mail,
+  MessageCircle,
+  Phone,
+  Twitter,
+} from "lucide-react";
 import React from "react";
 import {
   HeaderContent,
@@ -53,6 +63,14 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
     new Set(sortedSections.map((item) => item.type))
   );
 
+  const headerLogoMap: any = {
+    github: <Github size={18} className="mt-[2px]" />,
+    linkedin: <Linkedin size={18} className="mt-[2px]" />,
+    portfolio: <Globe size={18} className="mt-[2px]" />,
+    twitter: <Twitter size={18} className="mt-[2px]" />,
+    other: <Link2 size={18} className="mt-[2px]" />,
+  };
+
   const renderSection = (type: string) => {
     return obj?.sections?.map((item, index) => {
       if (item.type === type) {
@@ -68,36 +86,34 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                 >
                   {headerContent.firstName} {headerContent.lastName}
                 </h1>
-                <div className="flex items-center justify-center gap-2">
-                  {headerContent.phone && <p>{`${headerContent.phone} |`} </p>}
+                <div className="flex items-center flex-wrap justify-center gap-4 mt-2">
+                  {headerContent.phone && (
+                    <div className="flex gap-1 items-center">
+                      <Phone size={18} className="mt-[2px]"/>
+                      <p>{`${headerContent.phone}`} </p>
+                    </div>
+                  )}
                   {headerContent.email && (
-                    <p className="underline underline-offset-2">
-                      {`${headerContent.email} |`}
-                    </p>
-                  )}
-                  {headerContent.linkedin && (
-                    <div className="flex items-center justify-center gap-1">
-                      <Linkedin size={20} />
-                      <a
-                        href={`https://linkedin.com/${headerContent.linkedin}`}
-                        className="underline underline-offset-2"
-                      >
-                        {headerContent.linkedin}
-                      </a>{" "}
-                      |
+                    <div className="flex gap-1 items-center">
+                      <Mail size={18} className="mt-[2px]" />
+                      <p className="underline underline-offset-2">
+                        {`${headerContent.email}`}
+                      </p>
                     </div>
                   )}
-                  {headerContent.github && (
-                    <div className="flex items-center justify-center gap-1">
-                      <Github size={20} />
-                      <a
-                        href={`https://github.com/${headerContent.github}`}
-                        className="underline underline-offset-2"
-                      >
-                        {headerContent.github}
-                      </a>
-                    </div>
-                  )}
+                  {headerContent.socialLinks.map((item) => {
+                    return (
+                      <div className="flex items-center justify-center gap-1">
+                        {headerLogoMap[item.type]}
+                        <a
+                          href={item.url}
+                          className="underline underline-offset-2"
+                        >
+                          {item.name}
+                        </a>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             );
@@ -122,9 +138,11 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                   >
                     <div>
                       <h1 className="text-base font-semibold">
-                        {edu?.instituteName} 
+                        {edu?.instituteName}
                       </h1>
-                      <p className="text-sm italic">{edu?.courseName} {edu?.grade && "-"} {edu?.grade}</p>
+                      <p className="text-sm italic">
+                        {edu?.courseName} {edu?.grade && "-"} {edu?.grade}
+                      </p>
                     </div>
                     <div>
                       <p className="text-base text-right">
@@ -161,7 +179,10 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                       <div className="text-right">
                         {exp?.startYear && exp?.endYear && (
                           <p className="text-base ">
-                            {exp?.startMonth} {exp?.startYear} {(exp?.startYear || exp?.startMonth) &&  (exp?.endYear || exp?.endMonth) && "-"}
+                            {exp?.startMonth} {exp?.startYear}{" "}
+                            {(exp?.startYear || exp?.startMonth) &&
+                              (exp?.endYear || exp?.endMonth) &&
+                              "-"}
                             {exp?.endMonth} {exp?.endYear}
                           </p>
                         )}{" "}

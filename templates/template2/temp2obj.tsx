@@ -10,8 +10,13 @@ export const temp2Obj: ResumeTemplate = {
         email: "john.doe@example.com",
         firstName: "John",
         lastName: "Doe",
-        github: "johndoe",
-        linkedin: "john-doe",
+        socialLinks : [
+          {
+            type: "github",
+            name : "JohnDoe",
+            url : "https://github.com/JohnDoe",
+          }
+        ],
         location: "New York, NY",
         phone: "+1-555-123-4567",
         photo: "",
@@ -90,8 +95,8 @@ export const temp2Obj: ResumeTemplate = {
             startYear: "2024",
             endYear: "2024",
             workingHere: false,
-            endMonth: undefined,
-            startMonth: undefined,
+            endMonth: "",
+            startMonth: "",
           },
           {
             companyName: "Web Innovations LLC",
@@ -102,8 +107,8 @@ export const temp2Obj: ResumeTemplate = {
             startYear: "2024",
             endYear: "2024",
             workingHere: false,
-            endMonth: undefined,
-            startMonth: undefined,
+            endMonth: "",
+            startMonth: "",
           },
         ],
       },

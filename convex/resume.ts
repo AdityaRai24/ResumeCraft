@@ -4,6 +4,7 @@ import {
   createSection,
   templateStructures,
 } from "@/templates/templateStructures";
+import { ResumeTemplate, SocialLink } from "@/types/templateTypes";
 
 export const getTemplates = query({
   args: {},
@@ -35,8 +36,15 @@ export const updateHeader = mutation({
       lastName: v.optional(v.string()),
       email: v.string(),
       phone: v.optional(v.string()),
-      github: v.optional(v.string()),
-      linkedin: v.optional(v.string()),
+      socialLinks: v.optional(
+        v.array(
+          v.object({
+            name: v.string(),
+            url: v.string(),
+            type: v.string(),
+          })
+        )
+      ),
       location: v.optional(v.string()),
       summary: v.optional(v.string()),
     }),
@@ -594,5 +602,63 @@ export const reorderSections = mutation({
       sections: args.updatedSections,
     });
     return updatedResume;
+  },
+});
+
+export const migrateResumes = mutation({
+  args: {},
+  handler: async (ctx, args) => {
+    const resumes = await ctx.db.query("resumes").collect();
+
+    for (const resume of resumes) {
+      const oldHeader: any = resume.sections.find(
+        (section) => section.type === "header"
+      );
+
+      if (oldHeader) {
+        const socialLinks: SocialLink[] = [];
+
+        if (oldHeader.content.github) {
+          socialLinks.push({
+            name: "GitHub",
+            type: "github",
+            url: `https://github.com/${oldHeader.content.github}`,
+          });
+        }
+
+        if (oldHeader.content.linkedin) {
+          socialLinks.push({
+            name: "LinkedIn",
+            type: "linkedin",
+            url: oldHeader.content.linkedin,
+          });
+        }
+
+        const newHeader = {
+          ...oldHeader,
+          content: {
+            email: oldHeader.content.email,
+            firstName: oldHeader.content.firstName,
+            lastName: oldHeader.content.lastName,
+            phone: oldHeader.content.phone,
+            socialLinks,
+          },
+        };
+
+        if (oldHeader.content.summary) {
+          newHeader.content.summary = oldHeader.content.summary;
+        }
+
+        resume.sections = resume.sections.map((section) =>
+          section.type === "header" ? newHeader : section
+        );
+
+        await ctx.db.patch(resume._id, {
+          sections: resume.sections,
+        });
+      }
+    }
+
+    return resumes;
   },
 });

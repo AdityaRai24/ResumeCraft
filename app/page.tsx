@@ -6,8 +6,29 @@ import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
 import { geologicaFont, poppinsFont } from "@/lib/font";
 import { ArrowRight, ChevronRight } from "lucide-react";
+import React, { useEffect, useRef } from "react";
+import { migrateResumes } from "@/convex/resume";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export default function Home() {
+  
+  // const oneTimeRef = useRef(false);
+  // const migration = useMutation(api.resume.migrateResumes);
+
+  // useEffect(() => {
+  //   if (!oneTimeRef.current) {
+  //     const promise = migration()
+  //       .then((res) => {
+  //         console.log(res, "yes");
+  //       })
+  //       .catch((err) => {
+  //         console.log(err, "no");
+  //       });
+  //     oneTimeRef.current = true;
+  //   }
+  // }, []);
+
   return (
     <>
       <Navbar />
@@ -53,9 +74,14 @@ export default function Home() {
             </Link>
           </motion.div>
         </div>
+        <Button>Migrate Resumes</Button>
       </motion.div>
       <div className="">
-        <img src="./image.png" alt="" className="block w-[80%] border-2 rounded-lg cursor-pointer border-primary mx-auto" />
+        <img
+          src="./image.png"
+          alt=""
+          className="block w-[80%] border-2 rounded-lg cursor-pointer border-primary mx-auto"
+        />
       </div>
     </>
   );

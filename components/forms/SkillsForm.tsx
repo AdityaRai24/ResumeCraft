@@ -95,7 +95,6 @@ const SkillsForm = ({
 
   const handleSetDescription = (descriptions: string[]) => {
     const combinedDescription = descriptions.join("<br />");
-    console.log(combinedDescription)
     setSkillDescription(combinedDescription);
   };
 

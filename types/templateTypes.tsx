@@ -12,6 +12,12 @@ interface BaseSection {
   style?: Record<string, any>;
 }
 
+export interface SocialLink {
+  type: string;
+  name: string;
+  url: string;
+}
+
 export interface HeaderSection extends BaseSection {
   type: "header";
   content: {
@@ -20,10 +26,9 @@ export interface HeaderSection extends BaseSection {
     email: string;
     phone?: string;
     location?: string;
-    github?: string;
-    linkedin?: string;
     summary?: string;
     photo?: string;
+    socialLinks : SocialLink[]
   };
   isVisible: boolean;
   orderNumber: number;
