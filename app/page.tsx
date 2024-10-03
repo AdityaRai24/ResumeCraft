@@ -13,21 +13,21 @@ import { api } from "@/convex/_generated/api";
 
 export default function Home() {
   
-  // const oneTimeRef = useRef(false);
-  // const migration = useMutation(api.resume.migrateResumes);
+  const oneTimeRef = useRef(false);
+  const migration = useMutation(api.resume.migrateResumes);
 
-  // useEffect(() => {
-  //   if (!oneTimeRef.current) {
-  //     const promise = migration()
-  //       .then((res) => {
-  //         console.log(res, "yes");
-  //       })
-  //       .catch((err) => {
-  //         console.log(err, "no");
-  //       });
-  //     oneTimeRef.current = true;
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!oneTimeRef.current) {
+      const promise = migration()
+        .then((res) => {
+          console.log(res, "yes");
+        })
+        .catch((err) => {
+          console.log(err, "no");
+        });
+      oneTimeRef.current = true;
+    }
+  }, []);
 
   return (
     <>
@@ -74,7 +74,6 @@ export default function Home() {
             </Link>
           </motion.div>
         </div>
-        <Button>Migrate Resumes</Button>
       </motion.div>
       <div className="">
         <img
