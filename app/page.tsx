@@ -35,7 +35,7 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <div className="flex items-center justify-between max-w-[90%] mx-auto">
+      <div className="flex items-center justify-between max-w-[85%] mx-auto">
         <motion.div
           variants={container}
           initial="hidden"
@@ -95,7 +95,7 @@ export default function Home() {
             </motion.div>
           </div>
         </motion.div>
-        <motion.div className="fixed top-24 -right-[540px] -rotate-2">
+        <motion.div className="fixed top-24 -right-[38%] -rotate-2">
           <Template2 isLive isPreview obj={temp2Obj} />
         </motion.div>
       </div>
