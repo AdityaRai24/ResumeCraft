@@ -10,12 +10,12 @@ export const temp2Obj: ResumeTemplate = {
         email: "john.doe@example.com",
         firstName: "John",
         lastName: "Doe",
-        socialLinks : [
+        socialLinks: [
           {
             type: "github",
-            name : "JohnDoe",
-            url : "https://github.com/JohnDoe",
-          }
+            name: "JohnDoe",
+            url: "https://github.com/JohnDoe",
+          },
         ],
         location: "New York, NY",
         phone: "+1-555-123-4567",
@@ -119,7 +119,8 @@ export const temp2Obj: ResumeTemplate = {
     },
     {
       content: {
-        description: "ADitya",
+        description:
+          "<p><strong>Frontend :</strong> HTML5, CSS3, JavaScript (ES6+), TypeScript, React.js, Next.js, Redux, Tailwind CSS, Bootstrap, Responsive Design, Flexbox, CSS Grid, Webpack, Babel.</p><p><strong>Backend :</strong> Node.js, Express.js, REST APIs, GraphQL, Authentication (JWT, OAuth), MongoDB, Mongoose, PostgreSQL, WebSockets (Socket.io), Real-Time Data.</p><p><strong>DevOps:</strong> Docker, Kubernetes, AWS (S3, EC2, Lambda), DigitalOcean, CI/CD Pipelines (GitHub Actions, Jenkins), Nginx, Apache, PM2.</p><p>",
       },
       style: {},
       isVisible: true,

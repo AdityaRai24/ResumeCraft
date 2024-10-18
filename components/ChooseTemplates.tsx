@@ -100,7 +100,7 @@ const ChooseSkeleton = () => {
         {[0, 1, 2].map((item, index) => (
           <Skeleton
             key={index}
-            className=" w-[319px] h-[449px] bg-slate-500/20"
+            className=" w-[295px] h-[415px] bg-slate-500/20"
           />
         ))}
       </div>
