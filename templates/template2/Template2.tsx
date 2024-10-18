@@ -39,7 +39,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
           "transform origin-top-left scale-[1] ",
           isLive &&
             "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
-          isPreview && !isLive && "scale-[0.4]"
+          isPreview && !isLive && "scale-[0.37]"
         )}
       >
         {children}
@@ -117,7 +117,6 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                 </div>
               </div>
             );
-
           case "education":
             const educationContent = item.content as EducationContent;
 
@@ -149,14 +148,13 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                         {edu?.location && edu?.location}
                       </p>
                       <p className="text-sm text-right italic">
-                        {`${edu?.startMonth ? `${edu.startMonth} ` : ""}${edu?.startYear ? edu.startYear : ""}${!edu?.studyingHere && edu?.endMonth && edu?.endYear ? ` - ${edu.endMonth} ${edu.endYear}` : edu?.studyingHere ? " - Present" : ""}`}
+                        {`${edu?.startMonth ? `${edu.startMonth} ` : ""}${edu?.startYear ? edu.startYear : ""}${!edu?.studyingHere && (edu?.endMonth || edu?.endYear) ? ` - ${edu.endMonth} ${edu.endYear}` : edu?.studyingHere ? " - Present" : ""}`}
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
             );
-
           case "experience":
             const experienceContent = item.content as ExperienceContent;
             return (
@@ -202,7 +200,6 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                 ))}
               </div>
             );
-
           case "skills":
             const skillsContent = item as SkillsContent;
 
@@ -227,7 +224,6 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                 />
               </div>
             );
-
           case "projects":
             const projectContent = item.content as ProjectContent;
             return (
@@ -277,7 +273,6 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                 ))}
               </div>
             );
-
           case "custom":
             return sortedSections.map((item, index) => {
               if (item.type === "custom") {

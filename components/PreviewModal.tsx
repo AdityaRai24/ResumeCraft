@@ -15,7 +15,6 @@ import {
 } from "@/templates/templateStructures";
 
 const PreviewModal = () => {
-  
   const preview = usePreview();
 
   const TemplateComponent: TemplateComponentType | null =

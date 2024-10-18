@@ -52,7 +52,7 @@ const ChooseTemplates = () => {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-6 mt-5">
+    <div className="grid grid-cols-3 gap-6 mt-2">
       {templates?.map((item, index) => {
         const TemplateComponent: TemplateComponentType =
           templateComponents[item.templateName];
@@ -67,14 +67,14 @@ const ChooseTemplates = () => {
         return (
           <div
             key={index}
-            className={cn("relative group inline-block w-[319px] h-[449px]")}
+            className={cn("relative group inline-block w-[295px] h-[415px]")}
           >
             <TemplateComponent obj={item as ResumeTemplate} isPreview={true} />
             <div className="absolute inset-0 w-full h-full p-10 flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
               <Button
                 onClick={() => preview.onOpen(item as ResumeTemplate)}
                 className="py-2 px-5 flex items-center justify-center gap-2"
-              >
+            >
                 <p>Preview</p> <Eye />
               </Button>
               <Button
