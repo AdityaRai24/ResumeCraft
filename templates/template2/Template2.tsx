@@ -79,7 +79,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
             const headerContent = item.content as HeaderContent;
 
             return (
-              <div key={index}>
+              <div key={index} className={item.isVisible ? "block" : "hidden"}>
                 <h1
                   className="text-4xl text-center font-semibold"
                   style={{ color: primaryTextColorClass }}
@@ -89,7 +89,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                 <div className="flex items-center flex-wrap justify-center gap-4 mt-2">
                   {headerContent.phone && (
                     <div className="flex gap-1 items-center">
-                      <Phone size={18} className="mt-[2px]"/>
+                      <Phone size={18} className="mt-[2px]" />
                       <p>{`${headerContent.phone}`} </p>
                     </div>
                   )}
@@ -122,7 +122,7 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
             const educationContent = item.content as EducationContent;
 
             return (
-              <div className="mt-2">
+              <div className={`mt-2 ${item.isVisible ? "block" : "hidden"}`}>
                 <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
                   <h1
                     className="text-lg"
@@ -160,7 +160,10 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
           case "experience":
             const experienceContent = item.content as ExperienceContent;
             return (
-              <div className="mt-2">
+              <div
+                className={`mt-2 ${item.isVisible ? "block" : "hidden"}`}
+                key={index}
+              >
                 <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
                   <h1
                     className="text-lg"
@@ -204,7 +207,10 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
             const skillsContent = item as SkillsContent;
 
             return (
-              <div className={`mt-2`} key={index}>
+              <div
+                className={`mt-2 ${item.isVisible ? "block" : "hidden"}`}
+                key={index}
+              >
                 <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
                   <h1
                     className="text-lg"
@@ -225,7 +231,10 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
           case "projects":
             const projectContent = item.content as ProjectContent;
             return (
-              <div className="mt-2">
+              <div
+                className={`mt-2 ${item.isVisible ? "block" : "hidden"}`}
+                key={index}
+              >
                 <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
                   <h1
                     className="text-lg"
@@ -277,7 +286,8 @@ const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
                 return (
                   <>
                     <div
-                      className="mt-2"
+                      className={`mt-2 ${item.isVisible ? "block" : "hidden"}`}
+                      key={index}
                       style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                     >
                       <h1

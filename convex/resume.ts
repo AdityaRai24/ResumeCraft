@@ -5,7 +5,7 @@ import {
   templateStructures,
 } from "@/templates/templateStructures";
 import { ResumeTemplate, SocialLink } from "@/types/templateTypes";
-import {productionData} from "@/data.js"
+import { productionData } from "@/data.js";
 
 export const getTemplates = query({
   args: {},
@@ -661,5 +661,40 @@ export const migrateResumes = mutation({
     }
 
     return resumes;
+  },
+});
+
+export const hideSection = mutation({
+  args: {
+    id: v.id("resumes"),
+    sectionId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Resume not found");
+    }
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if (identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const resumeSections = resume?.sections;
+    let index = resumeSections.findIndex((item) => item.type === args.sectionId);
+    if (index === -1) {
+      throw new Error("Something went wrong index");
+    } else {
+      resumeSections[index].isVisible = !resumeSections[index].isVisible;
+    }
+
+    const updatedResume = await ctx.db.patch(args.id, {
+      sections: resumeSections,
+    });
+
+    return updatedResume;
   },
 });
