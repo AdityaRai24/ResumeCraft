@@ -41,10 +41,11 @@ export default function QuillProjectEditor({
     toolbar: [
       ["bold", "italic", "underline"],
       [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
     ],
   };
 
-  const quillFormats = ["bold", "italic", "underline", "list", "bullet"];
+  const quillFormats = ["bold", "italic", "underline", "list", "bullet","link"];
 
   const handleGenerate = async () => {
     try {

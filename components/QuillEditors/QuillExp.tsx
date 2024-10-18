@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.snow.css";
 import { motion } from "framer-motion";
-import { Loader2, WandSparkles } from "lucide-react";
+import { LinkIcon, Loader2, WandSparkles } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -43,10 +43,11 @@ export default function QuillExpEditor({
     toolbar: [
       ["bold", "italic", "underline"],
       [{ list: "ordered" }, { list: "bullet" }],
+      ["link"], // Add link button to toolbar
     ],
   };
 
-  const quillFormats = ["bold", "italic", "underline", "list", "bullet"];
+  const quillFormats = ["bold", "italic", "underline", "list", "bullet","link"];
 
   const handleGenerate = async () => {
     try {
@@ -88,6 +89,9 @@ export default function QuillExpEditor({
       <div className="flex items-center justify-between">
         <Label className="text-md">{label}</Label>
 
+
+       <div className="flex gap-2">
+     
         <Button
           type="button"
           onClick={() => {
@@ -100,6 +104,7 @@ export default function QuillExpEditor({
         >
           Magic Write <WandSparkles className="ml-2" size={14} />
         </Button>
+       </div>
 
         <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
           <DialogContent className="!max-w-lg">
