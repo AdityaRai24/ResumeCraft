@@ -71,8 +71,7 @@ const Page = () => {
             My Resumes
           </h1>
           <p className="text-[15px] text-gray-600">
-            Select a template and contine building your
-            perfect resume.
+            Select a template and contine building your perfect resume.
           </p>
         </div>{" "}
       </div>
@@ -125,10 +124,10 @@ const Page = () => {
                   <p>Select</p> <Edit />
                 </Button>
               </div>
-              <PreviewModal />
             </div>
           );
         })}
+        <PreviewModal />
       </div>
     </div>
   );
