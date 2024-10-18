@@ -46,7 +46,8 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
           "transform origin-top-left scale-[1] ",
           isLive &&
             "flex items-center justify-center w-[1122px] h-full scale-[0.5]",
-          isPreview && !isLive && "scale-[0.4]"
+          isPreview && !isLive && "scale-[0.37]",
+          !isPreview && !isLive && "scale-[0.8]"
         )}
       >
         {children}
@@ -174,8 +175,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                         <div>
                           {edu?.startYear && edu?.endYear && (
                             <h1 className="font-bold text-sm">
-                              {edu?.startMonth} {edu?.startYear} -{" "}
-                              {edu?.endMonth} {edu?.endYear}
+                              {`${edu?.startMonth ? `${edu.startMonth} ` : ""}${edu?.startYear ? edu.startYear : ""}${!edu?.studyingHere && (edu?.endMonth || edu?.endYear) ? ` - ${edu.endMonth} ${edu.endYear}` : edu?.studyingHere ? " - Present" : ""}`}
                             </h1>
                           )}
                         </div>
@@ -362,7 +362,8 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
         isPreview &&
           "select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
         isLive && "w-[210mm] h-[297mm]",
-        isPreview && !isLive && "w-[795px] h-[1122px]"
+        isPreview && !isLive && "w-[795px] h-[1122px]",
+        !isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >
       <div>
