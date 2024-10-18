@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 
 const ChooseTemplates = () => {
+  
   const { user } = useUser();
   const createUserResume = useMutation(api.resume.createUserResume);
   const router = useRouter();
@@ -31,9 +32,9 @@ const ChooseTemplates = () => {
   if (templates === undefined) {
     return <ChooseSkeleton />;
   }
-  if (!user) {
+  if (!user){
     return redirect("/sign-up");
-  }
+  };
 
   const selectResume = async (id: Id<"resumes">, templateName: string) => {
     const promise = createUserResume({
@@ -52,25 +53,28 @@ const ChooseTemplates = () => {
 
   return (
     <div className="grid grid-cols-3 gap-6 mt-2">
-      {templates?.map((item: any, index) => {
+      {templates?.map((item, index) => {
         const TemplateComponent: TemplateComponentType =
           templateComponents[item.templateName];
 
         if (!TemplateComponent) {
-          return <div key={index}>Something went wronng...</div>;
+          console.error(
+            `No component found for template: ${item.templateName}`
+          );
+          return null;
         }
 
         return (
           <div
             key={index}
-            className={cn("relative group inline-block  w-[295px] h-[415px]")}
+            className={cn("relative group inline-block w-[295px] h-[415px]")}
           >
             <TemplateComponent obj={item as ResumeTemplate} isPreview={true} />
             <div className="absolute inset-0 w-full h-full p-10 flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
               <Button
                 onClick={() => preview.onOpen(item as ResumeTemplate)}
                 className="py-2 px-5 flex items-center justify-center gap-2"
-              >
+            >
                 <p>Preview</p> <Eye />
               </Button>
               <Button
@@ -84,7 +88,6 @@ const ChooseTemplates = () => {
           </div>
         );
       })}
-
       <PreviewModal />
     </div>
   );

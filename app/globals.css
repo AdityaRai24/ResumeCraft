@@ -107,9 +107,6 @@
     padding: 0;
     box-sizing: border-box;
   }
-  .resume-container {
-    scale : 2;
-  }
 }
 
 @page{

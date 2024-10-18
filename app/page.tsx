@@ -3,14 +3,34 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { container } from "@/lib/motion";
-import { poppinsFont } from "@/lib/font";
-import { ArrowRight, Check } from "lucide-react";
-import React, {  } from "react";
+import { container, item } from "@/lib/motion";
+import { geologicaFont, poppinsFont } from "@/lib/font";
+import { ArrowRight, Check, ChevronRight } from "lucide-react";
+import React, { useEffect, useRef } from "react";
+import { migrateResumes } from "@/convex/resume";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import Template1 from "@/templates/template1/Template1";
 import { temp2Obj } from "@/templates/template2/temp2obj";
+import temp1Obj from "@/templates/template1/temp1obj";
 import Template2 from "@/templates/template2/Template2";
 
 export default function Home() {
+  const oneTimeRef = useRef(false);
+  const migration = useMutation(api.resume.migrateResumes);
+
+  useEffect(() => {
+    if (!oneTimeRef.current) {
+      const promise = migration()
+        .then((res) => {
+          console.log(res, "yes");
+        })
+        .catch((err) => {
+          console.log(err, "no");
+        });
+      oneTimeRef.current = true;
+    }
+  }, []);
 
   return (
     <>
@@ -68,8 +88,7 @@ export default function Home() {
 
             <motion.div  className="flex items-center gap-8">
               <Link href={"/build-resume/steps"}>
-                <Button 
-                className="py-[34px] px-8 hover:scale-[1.03] text-base flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
+                <Button className="py-[34px] px-8 hover:scale-[1.03] text-base flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
                   Create Free Resume <ArrowRight size={18} />
                 </Button>
               </Link>
