@@ -71,12 +71,12 @@ const Page = () => {
             My Resumes
           </h1>
           <p className="text-[15px] text-gray-600">
-            Start with a solid foundation — select a template and build your
+            Select a template and contine building your
             perfect resume.
           </p>
         </div>{" "}
       </div>
-      <div className="max-w-[85%] mx-auto flex gap-6">
+      <div className="max-w-[85%] mx-auto flex flex-wrap gap-6">
         {templates?.map((item, index) => {
           const TemplateComponent = templateComponents[item?.templateName];
 
@@ -136,7 +136,7 @@ const Page = () => {
 
 const ChooseSkeleton = () => {
   return (
-    <div className="flex flex-col mt-8 mb-6">
+    <div className="flex flex-col flex-wrap mt-8 mb-6">
       <div className="flex flex-col gap-2">
         <Skeleton className="w-[250px] h-[30px] bg-slate-500/20 font-medium tracking-normal pt-3 pb-1"></Skeleton>
         <Skeleton className="w-[500px] h-[30px]  bg-slate-500/20 text-gray-600"></Skeleton>

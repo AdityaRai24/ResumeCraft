@@ -5,6 +5,7 @@ import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { geologicaFont, poppinsFont } from "@/lib/font";
+import { Skeleton } from "./ui/skeleton";
 
 const Navbar = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -26,7 +27,11 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {!isLoaded && <h1>Loading...</h1>}
+        {!isLoaded && <div className="flex items-center justify-center gap-2">
+            <Skeleton className="w-[120px] h-[32px] bg-slate-500/20"/>
+            <Skeleton className="w-[100px] h-[32px] bg-slate-500/20"/>
+            <Skeleton className="w-[38px] h-[38px] rounded-full bg-slate-500/20 "/>
+          </div>}
         {isSignedIn && (
           <div className="flex items-center gap-4">
             <Button
