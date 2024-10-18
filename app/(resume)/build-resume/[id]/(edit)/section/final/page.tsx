@@ -11,7 +11,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import SortableList, { SortableItem } from "react-easy-sort";
 import { arrayMoveImmutable } from "array-move";
 
@@ -42,28 +42,44 @@ const Page = () => {
   const updatePC = useMutation(api.resume.updateColorPC);
   const updateFont = useMutation(api.resume.updateFont);
 
+  const hideSection = useMutation(api.resume.hideSection);
+
+  const toggleSectionVisibility = (sectionId: string) => {
+    hideSection({ id: resumeId as Id<"resumes">, sectionId: sectionId });
+  };
+
   useEffect(() => {
     if (resume?.sections) {
-      const mainSections = resume.sections.filter(item => item.type !== "custom");
-      const customSections = resume.sections.filter(item => item.type === "custom");
-      const updatedSections = [...mainSections, ...customSections].sort((a : any, b : any) => a.orderNumber - b.orderNumber);
+      const mainSections = resume.sections.filter(
+        (item) => item.type !== "custom"
+      );
+      const customSections = resume.sections.filter(
+        (item) => item.type === "custom"
+      );
+      const updatedSections = [...mainSections, ...customSections].sort(
+        (a: any, b: any) => a.orderNumber - b.orderNumber
+      );
       setSections(updatedSections);
     }
   }, [resume]);
 
   const onSortEnd = (oldIndex: number, newIndex: number) => {
-    setSections((prev : any) => {
+    setSections((prev: any) => {
       const newSections = arrayMoveImmutable(prev, oldIndex, newIndex);
-      const updatedSections = newSections.map((section : any, index : number) => ({
-        ...section,
-        orderNumber: index
-      }));
-      
-      reorder({ id: resumeId as Id<"resumes">, updatedSections: updatedSections });
+      const updatedSections = newSections.map(
+        (section: any, index: number) => ({
+          ...section,
+          orderNumber: index,
+        })
+      );
+
+      reorder({
+        id: resumeId as Id<"resumes">,
+        updatedSections: updatedSections,
+      });
       return updatedSections;
     });
   };
-
 
   const handlePrimaryTextColorChange = useMemo(() => {
     return debounce((color: any) => {
@@ -135,13 +151,27 @@ const Page = () => {
               return (
                 <SortableItem key={index}>
                   <div className="flex items-center gap-1 uppercase">
-                    <div className=" w-[35px] bg-[white] shadow-sm hover:cursor-move border flex items-center justify-center border-black/30 p-[10px] my-[4px]">
+                    <div className="w-[35px] bg-[white] shadow-sm hover:cursor-move border flex items-center justify-center border-black/30 p-[10px] my-[4px]">
                       {item?.orderNumber + 1}
                     </div>
-                    <div className="w-[60%] bg-white shadow-sm border hover:cursor-move border-black/30 p-[10px]  my-[4px]">
-                      {item.type === "custom"
-                        ? item.content.sectionTitle
-                        : item.type}
+                    <div className="w-[60%] bg-white shadow-sm border hover:cursor-move border-black/30 px-[10px] py-[5px] my-[4px] flex justify-between items-center">
+                      <span>
+                        {item.type === "custom"
+                          ? item.content.sectionTitle
+                          : item.type}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => toggleSectionVisibility(item.type)}
+                        className="ml-2"
+                      >
+                        {item.isVisible ? (
+                          <Eye size={16} />
+                        ) : (
+                          <EyeOff size={16} />
+                        )}
+                      </Button>
                     </div>
                   </div>
                 </SortableItem>

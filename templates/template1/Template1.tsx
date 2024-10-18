@@ -79,11 +79,13 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
             const headerContent = item.content as HeaderContent;
 
             return (
-              <div key={`header-section-${index}`}>
-                <div
-                >
+              <div
+                key={`header-section-${index}`}
+                className={` ${item.isVisible ? "block" : "hidden"}`}
+              >
+                <div>
                   <h1
-                    className={`text-4xl uppercase text-center font-bold`}
+                    className={`text-4xl uppercase text-center font-bold  `}
                     style={{ color: primaryTextColorClass }}
                   >
                     {headerContent?.firstName} {headerContent?.lastName}
@@ -146,7 +148,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
             return (
               <div
-                className={`py-2 `}
+                className={`py-2 ${item.isVisible ? "block" : "hidden"}`}
                 style={{ borderTop: `1px solid ${primaryColorClass}` }}
               >
                 {" "}
@@ -189,7 +191,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
             return (
               <div
-                className={`border-t py-2`}
+                className={`border-t py-2 ${item.isVisible ? "block" : "hidden"}`}
                 style={{ borderTop: `1px solid ${primaryColorClass}` }}
               >
                 <h1
@@ -235,7 +237,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
             return (
               <>
                 <div
-                  className={`border-t py-2`}
+                  className={`border-t py-2 ${item.isVisible ? "block" : "hidden"}`}
                   style={{ borderTop: `1px solid ${primaryColorClass}` }}
                   key={index}
                 >
@@ -295,7 +297,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
 
             return (
               <div
-                className={`py-2 border-t`}
+                className={`py-2 border-t ${item.isVisible ? "block" : "hidden"}`}
                 style={{ borderTop: `1px solid ${primaryColorClass}` }}
                 key={index}
               >
@@ -327,7 +329,7 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
                 return (
                   <div
                     key={`custom-${index}-${item.content.sectionTitle}`}
-                    className={`py-2`}
+                    className={`py-2 ${item.isVisible ? "block" : "hidden"}`}
                     style={{ borderTop: `1px solid ${primaryColorClass}` }}
                   >
                     <h1
