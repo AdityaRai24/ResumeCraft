@@ -31,10 +31,11 @@ export default function QuillEditorComponent({
     toolbar: [
       ["bold", "italic", "underline"],
       [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+      ["link"],
     ],
   };
   
-  const quillFormats = ["bold", "italic", "underline", "list", "bullet"];
+  const quillFormats = ["bold", "italic", "underline", "list", "bullet","link"];
 
   return (
     <motion.div
