@@ -75,20 +75,21 @@ const Page = () => {
           </p>
         </div>{" "}
       </div>
-      <div className="max-w-[85%] mx-auto flex ">
-        <div className="grid grid-cols-3 gap-6 mt-2">
-          {templates?.map((item, index) => {
-            const TemplateComponent = templateComponents[item?.templateName];
+      <div className="max-w-[85%] mx-auto flex flex-wrap gap-6">
+        {templates?.map((item, index) => {
+          const TemplateComponent = templateComponents[item?.templateName];
 
-            if (!TemplateComponent) {
-              return <div key={index}>Something went wronng...</div>;
-            }
+          if (!TemplateComponent) {
+            return <div key={index}>Something went wronng...</div>;
+          }
 
-            return (
+          return (
+            <div
+              key={index}
+              className="relative group inline-block w-[295px] h-[415px]"
+            >
               <div
-                key={index}
                 className={cn(
-                  "relative group inline-block  w-[295px] h-[415px]",
                   item?.globalStyles?.fontFamily === "Inter" &&
                     interFont.className,
                   item?.globalStyles?.fontFamily === "Montserrat" &&
@@ -107,25 +108,25 @@ const Page = () => {
                   obj={item as ResumeTemplate}
                   isPreview={true}
                 />
-                <div className="absolute inset-0 w-full h-full p-10 flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
-                  <Button
-                    onClick={() => preview.onOpen(item as ResumeTemplate)}
-                    className="py-2 px-5 flex items-center justify-center gap-2"
-                  >
-                    <p>Preview</p> <Eye />
-                  </Button>
-                  <Button
-                    onClick={() => editResume(item?._id)}
-                    variant={"secondary"}
-                    className="py-2 px-5 flex items-center justify-center gap-2"
-                  >
-                    <p>Select</p> <Edit />
-                  </Button>
-                </div>
               </div>
-            );
-          })}
-        </div>
+              <div className="absolute inset-0 w-full h-full p-10 flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
+                <Button
+                  onClick={() => preview.onOpen(item as ResumeTemplate)}
+                  className="py-2 px-5 flex items-center justify-center gap-2"
+                >
+                  <p>Preview</p> <Eye />
+                </Button>
+                <Button
+                  onClick={() => editResume(item?._id)}
+                  variant={"secondary"}
+                  className="py-2 px-5 flex items-center justify-center gap-2"
+                >
+                  <p>Select</p> <Edit />
+                </Button>
+              </div>
+            </div>
+          );
+        })}
         <PreviewModal />
       </div>
     </div>

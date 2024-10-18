@@ -26,15 +26,9 @@ export interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
   isLive?: boolean;
-  downloadPreview?: boolean;
 }
 
-const Template1 = ({
-  isPreview,
-  obj,
-  isLive,
-  downloadPreview,
-}: TemplateType) => {
+const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
   const sectionArray = obj?.sections?.map((item) => item.type);
 
   const headerLogoMap: any = {
@@ -46,17 +40,18 @@ const Template1 = ({
   };
 
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div
-      className={cn(
-        "transform origin-top-left scale-[1] ",
-        isLive &&
-          "flex items-center justify-center w-[1122px] h-full scale-[0.5]",
-        isPreview && !isLive && "scale-[0.37]",
-        !isPreview && !isLive && "scale-[0.8]",
-        downloadPreview && "scale-[0.52]"
-      )}
-    >
-      {children}
+    <div className=" overflow-hidden">
+      <div
+        className={cn(
+          "transform origin-top-left scale-[1] ",
+          isLive &&
+            "flex items-center justify-center w-[1122px] h-full scale-[0.5]",
+          isPreview && !isLive && "scale-[0.37]",
+          !isPreview && !isLive && "scale-[0.8]"
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
 
@@ -148,6 +143,7 @@ const Template1 = ({
                 </div>
               </div>
             );
+
           case "education":
             const educationContent = item.content as EducationContent;
 
@@ -189,6 +185,7 @@ const Template1 = ({
                 </div>
               </div>
             );
+
           case "experience":
             const experienceContent = item.content as ExperienceContent;
 
@@ -234,6 +231,7 @@ const Template1 = ({
                 })}
               </div>
             );
+
           case "projects":
             const projectContent = item.content as ProjectContent;
             return (
@@ -293,6 +291,7 @@ const Template1 = ({
                 </div>
               </>
             );
+
           case "skills":
             const skillsContent = item as SkillsContent;
 
