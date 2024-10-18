@@ -5,7 +5,6 @@ import {
   templateStructures,
 } from "@/templates/templateStructures";
 import { ResumeTemplate, SocialLink } from "@/types/templateTypes";
-import { productionData } from "@/data.js";
 
 export const getTemplates = query({
   args: {},
