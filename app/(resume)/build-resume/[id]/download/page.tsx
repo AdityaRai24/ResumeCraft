@@ -79,7 +79,7 @@ const LiveResumePreview = () => {
               </motion.h1>
               <div>
                 <h2 className="font-medium text-md text-gray-800  text-left pt-1 pb-4">
-                  Your resume is looking great! Here's what you can do next:
+                  Your resume is looking great! Here&apos;s what you can do next:
                 </h2>
                 <ul className="flex flex-col gap-3">
                   <li className="flex max-w-[80%]  items-center text-gray-700 gap-2">
@@ -88,7 +88,7 @@ const LiveResumePreview = () => {
                   </li>
                   <li className="flex max-w-[80%] items-center text-gray-700 gap-2">
                     <CheckCircle2Icon className="text-primary" size={31} />
-                    When downloading, select destination as "Save as PDF" to
+                    When downloading, select destination as &quot;Save as PDF&quot; to
                     ensure the resume text remains selectable.
                   </li>
                   <li className="flex max-w-[80%]  items-center text-gray-700 gap-2">
