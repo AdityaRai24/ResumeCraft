@@ -88,8 +88,9 @@ export default function Home() {
 
             <motion.div  className="flex items-center gap-8">
               <Link href={"/build-resume/steps"}>
-                <Button className="py-[34px] px-8  text-base flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
-                  Create Free Resume <ArrowRight size={18} />
+                <Button 
+                className="py-[34px] px-8  text-base flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
+                  Create Free Resume <ArrowRight size={18} className="mt-[2.5px]" />
                 </Button>
               </Link>
             </motion.div>
