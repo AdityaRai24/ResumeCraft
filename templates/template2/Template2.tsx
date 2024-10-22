@@ -27,27 +27,35 @@ interface TemplateType {
   obj: ResumeTemplate;
   isLive?: boolean;
   modalPreview?: boolean;
+  downloadPreview?: boolean;
 }
 
-const Template2 = ({ isPreview, obj, isLive, modalPreview }: TemplateType) => {
+const Template2 = ({
+  isPreview,
+  obj,
+  isLive,
+  modalPreview,
+  downloadPreview,
+}: TemplateType) => {
   const sectionArray = obj?.sections?.map((item) => item.type);
 
+
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="overflow-hidden">
-      <div
-        className={cn(
-          "transform origin-top-left scale-[1] ",
-          isLive &&
-            "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
-          isPreview && !isLive && "scale-[0.37]"
-        )}
-      >
-        {children}
-      </div>
+    <div
+      className={cn(
+        "transform origin-top-left scale-[1] ",
+        isLive &&
+          "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
+        isPreview && !isLive && "scale-[0.37]",
+        !isPreview && !isLive && "scale-[0.8]",
+        downloadPreview && "scale-[0.5]"
+      )}
+    >
+      {children}
     </div>
   );
   const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center justify-center ">{children}</div>
+    <div className="flex items-center justify-center">{children}</div>
   );
 
   const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;

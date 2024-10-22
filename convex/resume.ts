@@ -663,6 +663,7 @@ export const migrateResumes = mutation({
   },
 });
 
+
 export const hideSection = mutation({
   args: {
     id: v.id("resumes"),

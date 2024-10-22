@@ -26,9 +26,10 @@ export interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
   isLive?: boolean;
+  downloadPreview?:boolean;
 }
 
-const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
+const Template1 = ({ isPreview, obj, isLive,downloadPreview }: TemplateType) => {
   const sectionArray = obj?.sections?.map((item) => item.type);
 
   const headerLogoMap: any = {
@@ -40,7 +41,6 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
   };
 
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className=" overflow-hidden">
       <div
         className={cn(
           "transform origin-top-left scale-[1] ",
@@ -52,7 +52,6 @@ const Template1 = ({ isPreview, obj, isLive }: TemplateType) => {
       >
         {children}
       </div>
-    </div>
   );
 
   const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
