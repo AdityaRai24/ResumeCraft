@@ -29,14 +29,14 @@ const Page = () => {
               <Link href={"/"} className="w-[45%]">
                 <Button
                   variant={"outline"}
-                  className="py-[28px] w-full px-6 border-primary border-2 hover:scale-[1.03] active:scale-[0.97] transition duration-300 ease"
+                  className="py-[28px] w-full px-6 border-primary border-2  active:scale-[0.97] transition duration-300 ease"
                 >
                   Back
                 </Button>{" "}
               </Link>
               <Link href={"/build-resume/templates"} className="w-[45%]">
-                <Button className="py-[28px] w-full px-6 hover:scale-[1.03] active:scale-[0.97] transition duration-300 ease">
-                  Next <ArrowRight size={18} />
+                <Button className="py-[28px] w-full px-6 flex items-center gap-2 hover:gap-4  active:scale-[0.97] transition-all duration-300 ease-out">
+                  Next <ArrowRight size={18} className="mb-[2px]" />
                 </Button>{" "}
               </Link>
             </div>
@@ -81,8 +81,8 @@ const Page = () => {
                 Step-3: Customize and polish
               </h1>
               <p>
-                Fine-tune your resume`&apos;s layout, style, and content to make it
-                uniquely yours and stand out to employers.{" "}
+                Fine-tune your resume`&apos;s layout, style, and content to make
+                it uniquely yours and stand out to employers.{" "}
               </p>
             </div>
           </div>

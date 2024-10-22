@@ -56,7 +56,7 @@
 
 @layer base {
   * {
-    @apply border-border ;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
@@ -77,13 +77,12 @@
   margin-bottom: 0.3em;
 }
 
-
- body {
+body {
   padding: 0px;
   margin: 0px;
- }
+}
 
- @layer utilities {
+@layer utilities {
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -95,24 +94,24 @@
   }
 }
 
-@media print { 
-  #no-print{
+@media print {
+  #no-print {
     display: none;
   }
-  #pdf{
+  #pdf {
     display: block;
   }
-  body{
+  body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
 }
 
-@page{
+@page {
   size: auto;
   margin: 0mm;
 }
-.radial{
+.radial {
   background: radial-gradient(circle, #fff, #ffe4e6);
 }

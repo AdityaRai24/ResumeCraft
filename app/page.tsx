@@ -17,20 +17,20 @@ import Template2 from "@/templates/template2/Template2";
 
 export default function Home() {
   const oneTimeRef = useRef(false);
-  const migration = useMutation(api.resume.migrateResumes);
+  // const migration = useMutation(api.resume.migrateResumes);
 
-  useEffect(() => {
-    if (!oneTimeRef.current) {
-      const promise = migration()
-        .then((res) => {
-          console.log(res, "yes");
-        })
-        .catch((err) => {
-          console.log(err, "no");
-        });
-      oneTimeRef.current = true;
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!oneTimeRef.current) {
+  //     const promise = migration()
+  //       .then((res) => {
+  //         console.log(res, "yes");
+  //       })
+  //       .catch((err) => {
+  //         console.log(err, "no");
+  //       });
+  //     oneTimeRef.current = true;
+  //   }
+  // }, []);
 
   return (
     <>
@@ -88,7 +88,7 @@ export default function Home() {
 
             <motion.div  className="flex items-center gap-8">
               <Link href={"/build-resume/steps"}>
-                <Button className="py-[34px] px-8 hover:scale-[1.03] text-base flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
+                <Button className="py-[34px] px-8  text-base flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
                   Create Free Resume <ArrowRight size={18} />
                 </Button>
               </Link>

@@ -12,7 +12,14 @@ import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { Loader, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import { geologicaFont, interFont, montserratFont, openSansFont, poppinsFont, ralewayFont } from "@/lib/font";
+import {
+  geologicaFont,
+  interFont,
+  montserratFont,
+  openSansFont,
+  poppinsFont,
+  ralewayFont,
+} from "@/lib/font";
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -32,11 +39,11 @@ const LiveResumePreview = () => {
     return <div>Loading...</div>;
   }
 
-
   type TemplateComponentType = React.ComponentType<{
     obj: ResumeTemplate;
     isPreview: boolean;
     isLive?: boolean;
+    downloadPreview?: boolean;
   }>;
 
   const templateComponents: Record<string, TemplateComponentType> = {
@@ -53,67 +60,79 @@ const LiveResumePreview = () => {
     return <div>Error: Template not found</div>;
   }
 
-  const handlePdfDownload = ()=>{
-    window.print()
-  }
+  const handlePdfDownload = () => {
+    window.print();
+  };
 
   return (
-    <div className="flex flex-col items-center mx-auto">
-      {!resumeOnlyMode && (
-        <div id="no-print" className="w-full">
-       <Navbar />
-          <div  className="my-16">
-            <h1
-              className={cn("text-6xl font-bold text-center", geologicaFont.className)}
-            >
-              Your Resume is Ready !!
-            </h1>
-            <div className="flex items-center justify-center mt-8">
-              <Button
-                disabled={loading}
-                onClick={handlePdfDownload}
-                className="hover:scale-[1.02] active:scale-[0.98] transition duration-300 ease-out text-xl py-8 px-32"
-              >
-                {loading ? (
-                  <>
-                    Downloading... <Loader2 className="ml-4 animate-spin" />
-                  </>
-                ) : (
-                  <>Download</>
-                )}
-              </Button>
-            </div>
-            {loading && (
-              <p className="text-center my-2 text-muted-foreground">
-                Downloading may take few seconds so kindly be patient...
-              </p>
-            )}{" "}
-          </div>
-        </div>
-      )}
-      <div
-       className={cn(
-        "resume-container no-scrollbar shadow-md shadow-primary rounded-lg",
-        templateDetails?.globalStyles?.fontFamily === 'Inter' && interFont.className,
-        templateDetails?.globalStyles?.fontFamily === 'Montserrat' && montserratFont.className,
-        templateDetails?.globalStyles?.fontFamily === 'OpenSans' && openSansFont.className,
-      templateDetails?.globalStyles?.fontFamily === 'Poppins' && poppinsFont.className,
-        templateDetails?.globalStyles?.fontFamily === 'Geologica' && geologicaFont.className,
-        templateDetails?.globalStyles?.fontFamily === 'Raleway' && ralewayFont.className,
-      )}
-      id="pdf">
-      {templateDetails && (
-          <TemplateComponent 
-            obj={templateDetails} 
-            isPreview={false} 
-            isLive={true} 
-          />
-        )}
+    <>
+      <div id="no-print">
+        <Navbar />
       </div>
-    </div>
+      <div className="flex  items-center mx-auto">
+        {!resumeOnlyMode && (
+          <div id="no-print" className="w-full">
+            <div className="my-16">
+              <h1
+                className={cn(
+                  "text-6xl font-bold text-center",
+                  geologicaFont.className
+                )}
+              >
+                Your Resume is Ready !!
+              </h1>
+              <div className="flex items-center justify-center mt-8">
+                <Button
+                  disabled={loading}
+                  onClick={handlePdfDownload}
+                  className="hover:scale-[1.02] active:scale-[0.98] transition duration-300 ease-out text-xl py-8 px-32"
+                >
+                  {loading ? (
+                    <>
+                      Downloading... <Loader2 className="ml-4 animate-spin" />
+                    </>
+                  ) : (
+                    <>Download</>
+                  )}
+                </Button>
+              </div>
+              {loading && (
+                <p className="text-center my-2 text-muted-foreground">
+                  Downloading may take few seconds so kindly be patient...
+                </p>
+              )}{" "}
+            </div>
+          </div>
+        )}
+        <div
+          className={cn(
+            "no-scrollbar shadow-md w-full max-h-[250px] shadow-primary rounded-lg",
+            templateDetails?.globalStyles?.fontFamily === "Inter" &&
+              interFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Montserrat" &&
+              montserratFont.className,
+            templateDetails?.globalStyles?.fontFamily === "OpenSans" &&
+              openSansFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Poppins" &&
+              poppinsFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Geologica" &&
+              geologicaFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Raleway" &&
+              ralewayFont.className
+          )}
+          id="pdf"
+        >
+          {templateDetails && (
+            <TemplateComponent
+              obj={templateDetails}
+              isLive
+              isPreview={false}
+            />
+          )}
+        </div>
+      </div>
+    </>
   );
 };
 
 export default LiveResumePreview;
-
-
