@@ -4,7 +4,7 @@ import { Edit, Eye } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import toast from "react-hot-toast";
 import { Id } from "@/convex/_generated/dataModel";
 import { Skeleton } from "./ui/skeleton";
@@ -17,6 +17,7 @@ import { usePreview } from "@/lib/use-preview";
 import PreviewModal from "./PreviewModal";
 import { cn } from "@/lib/utils";
 import React from "react";
+import { useRouter } from 'nextjs-toploader/app';
 
 const ChooseTemplates = () => {
   

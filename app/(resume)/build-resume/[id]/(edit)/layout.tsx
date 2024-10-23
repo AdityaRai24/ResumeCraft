@@ -7,9 +7,10 @@ import { geologicaFont } from "@/lib/font";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React from "react";
 import toast from "react-hot-toast";
+import { useRouter } from 'nextjs-toploader/app';
 
 const ResumeBuilderLayout = ({ children }: { children: React.ReactNode }) => {
 

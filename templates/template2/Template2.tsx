@@ -330,7 +330,7 @@ const Template2 = ({
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] text-black !py-8 px-8 overflow-y-scroll overflow-x-hidden w-[210mm] max-h-[297mm]  select-none cursor-pointer rounded-3xl transition duration-300 ease-in shadow-2xl border border-primary",
+        "bg-[white] text-black !py-8 px-8 overflow-hidden overflow-x-clip w-[210mm] h-[297mm]  select-none cursor-pointer rounded-3xl transition duration-300 ease-in shadow-2xl border border-primary",
         isPreview && !isLive && "w-[795px] h-[1122px]",
         !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl",
         modalPreview && "scale-[0.6]"

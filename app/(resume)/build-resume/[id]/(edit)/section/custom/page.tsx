@@ -7,7 +7,8 @@ import SectionInfo from "@/components/SectionInfo";
 import { api } from "@/convex/_generated/api";
 import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useRouter } from 'nextjs-toploader/app';
 
 const Page = () => {
   const params = useParams();
