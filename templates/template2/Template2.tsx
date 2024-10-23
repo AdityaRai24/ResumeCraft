@@ -39,7 +39,6 @@ const Template2 = ({
 }: TemplateType) => {
   const sectionArray = obj?.sections?.map((item) => item.type);
 
-
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div
       className={cn(
@@ -83,6 +82,7 @@ const Template2 = ({
     return obj?.sections?.map((item, index) => {
       if (item.type === type) {
         switch (type) {
+
           case "header":
             const headerContent = item.content as HeaderContent;
 
@@ -125,6 +125,7 @@ const Template2 = ({
                 </div>
               </div>
             );
+
           case "education":
             const educationContent = item.content as EducationContent;
 
@@ -163,6 +164,7 @@ const Template2 = ({
                 ))}
               </div>
             );
+
           case "experience":
             const experienceContent = item.content as ExperienceContent;
             return (
@@ -208,6 +210,7 @@ const Template2 = ({
                 ))}
               </div>
             );
+
           case "skills":
             const skillsContent = item as SkillsContent;
 
@@ -232,6 +235,7 @@ const Template2 = ({
                 />
               </div>
             );
+
           case "projects":
             const projectContent = item.content as ProjectContent;
             return (
@@ -281,6 +285,7 @@ const Template2 = ({
                 ))}
               </div>
             );
+
           case "custom":
             return sortedSections.map((item, index) => {
               if (item.type === "custom") {
@@ -289,7 +294,7 @@ const Template2 = ({
                 return (
                   <>
                     <div
-                      className={`mt-2 ${item.isVisible ? "block" : "hidden"}`}
+                      className={`py-2 ${item.isVisible ? "block" : "hidden"}`}
                       key={index}
                       style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                     >
@@ -299,8 +304,6 @@ const Template2 = ({
                       >
                         {item.content.sectionTitle}
                       </h1>
-                    </div>
-                    <div className="mt-2">
                       <div
                         className="quill-content text-sm"
                         dangerouslySetInnerHTML={{
@@ -326,13 +329,13 @@ const Template2 = ({
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] text-black py-8 overflow-hidden overflow-x-hidden w-[210mm] h-[297mm] px-8 select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
+        "bg-[white] text-black !py-8 px-8 overflow-y-scroll overflow-x-hidden w-[210mm] max-h-[297mm]  select-none cursor-pointer rounded-3xl transition duration-300 ease-in shadow-2xl border border-primary",
         isPreview && !isLive && "w-[795px] h-[1122px]",
         !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl",
         modalPreview && "scale-[0.6]"
       )}
     >
-      <div>
+      <div className="">
         {uniqueSectionTypes?.map((section, index) => {
           return <div key={index}>{renderSection(section)}</div>;
         })}
