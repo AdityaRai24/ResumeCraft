@@ -82,7 +82,6 @@ const Template2 = ({
     return obj?.sections?.map((item, index) => {
       if (item.type === type) {
         switch (type) {
-
           case "header":
             const headerContent = item.content as HeaderContent;
 
@@ -296,16 +295,18 @@ const Template2 = ({
                     <div
                       className={`py-2 ${item.isVisible ? "block" : "hidden"}`}
                       key={index}
-                      style={{ borderBottom: `1px solid ${primaryColorClass}` }}
                     >
                       <h1
-                        className="text-lg"
-                        style={{ color: primaryTextColorClass }}
+                        className="text-lg uppercase"
+                        style={{
+                          color: primaryTextColorClass,
+                          borderBottom: `1px solid ${primaryColorClass}`,
+                        }}
                       >
                         {item.content.sectionTitle}
                       </h1>
                       <div
-                        className="quill-content text-sm"
+                        className="quill-content text-sm mt-2"
                         dangerouslySetInnerHTML={{
                           __html: item.content.sectionDescription,
                         }}
