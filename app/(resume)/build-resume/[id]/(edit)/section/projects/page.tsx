@@ -7,8 +7,9 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { ProjectSection } from "@/types/templateTypes";
 import { useMutation, useQuery } from "convex/react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import React from "react";
+import { useRouter } from 'nextjs-toploader/app';
 
 const Page = () => {
   const params = useParams();

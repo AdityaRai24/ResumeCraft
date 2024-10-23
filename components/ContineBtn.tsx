@@ -1,8 +1,8 @@
 "use client";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { useRouter } from "next/navigation";
 import {motion} from "framer-motion"
+import { useRouter } from 'nextjs-toploader/app';
 
 const ContineBtn = ({
   path,

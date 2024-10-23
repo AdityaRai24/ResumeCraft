@@ -5,8 +5,9 @@ import { Toaster } from "react-hot-toast";
 import { poppinsFont } from "@/lib/font";
 import ScreenProvider from "@/providers/ScreenProvider";
 import React from "react";
-import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: "Resume Craft",
@@ -24,8 +25,11 @@ export default function RootLayout({
         <ConvexAndClerk>
           <ScreenProvider>
             <Analytics />
-            <SpeedInsights />
-            {" "}
+            <SpeedInsights /> <NextTopLoader color="#E11D48"
+            height={5} 
+            shadow={false}
+            speed={150}
+            />
             <Toaster />
             {children}
           </ScreenProvider>

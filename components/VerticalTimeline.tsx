@@ -15,7 +15,6 @@ import {
   redirect,
   useParams,
   usePathname,
-  useRouter,
   useSearchParams,
 } from "next/navigation";
 import React from "react";
@@ -27,6 +26,7 @@ import {
 } from "./ui/tooltip";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { useRouter } from 'nextjs-toploader/app';
 
 const VerticalTimeline = () => {
   const params = useParams();

@@ -2,10 +2,10 @@
 import { ChevronDown, File } from "lucide-react";
 import { Button } from "./ui/button";
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { geologicaFont, poppinsFont } from "@/lib/font";
+import {  poppinsFont } from "@/lib/font";
 import { Skeleton } from "./ui/skeleton";
+import { useRouter } from 'nextjs-toploader/app';
 
 const Navbar = () => {
   const { user, isLoaded, isSignedIn } = useUser();

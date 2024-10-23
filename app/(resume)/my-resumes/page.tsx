@@ -20,8 +20,8 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import { useUser } from "@clerk/nextjs";
 import { useMutation, useQuery } from "convex/react";
 import { Edit, Eye } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React from "react";
+import { useRouter } from 'nextjs-toploader/app';
 
 const Page = () => {
   const { user, isSignedIn } = useUser();
