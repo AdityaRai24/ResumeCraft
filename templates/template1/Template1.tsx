@@ -26,12 +26,16 @@ export interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
   isLive?: boolean;
-  downloadPreview?:boolean;
+  downloadPreview?: boolean;
 }
 
-const Template1 = ({ isPreview, obj, isLive,downloadPreview }: TemplateType) => {
+const Template1 = ({
+  isPreview,
+  obj,
+  isLive,
+  downloadPreview,
+}: TemplateType) => {
   const sectionArray = obj?.sections?.map((item) => item.type);
-
   const headerLogoMap: any = {
     github: <Github size={18} className="mt-[2px]" />,
     linkedin: <Linkedin size={18} className="mt-[2px]" />,
@@ -41,17 +45,17 @@ const Template1 = ({ isPreview, obj, isLive,downloadPreview }: TemplateType) => 
   };
 
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
-      <div
-        className={cn(
-          "transform origin-top-left scale-[1] ",
-          isLive &&
-            "flex items-center justify-center w-[1122px] h-full scale-[0.5]",
-          isPreview && !isLive && "scale-[0.37]",
-          !isPreview && !isLive && "scale-[0.8]"
-        )}
-      >
-        {children}
-      </div>
+    <div
+      className={cn(
+        "transform origin-top-left scale-[1] ",
+        isLive &&
+          "flex items-center justify-center w-[1122px] h-full scale-[0.5]",
+        isPreview && !isLive && "scale-[0.37]",
+        !isPreview && !isLive && "scale-[0.8]"
+      )}
+    >
+      {children}
+    </div>
   );
 
   const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -319,6 +323,7 @@ const Template1 = ({ isPreview, obj, isLive,downloadPreview }: TemplateType) => 
                 </div>
               </div>
             );
+
           case "custom":
             return sortedSections.map((item, index) => {
               if (item.type === "custom") {
