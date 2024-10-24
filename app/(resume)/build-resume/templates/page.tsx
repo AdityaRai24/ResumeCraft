@@ -4,9 +4,9 @@ import Navbar from "@/components/Navbar";
 const Page = () => {
   return (
     <>
-      <div>
+      <div className="w-full">
         <Navbar />
-        <div className="flex items-center mt-8 mb-6  w-[85%] mx-auto">
+        <div className="flex items-center mt-8 mb-6 w-[90%] md:w-[85%] mx-auto">
           <div>
             <h1 className="text-2xl text-left font-medium tracking-normal pt-3 pb-1">
               Recommended Templates
@@ -18,7 +18,7 @@ const Page = () => {
           </div>
         </div>
 
-        <div className="max-w-[85%] mx-auto flex ">
+        <div className="max-w-[90%] md:max-w-[85%] mx-auto flex items-center justify-start">
           <ChooseTemplates />
         </div>
       </div>

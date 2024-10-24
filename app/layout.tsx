@@ -23,7 +23,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppinsFont.className}>
         <ConvexAndClerk>
-          <ScreenProvider>
+          {/* <ScreenProvider> */}
             <Analytics />
             <SpeedInsights /> <NextTopLoader color="#E11D48"
             height={5} 
@@ -32,7 +32,7 @@ export default function RootLayout({
             />
             <Toaster />
             {children}
-          </ScreenProvider>
+          {/* </ScreenProvider> */}
         </ConvexAndClerk>
       </body>
     </html>

@@ -21,20 +21,17 @@ import {
   SkillsContent,
 } from "./Temp1Types";
 import { CustomContent } from "../template1/Temp1Types";
+import useMobile from "@/lib/useMobile";
 
 export interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
-  isLive?: boolean;
-  downloadPreview?: boolean;
+  size?: "sm" | "md" | "lg";
 }
 
-const Template1 = ({
-  isPreview,
-  obj,
-  isLive,
-  downloadPreview,
-}: TemplateType) => {
+const Template1 = ({ isPreview, obj, size }: TemplateType) => {
+  const isMobile = useMobile();
+
   const sectionArray = obj?.sections?.map((item) => item.type);
   const headerLogoMap: any = {
     github: <Github size={18} className="mt-[2px]" />,
@@ -47,11 +44,23 @@ const Template1 = ({
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div
       className={cn(
-        "transform origin-top-left scale-[1] ",
-        isLive &&
-          "flex items-center justify-center w-[1122px] h-full scale-[0.5]",
-        isPreview && !isLive && "scale-[0.37]",
-        !isPreview && !isLive && "scale-[0.8]"
+        "transform origin-top-left",
+        isMobile
+          ? size === "sm"
+            ? "scale-[0.2]"
+            : size === "md"
+              ? "scale-[0.5]"
+              : "scale-[0.8]"
+          : size === "sm"
+            ? "scale-[0.37]"
+            : size === "md"
+              ? "scale-[0.5]"
+              : "scale-[0.8]"
+        // size === "sm" ? "scale-[0.37]" : size === "md" ? "scale-[0.5]" : "scale-[0.8]",
+        // isLive &&
+        //   "flex items-center justify-center w-[1122px] h-full scale-[0.5]",
+        // isPreview && !isLive && "scale-[0.37]",
+        // !isPreview && !isLive && "scale-[0.8]"
       )}
     >
       {children}
@@ -59,8 +68,10 @@ const Template1 = ({
   );
 
   const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center justify-center ">{children}</div>
+    <div className="flex items-center justify-center">{children}</div>
   );
+
+  const visitedCustoms: number[] = [];
 
   const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
@@ -68,8 +79,6 @@ const Template1 = ({
   const sortedSections = [...obj.sections].sort(
     (a, b) => a.orderNumber - b.orderNumber
   );
-
-  const visitedCustoms: number[] = [];
 
   const uniqueSectionTypes = Array.from(
     new Set(sortedSections.map((item) => item.type))
@@ -362,9 +371,9 @@ const Template1 = ({
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] text-black py-8 overflow-hidden overflow-x-hidden w-[210mm] h-[297mm] px-8 select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary",
-        isPreview && !isLive && "w-[795px] h-[1122px]",
-        !isPreview && !isLive && "w-[795px] h-[1122px]"
+        "bg-[white] text-black py-8 overflow-hidden overflow-x-hidden w-[210mm] h-[297mm] px-8 select-none cursor-pointer rounded-3xl transition duration-300 ease-in p-10 shadow-2xl border border-primary"
+        // isPreview && !isLive && "w-[795px] h-[1122px]",
+        // !isPreview && !isLive && "w-[795px] h-[1122px]"
       )}
     >
       <div>

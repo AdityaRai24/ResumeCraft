@@ -145,6 +145,7 @@ export const templateStructures: any = {
 export type TemplateComponentType = React.ComponentType<{
   obj: ResumeTemplate;
   isPreview: boolean;
+  size? : "sm" | "md" | "lg";
 }>;
 
 export const templateComponents: Record<string, TemplateComponentType> = {

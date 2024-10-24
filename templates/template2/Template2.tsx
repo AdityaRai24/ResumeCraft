@@ -21,40 +21,45 @@ import {
   CustomContent,
 } from "./temp2Types";
 import { ResumeTemplate } from "@/types/templateTypes";
+import useMobile from "@/lib/useMobile";
 
 interface TemplateType {
   isPreview?: boolean;
   obj: ResumeTemplate;
-  isLive?: boolean;
-  modalPreview?: boolean;
-  downloadPreview?: boolean;
+  size?: "sm" | "md" | "lg";
 }
 
-const Template2 = ({
-  isPreview,
-  obj,
-  isLive,
-  modalPreview,
-  downloadPreview,
-}: TemplateType) => {
+const Template2 = ({ isPreview, obj, size }: TemplateType) => {
   const sectionArray = obj?.sections?.map((item) => item.type);
+  const isMobile = useMobile();
 
   const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
     <div
       className={cn(
-        "transform origin-top-left scale-[1] ",
-        isLive &&
-          "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
-        isPreview && !isLive && "scale-[0.37]",
-        !isPreview && !isLive && "scale-[0.8]",
-        downloadPreview && "scale-[0.5]"
+        "transform origin-top-left",
+        isMobile
+          ? size === "sm"
+            ? "scale-[0.2]"
+            : size === "md"
+              ? "scale-[0.5]"
+              : "scale-[0.8]"
+          : size === "sm"
+            ? "scale-[0.37]"
+            : size === "md"
+              ? "scale-[0.5]"
+              : "scale-[0.8]"
+        // isLive &&
+        // "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
+        // isPreview && !isLive && "scale-[0.37]",
+        // !isPreview && !isLive && "scale-[0.8]",
+        // downloadPreview && "scale-[0.5]"
       )}
     >
       {children}
     </div>
   );
   const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center justify-center">{children}</div>
+    <div className="flex items-center justify-center ">{children}</div>
   );
 
   const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
@@ -330,10 +335,10 @@ const Template2 = ({
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] text-black !py-8 px-8 overflow-hidden overflow-x-clip w-[210mm] h-[297mm]  select-none cursor-pointer rounded-3xl transition duration-300 ease-in shadow-2xl border border-primary",
-        isPreview && !isLive && "w-[795px] h-[1122px]",
-        !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl",
-        modalPreview && "scale-[0.6]"
+        "bg-[white] text-black !py-8 px-8 overflow-hidden overflow-x-clip w-[210mm] h-[297mm]  select-none cursor-pointer rounded-3xl transition duration-300 ease-in shadow-2xl border border-primary"
+        // isPreview && !isLive && "w-[795px] h-[1122px]",
+        // !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl",
+        // modalPreview && "scale-[0.6]"
       )}
     >
       <div className="">
