@@ -17,10 +17,9 @@ import { usePreview } from "@/lib/use-preview";
 import PreviewModal from "./PreviewModal";
 import { cn } from "@/lib/utils";
 import React from "react";
-import { useRouter } from 'nextjs-toploader/app';
+import { useRouter } from "nextjs-toploader/app";
 
 const ChooseTemplates = () => {
-  
   const { user } = useUser();
   const createUserResume = useMutation(api.resume.createUserResume);
   const router = useRouter();
@@ -33,12 +32,12 @@ const ChooseTemplates = () => {
   if (templates === undefined) {
     return <ChooseSkeleton />;
   }
-  if (!user){
+  if (!user) {
     return redirect("/sign-up");
-  };
+  }
 
   const selectResume = async (id: Id<"resumes">, templateName: string) => {
-    const promise = createUserResume({
+    createUserResume({
       id: id,
       userId: user?.id,
       templateName: templateName,
@@ -53,7 +52,7 @@ const ChooseTemplates = () => {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-6 mt-2">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       {templates?.map((item, index) => {
         const TemplateComponent: TemplateComponentType =
           templateComponents[item.templateName];
@@ -68,22 +67,34 @@ const ChooseTemplates = () => {
         return (
           <div
             key={index}
-            className={cn("relative group inline-block w-[295px] h-[415px]")}
+            className={cn(
+              "relative group mx-auto w-[159px] h-[225px] md:w-[295px] md:h-[415px]",
+              "transition-transform duration-300"
+            )}
           >
-            <TemplateComponent obj={item as ResumeTemplate} isPreview={true} />
-            <div className="absolute inset-0 w-full h-full p-10 flex items-center gap-5 rounded-xl cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
+            <div className="w-full h-full">
+              <TemplateComponent
+                obj={item as ResumeTemplate}
+                size="sm"
+                isPreview={true}
+              />
+            </div>
+
+            <div className="absolute inset-0 w-full h-full p-4 sm:p-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-5 rounded-md cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
               <Button
                 onClick={() => preview.onOpen(item as ResumeTemplate)}
-                className="py-2 px-5 flex items-center justify-center gap-2"
-            >
-                <p>Preview</p> <Eye />
+                className="w-[50%] md:w-full  flex items-center justify-center gap-2"
+              >
+                <p className="hidden md:block">Preview</p>{" "}
+                <Eye className="md:h-4 md:w-4 h-6 w-6" />
               </Button>
               <Button
                 onClick={() => selectResume(item?._id, item.templateName)}
                 variant={"secondary"}
-                className="py-2 px-5 flex items-center justify-center gap-2"
+                className="w-[50%] md:w-full py-2 px-5 flex items-center justify-center gap-2"
               >
-                <p>Select</p> <Edit />
+                <p className="hidden md:block">Select</p>{" "}
+                <Edit className="md:h-4 md:w-4 h-5 w-5" />
               </Button>
             </div>
           </div>
@@ -96,16 +107,14 @@ const ChooseTemplates = () => {
 
 const ChooseSkeleton = () => {
   return (
-    <>
-      <div className="grid grid-cols-3 gap-6 mt-5">
-        {[0, 1, 2].map((item, index) => (
-          <Skeleton
-            key={index}
-            className=" w-[295px] h-[415px] bg-slate-500/20"
-          />
-        ))}
-      </div>
-    </>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-5 px-4 md:px-6">
+      {[0, 1, 2].map((item, index) => (
+        <Skeleton
+          key={index}
+          className="mx-auto w-full max-w-[295px] h-[415px] bg-slate-500/20"
+        />
+      ))}
+    </div>
   );
 };
 
