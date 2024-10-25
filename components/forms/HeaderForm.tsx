@@ -156,7 +156,7 @@ const HeaderForm = ({
 
   return (
     <>
-      <motion.form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-8 rounded-lg shadow shadow-primary">
+      <motion.form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 md:p-8 rounded-lg shadow shadow-primary">
         <div className="grid grid-cols-1 md:grid-cols-2 w-full md:max-w-[85%] gap-6 md:gap-8">
           <InputField
             label="First Name"
@@ -242,7 +242,7 @@ const HeaderForm = ({
         </div>
 
         {item?.content?.summary !== undefined && (
-          <div className="mt-8 w-[85%] ">
+          <div className="mt-8 w-full md:w-[85%] ">
             <QuillEditorComponent
               label="Summary"
               placeholder="Write something about yourself..."

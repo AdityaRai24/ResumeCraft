@@ -16,6 +16,7 @@ import { geologicaFont } from "@/lib/font";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { item } from "@/lib/motion";
+import useMobile from "@/lib/useMobile";
 
 // Types
 type Section =
@@ -59,12 +60,10 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
   const { user, isLoaded } = useUser();
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const isMobile = useMobile();
 
   const resumeId = params.id as Id<"resumes">;
-  const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId }) as
-    | ResumeData
-    | null
-    | undefined;
+  const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
 
   // Helper functions
   const validateSection = (section: string): section is Section => {
@@ -104,13 +103,15 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
     const currentIndex = sectionArray.findIndex((item) => item === sectionType);
 
     return {
-      prevUrl: `/build-resume/${resumeId}/tips?sec=${sectionArray[currentIndex]}`,
+      prevUrl:
+        sectionType === "final"
+          ? `/build-resume/${resumeId}/tips?sec=custom`
+          : `/build-resume/${resumeId}/tips?sec=${sectionArray[currentIndex]}`,
       nextUrl:
         sectionType === "custom"
           ? `/build-resume/${resumeId}/section/final`
-          : sectionArray[currentIndex + 1]
-            ? `/build-resume/${resumeId}/tips?sec=${sectionArray[currentIndex + 1]}`
-            : `/build-resume/${resumeId}/section/custom`,
+          : sectionType === "final" ? `/build-resume/${resumeId}/download`
+            : `/build-resume/${resumeId}/tips?sec=${sectionArray[currentIndex + 1]}`
     };
   };
 
@@ -123,7 +124,9 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
     return null;
   }
 
-  const sectionArray = resume.sections.map((item) => item.type);
+  const sectionArray : Section[] = resume.sections.map((item) => item.type);
+  sectionArray.push("custom");
+  sectionArray.push("final");
   const sec = searchParams.get("sec");
 
   if (sec && !validateSection(sec)) {
@@ -147,7 +150,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
       <div className="flex flex-shrink-0 bg-primary w-full md:hidden">
         <VerticalTimeline />
       </div>
-      <div className="flex min-h-screen w-full">
+      <div className="flex md:min-h-screen w-full">
         <div className="flex flex-1 overflow-hidden">
           <div className="w-[150px] bg-primary hidden md:flex flex-shrink-0">
             <VerticalTimeline />
@@ -160,7 +163,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
             )}
           >
             {children}
-            {!currentSection && (
+            {(isMobile || (!currentSection && !isMobile)) && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -169,7 +172,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
                   delay: 0.8,
                   ease: [0, 0.71, 0.2, 1.01],
                 }}
-                className="flex flex-col md:flex-row max-w-[90%] px-4 md:px-16 items-center mt-4 justify-between"
+                className="flex mb-32 md:mb-0 flex-col md:flex-row w-full md:max-w-[90%] px-4 md:px-16 items-center mt-4 justify-between"
               >
                 <ContineBtn path={prevUrl} text="Back" type="outline" />
                 <ContineBtn path={nextUrl} text="Continue" type="default" />

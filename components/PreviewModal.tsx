@@ -34,7 +34,7 @@ const PreviewModal = () => {
                 <TemplateComponent
                   obj={preview.currentTemplate}
                   size="md"
-                  isPreview={false}
+                  isPreview={true}
                 />
               )}{" "}
             </div>

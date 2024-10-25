@@ -109,7 +109,6 @@ const Page = () => {
     "#153b66",
     "#a1be29",
     "#955b15",
-    "#9d161d",
   ];
 
   const fontOptions = [
@@ -129,7 +128,7 @@ const Page = () => {
 
   return (
     <FinalLayout>
-      <div className="max-w-[95%] md:max-w-[70%] mt-16 mx-4 md:mx-16">
+      <div className="max-w-[95%] md:max-w-[70%] overflow-y-hidden px-0 md:px-2 mt-16 mx-4 md:mx-16">
         <div className="mb-8">
           <h1 className="text-4xl md:text-6xl font-bold">Almost Done !!</h1>
           <p className="font-normal text-lg text-gray-700">
@@ -231,7 +230,7 @@ const Page = () => {
         </div>
 
         {showPrimaryTextColorBox && (
-          <div className="max-w-[50%]">
+          <div className="max-w-[80%] md:max-w-[50%]">
             <ColorPicker
               hideAlpha
               height={200}
@@ -292,7 +291,7 @@ const Page = () => {
         </div>
 
         {showPrimaryColorBox && (
-          <div className="max-w-[50%]">
+          <div className="max-w-[80%] md:max-w-[50%]">
             <ColorPicker
               hideAlpha
               height={200}
@@ -309,7 +308,7 @@ const Page = () => {
             Choose a font style for your resume...
           </p>
         </div>
-        <div className="flex items-center justify-start gap-2 mb-8">
+        <div className="flex flex-wrap items-center gap-2 mb-2 md:gap-3">
           {fontOptions?.map((item, index) => {
             return (
               <Button

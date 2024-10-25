@@ -256,7 +256,7 @@ const ExperienceForm = ({
           ease: [0, 0.71, 0.2, 1.01],
         }}
       >
-        <Button onClick={addExperience} className="mt-4 mb-8">
+        <Button onClick={addExperience} className="mt-4 md:mb-8">
           Add Another Experience
         </Button>
       </motion.div>

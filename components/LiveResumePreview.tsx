@@ -116,7 +116,7 @@ const LiveResumePreview = () => {
               text="Back"
               path={
                 sectionType === "final"
-                  ? `/build-resume/${params.id}/tips?sec=${sectionArray[sectionArray.length - 1]}`
+                  ? `/build-resume/${params.id}/tips?sec=custom`
                   : backLocation
               }
             />

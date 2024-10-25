@@ -39,10 +39,18 @@ const LiveResumePreview = () => {
   const resumeOnlyMode = searchParams.get("resumeonly") === "true";
 
   if (templateDetails === null) {
-    return <div>Template not found</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-600">Template not found</p>
+      </div>
+    );
   }
   if (templateDetails === undefined) {
-    return <div>Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   }
 
   type TemplateComponentType = React.ComponentType<{
@@ -63,7 +71,11 @@ const LiveResumePreview = () => {
     console.error(
       `No component found for template: ${templateDetails.templateName}`
     );
-    return <div>Error: Template not found</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-600">Error: Template not found</p>
+      </div>
+    );
   }
 
   const handlePdfDownload = () => {
@@ -71,41 +83,55 @@ const LiveResumePreview = () => {
   };
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <div id="no-print">
         <Navbar />
       </div>
-      <div className="flex mx-auto ">
+      
+      <div className="flex w-full">
         {!resumeOnlyMode && (
-          <div id="no-print" className="max-w-[50%] pt-32 pl-16">
+          <div 
+            id="no-print" 
+            className="w-full lg:w-1/2 px-4 sm:px-6 lg:px-16 pt-8 lg:pt-32 pb-8 lg:pb-0"
+          >
             <h1
               className={cn(
-                "text-5xl font-bold text-left",
+                "text-3xl sm:text-4xl lg:text-5xl font-bold text-left",
                 geologicaFont.className
               )}
             >
               Your Resume is Ready !!
             </h1>
-            <div className="flex flex-col justify-center gap-2 mt-4">
-              <p className="flex items-center gap-2 text-gray-600 ">
-                <CheckCircle /> Your resume has been professionally formatted
-                and is ready for download.
-              </p>
-              <p className="flex items-center gap-2 text-gray-600 ">
-                <CheckCircle size={32} /> When downloading, select Save as Pdf
-                to ensure the resume text remains selectable, allowing easy
-                copy-pasting by recruiters.
-              </p>
-              <p className="flex items-center gap-2 text-gray-600 ">
-                <CheckCircle /> Take a moment to review your resume one last
-                time before sharing it with potential employers.
-              </p>
+            
+            <div className="flex flex-col gap-4 mt-6 lg:mt-8">
+              <div className="flex items-start gap-3 text-gray-600">
+                <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
+                <p className="text-sm sm:text-base">
+                  Your resume has been professionally formatted and is ready for download.
+                </p>
+              </div>
+              
+              <div className="flex items-start gap-3 text-gray-600">
+                <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
+                <p className="text-sm sm:text-base">
+                  When downloading, select Save as Pdf to ensure the resume text remains selectable, 
+                  allowing easy copy-pasting by recruiters.
+                </p>
+              </div>
+              
+              <div className="flex items-start gap-3 text-gray-600">
+                <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
+                <p className="text-sm sm:text-base">
+                  Take a moment to review your resume one last time before sharing it with potential employers.
+                </p>
+              </div>
             </div>
-            <div className="flex items-center mt-4">
+            
+            <div className="mt-6 lg:mt-8">
               <Button
                 disabled={loading}
                 onClick={handlePdfDownload}
-                className="py-[30px] px-16  text-base flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out"
+                className="w-full sm:w-auto py-6 px-8 sm:px-16 text-base flex items-center justify-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out"
               >
                 {loading ? (
                   <>
@@ -113,21 +139,24 @@ const LiveResumePreview = () => {
                   </>
                 ) : (
                   <>
-                    Download <Download className="mt-[2.5px]" />{" "}
+                    Download <Download className="mt-[2.5px]" />
                   </>
                 )}
               </Button>
+              
+              {loading && (
+                <p className="text-center mt-4 text-sm text-muted-foreground">
+                  Downloading may take few seconds so kindly be patient...
+                </p>
+              )}
             </div>
-            {loading && (
-              <p className="text-center my-2 text-muted-foreground">
-                Downloading may take few seconds so kindly be patient...
-              </p>
-            )}{" "}
           </div>
         )}
-        <div className="scale-[0.5] fixed right-0 -top-48" id="hello">
+        
+        <div className="scale-[0.3] md:!scale-[0.5] fixed left-1/2  -translate-x-1/2  md:-top-48" id="hello">
           <div
             className={cn(
+              "w-full h-full",
               templateDetails?.globalStyles?.fontFamily === "Inter" &&
                 interFont.className,
               templateDetails?.globalStyles?.fontFamily === "Montserrat" &&
@@ -153,7 +182,7 @@ const LiveResumePreview = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
