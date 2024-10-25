@@ -41,7 +41,7 @@ const Page = () => {
         variants={container}
         initial="hidden"
         animate="visible"
-        className={cn("mt-24", poppinsFont.className)}
+        className={cn("mt-16 md:mt-24", poppinsFont.className)}
       >
         <div className="flex flex-col gap-3 md:gap-4">
           <motion.h2 variants={item} className="text-lg">

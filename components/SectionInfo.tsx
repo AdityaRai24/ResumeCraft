@@ -15,7 +15,7 @@ const SectionInfo = ({ heading, text }: SectionInfoTypes) => {
     <motion.div variants={item} initial="hidden" animate="visible">
       <h1
         className={cn(
-          "text-[35px] !leading-[1.5] font-extrabold",
+          "text-[35px] leading-tight  font-extrabold",
           poppinsFont.className
         )}
       >

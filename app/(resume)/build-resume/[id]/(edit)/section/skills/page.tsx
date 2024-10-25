@@ -24,10 +24,10 @@ const Page = () => {
 
   return (
     <>
-      {resume?.sections?.map((item, index) => {
+      {resume?.sections?.map((item, idx) => {
         if (item?.type === "skills") {
           return (
-            <div key={index} className="mt-24 mx-4 md:mx-16">
+            <div key={idx} className="my-10 md:my-24 mx-4 md:mx-16">
               <SectionInfo
                 heading="Showcase Your Skills"
                 text="Highlight your technical abilities and showcase your expertise in key technologies and tools for building modern applications."

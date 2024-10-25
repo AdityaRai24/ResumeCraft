@@ -25,7 +25,7 @@ const Page = () => {
   }
 
   return (
-    <div className="mt-24 mx-4 md:mx-16">
+    <div className="my-10 md:my-24 mx-4 md:mx-16">
       <SectionInfo
         heading="Create a Custom Section"
         text="Use this space to elaborate on specific projects, certifications, or contributions that demonstrate your expertise if you want to."

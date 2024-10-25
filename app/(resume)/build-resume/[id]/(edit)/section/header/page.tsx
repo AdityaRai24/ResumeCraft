@@ -30,7 +30,7 @@ const Page = () => {
       {resume.sections?.map((item, idx) => {
         if (item?.type === "header") {
           return (
-            <div key={idx} className="my-12 md:my-24 mx-4 md:mx-16">
+            <div key={idx} className="my-10 md:my-24 mx-4 md:mx-16">
               <SectionInfo
                 heading={"Let's start with your header."}
                 text="Include your full name and at least one way for employers to

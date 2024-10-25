@@ -24,12 +24,11 @@ import { CustomContent } from "../template1/Temp1Types";
 import useMobile from "@/lib/useMobile";
 
 export interface TemplateType {
-  isPreview?: boolean;
   obj: ResumeTemplate;
   size?: "sm" | "md" | "lg";
 }
 
-const Template1 = ({ isPreview, obj, size }: TemplateType) => {
+const Template1 = ({ obj, size }: TemplateType) => {
   const isMobile = useMobile();
 
   const sectionArray = obj?.sections?.map((item) => item.type);

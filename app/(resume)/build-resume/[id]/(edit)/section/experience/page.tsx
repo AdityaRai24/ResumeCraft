@@ -27,7 +27,7 @@ const Page = () => {
       {resume.sections?.map((item, idx) => {
         if (item?.type === "experience") {
           return (
-            <div key={idx} className="my-12 md:my-24 mx-4 md:mx-16">
+            <div key={idx} className="my-10 md:my-24 mx-4 md:mx-16">
               <SectionInfo
                 heading={"Let's work on your experience."}
                 text={"Start with your most recent job first."}

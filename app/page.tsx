@@ -35,7 +35,7 @@ export default function Home() {
   // }, []);
 
   return (
-    <div className="h-[90vh] overflow-x-hidden">
+    <div className="h-screen overflow-y-hidden overflow-x-hidden">
       <Navbar />
       <div className="relative w-full px-4 md:px-0">
         <div className="flex  flex-col md:flex-row relative items-center justify-between w-full md:max-w-[85%] mx-auto">
@@ -108,32 +108,32 @@ export default function Home() {
           {/* Template Preview */}
           <motion.div
             className={`
-              !scale-[0.3] md:!scale-[0.5]
-               block  absolute 
-               -top-32 md:-top-60 
-               -right-52
+              !scale-[0.6] md:!scale-[0.46]
+               md:block  absolute 
+               top-20 md:-top-60 
+               -right-full
                 md:-right-16 
                 -rotate-6 transition-all duration-300`}
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Template2 isPreview obj={temp2Obj} />
+            <Template2 obj={temp2Obj} />
           </motion.div>
 
           <motion.div
             className={`
-              !scale-[0.3] md:!scale-[0.5]
+              !scale-[0.6] md:!scale-[0.46]
                md:block absolute 
-               -top-32 md:-top-56 
-               -right-60
+               top-20 md:-top-56 
+               -right-full
                 md:-right-48 
                 rotate-6 transition-all duration-300`}
             initial={{ opacity: 0, x: 100 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Template1 isPreview obj={temp1Obj} />
+            <Template1 obj={temp1Obj} />
           </motion.div>
         </div>
       </div>

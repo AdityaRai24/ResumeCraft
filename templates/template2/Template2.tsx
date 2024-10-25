@@ -24,12 +24,11 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import useMobile from "@/lib/useMobile";
 
 interface TemplateType {
-  isPreview?: boolean;
   obj: ResumeTemplate;
   size?: "sm" | "md" | "lg";
 }
 
-const Template2 = ({ isPreview, obj, size }: TemplateType) => {
+const Template2 = ({  obj, size }: TemplateType) => {
   const sectionArray = obj?.sections?.map((item) => item.type);
   const isMobile = useMobile();
 

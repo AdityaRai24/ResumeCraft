@@ -1,4 +1,4 @@
-"use client";
+import React, { useEffect, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
@@ -17,7 +17,6 @@ import {
   usePathname,
   useSearchParams,
 } from "next/navigation";
-import React, { useEffect, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -83,13 +82,13 @@ const Timeline = () => {
     const SectionIcon = sectionIconMap[section];
 
     return (
-      <div className={`relative ${isMobile ? "mx-6" : "mb-16"}`}>
+      <div className={`relative ${isMobile ? "mx-6" : "mb-16"} `}>
         <div
           className={`absolute ${isMobile ? "top-1/2 -translate-y-1/2" : "left-1/2 -translate-x-1/2 -translate-y-1/2"} w-9 h-9 rounded-full flex items-center justify-center`}
         >
-          <TooltipProvider>
+          <TooltipProvider delayDuration={0}>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <Link
                   href={
                     section === "final"
@@ -110,7 +109,12 @@ const Timeline = () => {
                   </div>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="top" className="z-[10000]">
+              <TooltipContent 
+                side="top" 
+                sideOffset={5}
+                className=" bg-white shadow-!z-[100000] lg border border-gray-200"
+                style={{ position: 'relative' }}
+              >
                 <p className="capitalize">{section}</p>
               </TooltipContent>
             </Tooltip>
@@ -125,9 +129,10 @@ const Timeline = () => {
     <div
       className={`${
         isMobile
-          ? "w-full h-full sticky top-0 bg-background z-50 "
+          ? "w-full h-full sticky top-0 bg-background"
           : "h-full fixed pl-10"
       } flex flex-col items-center justify-center`}
+      style={{ zIndex: 50 }}
     >
       <Button
         variant="ghost"

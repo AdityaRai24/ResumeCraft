@@ -35,7 +35,7 @@ const Page = () => {
       {resume?.sections?.map((item, idx) => {
         if (item?.type === "projects") {
           return (
-            <div className="mt-24 mx-4 md:mx-16" key={idx}>
+            <div key={idx} className="my-10 md:my-24 mx-4 md:mx-16">
               <SectionInfo
                 heading="Time to showcase your projects !!"
                 text="Write about any of your projects or past work to impress your employer."

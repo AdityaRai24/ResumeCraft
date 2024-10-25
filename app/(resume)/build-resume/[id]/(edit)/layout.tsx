@@ -17,6 +17,10 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { item } from "@/lib/motion";
 import useMobile from "@/lib/useMobile";
+import MobilePreviewButton from "@/components/MobilePreviewButton";
+import PreviewModal from "@/components/PreviewModal";
+import { ResumeTemplate } from "@/types/templateTypes";
+import { Button } from "@/components/ui/button";
 
 // Types
 type Section =
@@ -110,8 +114,9 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
       nextUrl:
         sectionType === "custom"
           ? `/build-resume/${resumeId}/section/final`
-          : sectionType === "final" ? `/build-resume/${resumeId}/download`
-            : `/build-resume/${resumeId}/tips?sec=${sectionArray[currentIndex + 1]}`
+          : sectionType === "final"
+            ? `/build-resume/${resumeId}/download`
+            : `/build-resume/${resumeId}/tips?sec=${sectionArray[currentIndex + 1]}`,
     };
   };
 
@@ -124,7 +129,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
     return null;
   }
 
-  const sectionArray : Section[] = resume.sections.map((item) => item.type);
+  const sectionArray: Section[] = resume.sections.map((item) => item.type);
   sectionArray.push("custom");
   sectionArray.push("final");
   const sec = searchParams.get("sec");
@@ -147,8 +152,18 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
   // Render
   return (
     <>
-      <div className="flex flex-shrink-0 bg-primary w-full md:hidden">
+      <div className="flex flex-shrink-0 !z-[100000] bg-primary w-full md:hidden">
         <VerticalTimeline />
+      </div>
+      <div className="relative pt-6 w-full px-4  flex md:hidden items-center justify-between">
+        <Button
+        onClick={()=>router.push('/build-resume/templates')}
+          variant={"outline"}
+          className="  cursor-pointer"
+        >
+          Home
+        </Button>
+        <MobilePreviewButton item={resume as ResumeTemplate} />
       </div>
       <div className="flex md:min-h-screen w-full">
         <div className="flex flex-1 overflow-hidden">
@@ -158,7 +173,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
 
           <div
             className={cn(
-              "flex-grow overflow-x-hidden md:max-w-[80%] overflow-y-auto",
+              "flex-grow overflow-x-hidden !z-[1] md:max-w-[80%] overflow-y-auto",
               geologicaFont.className
             )}
           >
@@ -185,6 +200,8 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
           <LiveResumePreview />
         </div>
       </div>
+
+      <PreviewModal />
     </>
   );
 };
