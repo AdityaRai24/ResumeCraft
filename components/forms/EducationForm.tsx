@@ -105,16 +105,19 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
     }));
   };
 
-  const removeEducation = useCallback((index: number)=>{
-    setEducation((prev)=>{
-      const newEducation = {
-        ...prev,
-        education : prev.education.filter((_,i)=>i!==index)
-      }
-      debouncedUpdate(newEducation);
-      return newEducation;
-    })
-  },[debouncedUpdate])
+  const removeEducation = useCallback(
+    (index: number) => {
+      setEducation((prev) => {
+        const newEducation = {
+          ...prev,
+          education: prev.education.filter((_, i) => i !== index),
+        };
+        debouncedUpdate(newEducation);
+        return newEducation;
+      });
+    },
+    [debouncedUpdate]
+  );
 
   const months = [
     "Jan",
@@ -140,7 +143,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
       {education?.education?.map((item, index) => (
         <motion.form
           key={index}
-          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-8 rounded-lg shadow shadow-primary"
+          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow shadow-primary"
         >
           {index !== 0 && (
             <XIcon
@@ -149,7 +152,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
               className="right-8 top-4 absolute cursor-pointer"
             />
           )}
-          <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full md:max-w-[85%] gap-6 md:gap-8">
             <InputField
               label="Institute Name"
               name="instituteName"

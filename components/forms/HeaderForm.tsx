@@ -68,7 +68,7 @@ const HeaderForm = ({
   useEffect(() => {
     if (item?.content && !pendingChangesRef.current) {
       setHeader(item.content as HeaderContent);
-      console.log(item.content)
+      console.log(item.content);
     }
   }, [item?.content, pendingChangesRef]);
 
@@ -157,7 +157,7 @@ const HeaderForm = ({
   return (
     <>
       <motion.form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-8 rounded-lg shadow shadow-primary">
-        <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 w-full md:max-w-[85%] gap-6 md:gap-8">
           <InputField
             label="First Name"
             name="firstName"
@@ -195,7 +195,7 @@ const HeaderForm = ({
         <div className="mt-8">
           <h3 className="text-lg font-semibold mb-2">Social Links</h3>
           {header?.socialLinks?.map((link, index) => (
-            <div key={link.type} className="mb-4 flex items-center gap-6">
+            <div key={link.type} className="mb-4 flex flex-col md:flex-row items-start justify-start md:items-center gap-6">
               <InputField
                 label={link.type}
                 name={`socialLinks`}
@@ -216,7 +216,7 @@ const HeaderForm = ({
               />
               <button
                 type="button"
-                className="mb-8"
+                className="mb-8 absolute right-20 md:block "
                 onClick={() => handleRemoveSocialLink(index)}
               >
                 <XIcon className="w-5 h-5" />
@@ -225,7 +225,7 @@ const HeaderForm = ({
           ))}
         </div>
 
-        <div className="flex items-center justify-start gap-4 my-4 flex-wrap">
+        <div className="grid grid-cols-2 md:flex items-center justify-start gap-4">
           {socialOptions.map((option) => (
             <span
               key={option.value}

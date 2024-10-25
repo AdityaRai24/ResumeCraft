@@ -130,9 +130,13 @@ const SkillsForm = ({
                 <div className="p-5">
                   <h1 className="font-bold text-2xl">{item.heading}</h1>
                   <p className="text-sm mt-3 font-normal">
-                    {item.allDescriptions.map((desc,index) => {
+                    {item.allDescriptions.map((desc, index) => {
                       return (
-                        <li key={index} dangerouslySetInnerHTML={{ __html: desc }}></li>
+                        <li
+                          key={index}
+                          className="font-normal text-gray-800"
+                          dangerouslySetInnerHTML={{ __html: desc }}
+                        ></li>
                       );
                     })}
                   </p>

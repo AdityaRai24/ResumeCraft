@@ -51,47 +51,47 @@ const CustomForm = ({
 
   const handleTitleChange = (index: number, value: string) => {
     pendingChangesRef.current = true;
-    setSectionsContent((prev)=>{
-      const updatedSections = [...prev]
-      updatedSections[index].sectionTitle = value
+    setSectionsContent((prev) => {
+      const updatedSections = [...prev];
+      updatedSections[index].sectionTitle = value;
       debouncedUpdate(updatedSections, index);
-      return updatedSections
-    })
+      return updatedSections;
+    });
   };
 
   const handleDescriptionChange = (index: number, value: string) => {
     pendingChangesRef.current = true;
-    setSectionsContent((prev)=>{
+    setSectionsContent((prev) => {
       const updatedSections = [...prev];
       updatedSections[index].sectionDescription = value;
       debouncedUpdate(updatedSections, index);
-      return updatedSections
-    })
+      return updatedSections;
+    });
   };
-  
+
   const initialData = useQuery(api.resume.getCustomSections, { id: resumeId });
   useEffect(() => {
     if (initialData && initialData.length > 0 && !pendingChangesRef.current) {
-
-      const modified : any[] = initialData.map((item) => item.content)
+      const modified: any[] = initialData.map((item) => item.content);
       setSectionsContent(modified);
     }
   }, [initialData]);
 
-
-  const debouncedRemoveUpdate = useMemo(()=>{
-    return debounce((toRemoveSectionNumber : number)=>{
-        removeSectionUpdate({id: resumeId, sectionNumber: toRemoveSectionNumber})
-    },400)
-  },[removeSectionUpdate,resumeId])
+  const debouncedRemoveUpdate = useMemo(() => {
+    return debounce((toRemoveSectionNumber: number) => {
+      removeSectionUpdate({
+        id: resumeId,
+        sectionNumber: toRemoveSectionNumber,
+      });
+    }, 400);
+  }, [removeSectionUpdate, resumeId]);
 
   const removeSection = (index: number) => {
-
     const removedSection = sectionsContent.find(
       (section) => section.sectionNumber === index
-    )
+    );
     const toRemoveSectionNumber = removedSection?.sectionNumber;
-    const filteredContent = sectionsContent.filter((_, i) => i+1 !== index);
+    const filteredContent = sectionsContent.filter((_, i) => i + 1 !== index);
     debouncedRemoveUpdate(toRemoveSectionNumber || 0);
     setSectionsContent(filteredContent);
   };
@@ -101,13 +101,13 @@ const CustomForm = ({
       {sectionsContent.map((section, index) => (
         <div
           key={section.sectionNumber}
-          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-8 rounded-lg shadow shadow-primary"
+          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow shadow-primary"
         >
           <div className="flex items-center justify-between">
             <Label>Section Title</Label>
             {index !== 0 && (
               <XIcon
-                onClick={() => removeSection(index+1)}
+                onClick={() => removeSection(index + 1)}
                 className="mr-4 cursor-pointer"
                 width={16}
               />
@@ -119,7 +119,7 @@ const CustomForm = ({
             value={section.sectionTitle}
             onChange={(e) => handleTitleChange(index, e.target.value)}
           />
-          <div className="mt-2">
+          <div className="mt-4 w-full">
             <QuillEditorComponent
               value={section.sectionDescription}
               onChange={(value) => handleDescriptionChange(index, value)}

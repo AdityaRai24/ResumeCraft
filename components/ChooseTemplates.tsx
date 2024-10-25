@@ -19,18 +19,29 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { useRouter } from "nextjs-toploader/app";
 
-const ChooseTemplates = () => {
+const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   const { user } = useUser();
   const createUserResume = useMutation(api.resume.createUserResume);
   const router = useRouter();
   const templates = useQuery(api.resume.getTemplates);
+  const myResumeTemplates = useQuery(api.resume.getUserResumes, {
+    userId: user?.id || "",
+  });
   const preview = usePreview();
 
-  if (templates === null) {
-    return <div>no templates</div>;
-  }
-  if (templates === undefined) {
+  const finalTemplates = myResumes ? myResumeTemplates : templates;
+
+  if (finalTemplates === undefined) {
     return <ChooseSkeleton />;
+  }
+  if (finalTemplates.length === 0) {
+    return (
+        <div className="flex items-center justify-center w-full h-[50vh]">
+          <h1 className="text-xl font-medium">
+            {myResumes ? "No resumes found" : "No templates found"}
+          </h1>
+        </div>
+    );
   }
   if (!user) {
     return redirect("/sign-up");
@@ -51,9 +62,13 @@ const ChooseTemplates = () => {
       });
   };
 
+  const editResume = (resumeId: Id<"resumes">) => {
+    router.push(`/build-resume/${resumeId}/tips?sec=header`);
+  };
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-      {templates?.map((item, index) => {
+      {finalTemplates?.map((item, index) => {
         const TemplateComponent: TemplateComponentType =
           templateComponents[item.templateName];
 
@@ -89,7 +104,11 @@ const ChooseTemplates = () => {
                 <Eye className="md:h-4 md:w-4 h-6 w-6" />
               </Button>
               <Button
-                onClick={() => selectResume(item?._id, item.templateName)}
+                onClick={
+                  myResumes
+                    ? () => editResume(item?._id)
+                    : () => selectResume(item?._id, item.templateName)
+                }
                 variant={"secondary"}
                 className="w-[50%] md:w-full py-2 px-5 flex items-center justify-center gap-2"
               >
@@ -107,12 +126,14 @@ const ChooseTemplates = () => {
 
 const ChooseSkeleton = () => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mt-5 px-4 md:px-6">
-      {[0, 1, 2].map((item, index) => (
-        <Skeleton
-          key={index}
-          className="mx-auto w-full max-w-[295px] h-[415px] bg-slate-500/20"
-        />
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
+        <div
+          key={item}
+          className="relative mx-auto w-[159px] h-[225px] md:w-[295px] md:h-[415px]"
+        >
+          <Skeleton className="w-full h-full rounded-md bg-slate-500/20" />
+        </div>
       ))}
     </div>
   );

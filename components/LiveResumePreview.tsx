@@ -24,6 +24,7 @@ type TemplateComponentType = React.ComponentType<{
   obj: ResumeTemplate;
   isPreview: boolean;
   isLive?: boolean;
+  size: "sm" | "md" | "lg";
 }>;
 
 const templateComponents: Record<string, TemplateComponentType> = {
@@ -58,7 +59,7 @@ const LiveResumePreview = () => {
         ? `/build-resume/${params.id}/tips?sec=${sectionArray[currentIndex + 1]}`
         : `/build-resume/${params.id}/section/custom`;
 
-        const TemplateComponent = templateComponents[templateDetails.templateName];
+  const TemplateComponent = templateComponents[templateDetails.templateName];
 
   if (!TemplateComponent) {
     console.error(
@@ -69,7 +70,7 @@ const LiveResumePreview = () => {
 
   return (
     <>
-      <div className="overflow-hidden w-full fixed h-[100%] mt-8 ">
+      <div className="overflow-hidden  w-full fixed h-[100%] mt-8 ">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -92,6 +93,7 @@ const LiveResumePreview = () => {
           <TemplateComponent
             obj={templateDetails as ResumeTemplate}
             isLive
+            size="md"
             isPreview
           />
         </motion.div>
@@ -108,7 +110,7 @@ const LiveResumePreview = () => {
           }}
           className="fixed bottom-5 right-10"
         >
-          <div className="flex items-center justify-center gap-24">
+          <div className="flex items-center justify-center gap-16">
             <ContineBtn
               type="outline"
               text="Back"

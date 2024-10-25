@@ -16,7 +16,7 @@ const SectionInfo = ({heading,text}: SectionInfoTypes) => {
       <h1 className={cn("text-[35px] font-extrabold", poppinsFont.className)}>
         {heading}
       </h1>
-      <p className="text-md font-light mb-4">{text}</p>
+      <p className="text-md font-light text-gray-700 mb-4">{text}</p>
     </motion.div>
   );
 };

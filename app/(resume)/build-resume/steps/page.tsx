@@ -101,7 +101,8 @@ const Page = () => {
                 </Button>
               </Link>
               <Link href={"/build-resume/templates"} className="w-full sm:w-[45%]">
-                <Button className="py-6 lg:py-[28px] w-full px-6 flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
+                <Button 
+                className="py-6 lg:py-[28px] w-full px-6 flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
                   Next <ArrowRight size={18} className="mb-[2px]" />
                 </Button>
               </Link>

@@ -27,7 +27,7 @@ const Page = () => {
       {resume?.sections?.map((item, idx) => {
         if (item?.type === "education") {
           return (
-            <div key={idx} className="mt-24 mx-16">
+            <div key={idx} className="mt-24 mx-4 md:mx-16">
               <SectionInfo
                 heading="Let's talk about your education."
                 text="Tell us about any colleges, vocational programs, or 

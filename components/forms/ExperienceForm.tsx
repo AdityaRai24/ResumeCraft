@@ -102,16 +102,19 @@ const ExperienceForm = ({
     }));
   };
 
-  const removeEducation = useCallback((index: number)=>{
-      setExperience((prev)=>{
+  const removeEducation = useCallback(
+    (index: number) => {
+      setExperience((prev) => {
         const newExperience = {
           ...prev,
-          experience: prev.experience.filter((_,i)=>i!==index)
-        }
+          experience: prev.experience.filter((_, i) => i !== index),
+        };
         debouncedUpdate(newExperience);
-        return newExperience
-      })
-  },[debouncedUpdate])
+        return newExperience;
+      });
+    },
+    [debouncedUpdate]
+  );
 
   const months = [
     "Jan",
@@ -135,7 +138,10 @@ const ExperienceForm = ({
   return (
     <>
       {experience.experience.map((exp, index) => (
-        <motion.form key={index} className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-8 rounded-lg shadow shadow-primary">
+        <motion.form
+          key={index}
+          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 md:p-8 rounded-lg shadow shadow-primary"
+        >
           {index !== 0 && (
             <XIcon
               width={20}
@@ -143,7 +149,7 @@ const ExperienceForm = ({
               className="right-8 top-4 absolute cursor-pointer"
             />
           )}
-          <div className="grid grid-cols-2 w-full max-w-[85%] gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 w-full md:max-w-[85%] gap-6 md:gap-8">
             <InputField
               label="Company Name"
               name="companyName"
@@ -211,7 +217,7 @@ const ExperienceForm = ({
                 delay: 0.5,
                 ease: [0, 0.71, 0.2, 1.01],
               }}
-              className="flex items-center mt-8 space-x-2"
+              className="flex items-center md:mt-8 space-x-2"
             >
               <Checkbox
                 id={`workingHere-${index}`}
@@ -228,7 +234,7 @@ const ExperienceForm = ({
               </Label>
             </motion.div>
           </div>
-          <div className="mt-8 w-[85%]">
+          <div className="mt-8 w-full  md:w-[85%]">
             <QuillExpEditor
               label="Job Description"
               companyName={exp.companyName}

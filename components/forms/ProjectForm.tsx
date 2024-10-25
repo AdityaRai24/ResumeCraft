@@ -60,7 +60,8 @@ const ProjectForm = ({
     }, 400);
   }, [update, resumeId]);
 
-  const handleChange = useCallback(  (index: number) =>
+  const handleChange = useCallback(
+    (index: number) =>
       (
         e: ChangeEvent<HTMLInputElement> | string,
         field?: keyof ProjectType
@@ -88,23 +89,34 @@ const ProjectForm = ({
     }));
   };
 
-  const removeProject = useCallback((index : number)=>{
-    setProjects((prev)=>{
-      const newProjects = {...prev, projects: prev.projects.filter((_,i)=>i!==index)}
-      debouncedUpdate(newProjects)
-      return newProjects
-    })
-  },[debouncedUpdate])
+  const removeProject = useCallback(
+    (index: number) => {
+      setProjects((prev) => {
+        const newProjects = {
+          ...prev,
+          projects: prev.projects.filter((_, i) => i !== index),
+        };
+        debouncedUpdate(newProjects);
+        return newProjects;
+      });
+    },
+    [debouncedUpdate]
+  );
 
   return (
     <>
-
       {projects?.projects.map((item, index) => {
         return (
           <div key={index}>
-            <form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-8 rounded-lg shadow-sm shadow-primary">
-              {index !== 0 && <XIcon width={20} onClick={()=>removeProject(index)} className="right-8 top-4 absolute cursor-pointer"/>}
-              <div className="grid grid-cols-2 max-w-[85%]  gap-8">
+            <form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow-sm shadow-primary">
+              {index !== 0 && (
+                <XIcon
+                  width={20}
+                  onClick={() => removeProject(index)}
+                  className="right-8 top-4 absolute cursor-pointer"
+                />
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 w-full md:max-w-[85%] gap-6 md:gap-8">
                 <InputField
                   label="Project Title"
                   name="name"
@@ -127,7 +139,7 @@ const ProjectForm = ({
                   placeholder="https://myproject.com/johndoe"
                 />
               </div>
-              <div className="mt-8 w-[85%]">
+              <div className="mt-8 w-full  md:w-[85%]">
                 <QuillProjectEditor
                   label="Project Description"
                   value={item.description}

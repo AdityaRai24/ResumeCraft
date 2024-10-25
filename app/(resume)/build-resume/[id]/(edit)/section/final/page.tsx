@@ -129,10 +129,10 @@ const Page = () => {
 
   return (
     <FinalLayout>
-      <div className="max-w-[70%] mt-16 mx-16">
+      <div className="max-w-[95%] md:max-w-[70%] mt-16 mx-4 md:mx-16">
         <div className="mb-8">
-          <h1 className="text-6xl font-bold">Almost Done !!</h1>
-          <p className="font-normal text-lg">
+          <h1 className="text-4xl md:text-6xl font-bold">Almost Done !!</h1>
+          <p className="font-normal text-lg text-gray-700">
             Change the theme color and font of your resume if you want...
           </p>
         </div>
@@ -154,7 +154,7 @@ const Page = () => {
                     <div className="w-[35px] bg-[white] shadow-sm hover:cursor-move border flex items-center justify-center border-black/30 p-[10px] my-[4px]">
                       {item?.orderNumber + 1}
                     </div>
-                    <div className="w-[60%] bg-white shadow-sm border hover:cursor-move border-black/30 px-[10px] py-[5px] my-[4px] flex justify-between items-center">
+                    <div className="w-[80%] md:w-[60%] bg-white shadow-sm border hover:cursor-move border-black/30 px-[10px] py-[5px] my-[4px] flex justify-between items-center">
                       <span>
                         {item.type === "custom"
                           ? item.content.sectionTitle

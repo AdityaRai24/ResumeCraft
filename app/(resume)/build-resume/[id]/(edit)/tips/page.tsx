@@ -8,7 +8,7 @@ import { useQuery } from "convex/react";
 import { useParams, useSearchParams } from "next/navigation";
 import React from "react";
 import { motion } from "framer-motion";
-import {container, item} from "@/lib/motion"
+import { container, item } from "@/lib/motion";
 import TipsSkeleton from "@/components/TipsSkeleton";
 import { geologicaFont, poppinsFont } from "@/lib/font";
 
@@ -33,69 +33,37 @@ const Page = () => {
   let sectionArray: string[] = [];
   resume?.sections?.map((item) => sectionArray.push(item.type));
 
-  const index = sectionArray.findIndex((item) => item === sec);
   const currentTips = tipsData.find((item) => item.sec === sec);
 
-  const nextSection =  sec === "custom" ? "custom" : sectionArray[index];
-
-  const prevSection = sectionArray[index - 1]
-    ? sectionArray[index - 1]
-    : "header";
-
-  const nexturl =  `/build-resume/${resumeId}/section/${nextSection}`
-  const prevurl = sec === 'header' ? `/build-resume/${resumeId}/tips?sec=header` : `/build-resume/${resumeId}/section/${prevSection}`
-  
   return (
-    <div className="flex items-center justify-start max-w-[80%] mx-16">
+    <div className="flex items-center justify-start w-full md:max-w-[95%] px-4 md:px-16">
       <motion.div
         variants={container}
         initial="hidden"
         animate="visible"
-        className={cn("mt-24",poppinsFont.className)}
+        className={cn("mt-24", poppinsFont.className)}
       >
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3 md:gap-4">
           <motion.h2 variants={item} className="text-lg">
             {currentTips?.topText}
           </motion.h2>
           <motion.div variants={item}>
-            <h1
-              className={cn(
-                "text-6xl font-bold leading-[1.10]",
-              )}
-            >
+            <h1 className={cn("text-4xl md:text-6xl font-bold leading-[1.20]")}>
               {currentTips?.mainText}
             </h1>
             <div className="flex flex-col items-start gap-1 mt-4">
-              <h2 className="font-medium text-xl">
+              <h2 className="font-medium text-base md:text-xl">
                 {currentTips?.bottomMainText}
               </h2>
-              <p className="font-normal text-gray-500 text-base">{currentTips?.bottomText}</p>
+              <p className="font-normal text-gray-500 text-sm md:text-base">
+                {currentTips?.bottomText}
+              </p>
             </div>
           </motion.div>
         </div>
-
-        {/* BUTTONS DIV */}
-        <motion.div
-          variants={item} 
-          className="flex items-center mt-8 justify-between"
-        >
-          <ContineBtn
-            path={prevurl}
-            text="Back"
-            type={"outline"}
-          />
-          <ContineBtn
-            path={nexturl}
-            text="Continue"
-            type={"default"}
-          />
-        </motion.div>
       </motion.div>
     </div>
   );
 };
-
-
-
 
 export default Page;
