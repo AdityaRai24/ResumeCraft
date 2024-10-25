@@ -42,27 +42,17 @@ const Template2 = ({ isPreview, obj, size }: TemplateType) => {
             ? "scale-[0.2]"
             : size === "md"
               ? "scale-[0.5]"
-              : "scale-[0.8]"
+              : "scale-[0.42] print:scale-100"
           : size === "sm"
             ? "scale-[0.37]"
             : size === "md"
               ? "scale-[0.5]"
-              : "scale-[0.8]"
-        // isLive &&
-        // "flex items-center justify-center w-[1122px] h-full  scale-[0.5]",
-        // isPreview && !isLive && "scale-[0.37]",
-        // !isPreview && !isLive && "scale-[0.8]",
-        // downloadPreview && "scale-[0.5]"
+              : "scale-[1]"
       )}
     >
       {children}
     </div>
   );
-  const FullSizeWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div className="flex items-center justify-center ">{children}</div>
-  );
-
-  const Wrapper = isPreview ? PreviewWrapper : FullSizeWrapper;
 
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColorClass = obj?.globalStyles?.primaryColor || "black";
@@ -335,10 +325,7 @@ const Template2 = ({ isPreview, obj, size }: TemplateType) => {
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] text-black !py-8 px-8 overflow-hidden overflow-x-clip w-[210mm] h-[297mm]  select-none cursor-pointer rounded-3xl transition duration-300 ease-in shadow-2xl border border-primary"
-        // isPreview && !isLive && "w-[795px] h-[1122px]",
-        // !isLive && !isPreview && "scale-[1] shadow-2xl rounded-2xl",
-        // modalPreview && "scale-[0.6]"
+        "bg-[white] text-black !py-8 px-8 overflow-hidden overflow-x-clip w-[211mm] h-[297mm]  select-none cursor-pointer rounded-3xl print:rounded-none transition duration-300 ease-in shadow-2xl border print:border-0 border-primary"
       )}
     >
       <div className="">
@@ -349,7 +336,7 @@ const Template2 = ({ isPreview, obj, size }: TemplateType) => {
     </div>
   );
 
-  return <Wrapper>{content}</Wrapper>;
+  return <PreviewWrapper>{content}</PreviewWrapper>;
 };
 
 export default Template2;

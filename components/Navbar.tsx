@@ -28,7 +28,7 @@ const Navbar = () => {
         />
       )}
 
-      <div className="shadow-[0_2px_4px_rgba(0,0,0,0.1)] relative z-50 bg-white">
+      <div className={cn(`shadow-[0_2px_4px_rgba(0,0,0,0.1)] relative z-50 ${isMenuOpen ? "bg-white" : "bg-background"} `)}>
         <div
           className={`${poppinsFont.className} w-[90%] md:w-[85%] mx-auto flex items-center justify-between py-4`}
         >
@@ -97,8 +97,8 @@ const Navbar = () => {
 
         <div
           className={cn(
-            "md:hidden absolute top-full left-0 right-0 bg-white border-b shadow-lg transition-all duration-300 ease-in-out",
-            isMenuOpen ? "opacity-100 visible" : "opacity-0 invisible h-0"
+            "md:hidden absolute top-full left-0 right-0 border-b shadow-lg transition-all duration-300 ease-in-out",
+            isMenuOpen ? "opacity-100 visible bg-white" : "opacity-0 bg-background invisible h-0"
           )}
         >
           <div className="w-[90%] mx-auto py-4 flex flex-col gap-4">

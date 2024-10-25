@@ -36,11 +36,11 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   }
   if (finalTemplates.length === 0) {
     return (
-        <div className="flex items-center justify-center w-full h-[50vh]">
-          <h1 className="text-xl font-medium">
-            {myResumes ? "No resumes found" : "No templates found"}
-          </h1>
-        </div>
+      <div className="flex items-center justify-center w-full h-[50vh]">
+        <h1 className="text-xl font-medium">
+          {myResumes ? "No resumes found" : "No templates found"}
+        </h1>
+      </div>
     );
   }
   if (!user) {
@@ -119,7 +119,9 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
           </div>
         );
       })}
-      <PreviewModal />
+      <div>
+        <PreviewModal />
+      </div>
     </div>
   );
 };

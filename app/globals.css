@@ -61,7 +61,6 @@
   body {
     @apply bg-background text-foreground !overflow-x-hidden;
   }
-  
 }
 
 .quill-content ul {
@@ -99,18 +98,25 @@ body {
   #no-print {
     display: none;
   }
+  
   #pdf {
     display: block;
   }
+  
   body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
-  #hello{
-    scale: 2.022;
-    top: 0;
-    border-radius: 0px!important;
+  
+  #hello {
+    transform: none !important; /* Reset any transforms */
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
   }
 }
 

@@ -26,6 +26,7 @@ import {
   poppinsFont,
   ralewayFont,
 } from "@/lib/font";
+import useMobile from "@/lib/useMobile";
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -37,6 +38,7 @@ const LiveResumePreview = () => {
 
   const searchParams = useSearchParams();
   const resumeOnlyMode = searchParams.get("resumeonly") === "true";
+  const isMobile = useMobile();
 
   if (templateDetails === null) {
     return (
@@ -83,16 +85,16 @@ const LiveResumePreview = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="max-h-screen flex flex-col">
       <div id="no-print">
         <Navbar />
       </div>
-      
-      <div className="flex w-full">
+
+      <div className="flex flex-col lg:flex-row w-full">
         {!resumeOnlyMode && (
-          <div 
-            id="no-print" 
-            className="w-full lg:w-1/2 px-4 sm:px-6 lg:px-16 pt-8 lg:pt-32 pb-8 lg:pb-0"
+          <div
+            id="no-print"
+            className="w-full lg:w-full max-w-[85%] mx-auto ] pt-8 lg:pt-32 pb-8 lg:pb-0"
           >
             <h1
               className={cn(
@@ -102,31 +104,33 @@ const LiveResumePreview = () => {
             >
               Your Resume is Ready !!
             </h1>
-            
-            <div className="flex flex-col gap-4 mt-6 lg:mt-8">
+
+            <div className="flex flex-col gap-4 mt-6 lg:mt-8 md:max-w-[50%]">
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  Your resume has been professionally formatted and is ready for download.
+                  Your resume has been professionally formatted and is ready for
+                  download.
                 </p>
               </div>
-              
+
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  When downloading, select Save as Pdf to ensure the resume text remains selectable, 
-                  allowing easy copy-pasting by recruiters.
+                  When downloading, select &apos;Save as Pdf&apos; and Paper Size &apos;ISO A4&apos; to ensure the resume text
+                  remains selectable, allowing easy copy-pasting by recruiters.
                 </p>
               </div>
-              
+
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  Take a moment to review your resume one last time before sharing it with potential employers.
+                  Take a moment to review your resume one last time before
+                  sharing it with potential employers.
                 </p>
               </div>
             </div>
-            
+
             <div className="mt-6 lg:mt-8">
               <Button
                 disabled={loading}
@@ -143,7 +147,7 @@ const LiveResumePreview = () => {
                   </>
                 )}
               </Button>
-              
+
               {loading && (
                 <p className="text-center mt-4 text-sm text-muted-foreground">
                   Downloading may take few seconds so kindly be patient...
@@ -152,8 +156,15 @@ const LiveResumePreview = () => {
             </div>
           </div>
         )}
-        
-        <div className="scale-[0.3] md:!scale-[0.5] fixed left-1/2  -translate-x-1/2  md:-top-48" id="hello">
+
+        <div
+          className={cn(
+            "scale-[0.5] fixed left-3/4 -translate-x-1/2 top-[55%] -translate-y-1/2",
+            "print:scale-100 print:left-0 print:top-0 print:translate-x-0 print:translate-y-0",
+            isMobile && "hidden print:block"
+          )}
+          id="hello"
+        >
           <div
             className={cn(
               "w-full h-full",
