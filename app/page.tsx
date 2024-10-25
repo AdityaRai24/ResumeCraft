@@ -35,7 +35,7 @@ export default function Home() {
   // }, []);
 
   return (
-    <div className="h-screen overflow-y-hidden overflow-x-hidden">
+    <div className="h-screen overflow-x-hidden">
       <Navbar />
       <div className="relative w-full px-4 md:px-0">
         <div className="flex  flex-col md:flex-row relative items-center justify-between w-full md:max-w-[85%] mx-auto">
