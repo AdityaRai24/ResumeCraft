@@ -133,7 +133,7 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Template1 obj={temp1Obj} />
+            <Template1 size="lg" obj={temp1Obj} />
           </motion.div>
         </div>
       </div>

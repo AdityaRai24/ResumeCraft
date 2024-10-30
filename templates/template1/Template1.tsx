@@ -23,7 +23,7 @@ import TemplateWrapper from "@/providers/TemplateWrapper";
 
 export interface TemplateType {
   obj: ResumeTemplate;
-  size: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg";
 }
 
 const Template1 = ({ obj, size }: TemplateType) => {
@@ -348,7 +348,7 @@ const Template1 = ({ obj, size }: TemplateType) => {
     </div>
   );
 
-  return <TemplateWrapper size={size}>{content}</TemplateWrapper>;
+  return <TemplateWrapper size={size!}>{content}</TemplateWrapper>;
 };
 
 export default Template1;
