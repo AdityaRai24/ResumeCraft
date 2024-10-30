@@ -57,9 +57,7 @@ const LiveResumePreview = () => {
 
   type TemplateComponentType = React.ComponentType<{
     obj: ResumeTemplate;
-    isPreview: boolean;
-    isLive?: boolean;
-    downloadPreview?: boolean;
+    size: "md" | "sm" | "lg";
   }>;
 
   const templateComponents: Record<string, TemplateComponentType> = {
@@ -117,8 +115,9 @@ const LiveResumePreview = () => {
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  When downloading, select &apos;Save as Pdf&apos; and Paper Size &apos;ISO A4&apos; to ensure the resume text
-                  remains selectable, allowing easy copy-pasting by recruiters.
+                  When downloading, select &apos;Save as Pdf&apos; and Paper
+                  Size &apos;ISO A4&apos; to ensure the resume text remains
+                  selectable, allowing easy copy-pasting by recruiters.
                 </p>
               </div>
 
@@ -186,8 +185,7 @@ const LiveResumePreview = () => {
             {templateDetails && (
               <TemplateComponent
                 obj={templateDetails}
-                isLive
-                isPreview={false}
+                size="lg"
               />
             )}
           </div>
