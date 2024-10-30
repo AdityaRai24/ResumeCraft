@@ -1,7 +1,4 @@
 "use client";
-import ConvexAndClerk from "@/providers/ConvexAndClerk";
-import { Toaster } from "react-hot-toast";
-import { poppinsFont } from "@/lib/font";
 import { useState, useEffect } from "react";
 
 export default function ScreenProvider({
