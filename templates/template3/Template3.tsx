@@ -18,7 +18,7 @@ import {
   HeaderContent,
   ProjectContent,
   SkillsContent,
-} from "./Temp1Types";
+} from "../template1/Temp1Types";
 import TemplateWrapper from "@/providers/TemplateWrapper";
 
 export interface TemplateType {
@@ -26,7 +26,7 @@ export interface TemplateType {
   size: "sm" | "md" | "lg";
 }
 
-const Template1 = ({ obj, size }: TemplateType) => {
+const Template3 = ({ obj, size }: TemplateType) => {
   const headerLogoMap: any = {
     github: <Github size={18} className="mt-[2px]" />,
     linkedin: <Linkedin size={18} className="mt-[2px]" />,
@@ -34,6 +34,8 @@ const Template1 = ({ obj, size }: TemplateType) => {
     twitter: <Twitter size={18} className="mt-[2px]" />,
     other: <Link2 size={18} className="mt-[2px]" />,
   };
+
+  console.log(obj);
 
   const visitedCustoms: number[] = [];
   const primaryTextColor = obj?.globalStyles?.primaryTextColor || "black";
@@ -333,14 +335,18 @@ const Template1 = ({ obj, size }: TemplateType) => {
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] text-black py-8 overflow-hidden overflow-x-hidden  w-[211mm] h-[297mm] px-8 select-none cursor-pointer rounded-3xl print:rounded-none transition duration-300 ease-in  shadow-2xl print:border-0 border border-primary"
+        "bg-[white] text-black overflow-hidden overflow-x-hidden  w-[211mm] h-[297mm]  select-none cursor-pointer rounded-3xl print:rounded-none transition duration-300 ease-in  shadow-2xl print:border-0 border border-primary"
       )}
     >
       <div className="">
         {uniqueSectionTypes?.map((section, index) => {
           return (
             <React.Fragment key={index}>
-              {renderSection(section)}
+              {/* {renderSection(section)} */}
+              <div className="grid grid-cols-[33%_67%] min-h-screen">
+                <div className="bg-green-700">{section === 'header' && renderSection(section)} </div>
+                <div className=""></div>
+              </div>
             </React.Fragment>
           );
         })}
@@ -351,4 +357,4 @@ const Template1 = ({ obj, size }: TemplateType) => {
   return <TemplateWrapper size={size}>{content}</TemplateWrapper>;
 };
 
-export default Template1;
+export default Template3;
