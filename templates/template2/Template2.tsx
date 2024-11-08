@@ -287,7 +287,7 @@ const Template2 = ({  obj, size }: TemplateType) => {
                 return (
                   <>
                     <div
-                      className={`py-2 ${item.isVisible ? "block" : "hidden"}`}
+                      className={`mt-2 ${item.isVisible ? "block" : "hidden"}`}
                       key={index}
                     >
                       <h1
