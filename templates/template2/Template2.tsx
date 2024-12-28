@@ -25,7 +25,7 @@ import useMobile from "@/lib/useMobile";
 
 interface TemplateType {
   obj: ResumeTemplate;
-  size?: "sm" | "md" | "lg";
+  size: "sm" | "md" | "lg";
 }
 
 const Template2 = ({  obj, size }: TemplateType) => {

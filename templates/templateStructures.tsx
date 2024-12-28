@@ -1,6 +1,7 @@
 import { ResumeTemplate } from "@/types/templateTypes";
 import Template1 from "@/templates/template1/Template1";
 import Template2 from "@/templates/template2/Template2";
+import Template3 from "./template3/Template3";
 
 export const allSectionFields: any = {
   header: {
@@ -145,10 +146,11 @@ export const templateStructures: any = {
 export type TemplateComponentType = React.ComponentType<{
   obj: ResumeTemplate;
   isPreview: boolean;
-  size? : "sm" | "md" | "lg";
+  size: "sm" | "md" | "lg";
 }>;
 
 export const templateComponents: Record<string, TemplateComponentType> = {
   Template1: Template1,
   Template2: Template2,
+  Template3: Template3,
 };

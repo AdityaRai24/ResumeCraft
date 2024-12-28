@@ -12,6 +12,7 @@
         location: v.optional(v.string()),
         summary: v.optional(v.string()),
         photo: v.optional(v.string()),
+        role: v.optional(v.string()),
         socialLinks : v.array(
           v.object({
             type : v.string(),

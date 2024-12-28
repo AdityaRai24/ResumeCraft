@@ -11,6 +11,7 @@ const temp3obj: ResumeTemplate = {
         email: "john.doe@example.com",
         firstName: "John",
         lastName: "Doe",
+        role : "Software Engineer",
         socialLinks: [
           {
             type: "github",
@@ -21,8 +22,8 @@ const temp3obj: ResumeTemplate = {
         location: "New York, NY",
         phone: "+1-555-123-4567",
         photo: "",
-        summary:
-          "Experienced software developer with a strong background in full-stack development and a passion for creating innovative solutions.",
+        // summary:
+        //   "Experienced software developer with a strong background in full-stack development and a passion for creating innovative solutions.",
       },
       isVisible: true,
       orderNumber: 0,
@@ -31,7 +32,7 @@ const temp3obj: ResumeTemplate = {
     {
       type: "skills",
       content: {
-        description:
+        description: 
           "<p><strong>Frontend :</strong> HTML5, CSS3, JavaScript (ES6+), TypeScript, React.js, Next.js, Redux, Tailwind CSS, Bootstrap, Responsive Design, Flexbox, CSS Grid, Webpack, Babel.</p><p><strong>Backend :</strong> Node.js, Express.js, REST APIs, GraphQL, Authentication (JWT, OAuth), MongoDB, Mongoose, PostgreSQL, WebSockets (Socket.io), Real-Time Data.</p><p><strong>DevOps:</strong> Docker, Kubernetes, AWS (S3, EC2, Lambda), DigitalOcean, CI/CD Pipelines (GitHub Actions, Jenkins), Nginx, Apache, PM2.</p><p><strong>Version Control &amp; Tools: </strong>Git, GitHub, GitLab, Postman, Insomnia, Swagger, VS Code, WebStorm. Testing: Jest, Mocha, Chai, Cypress, Selenium.</p>",
       },
       isVisible: true,

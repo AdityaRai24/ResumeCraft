@@ -122,7 +122,6 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
           </div>
         );
       })}
-      {/* <Template3 obj={temp3obj} size="sm" /> */}
       <div>
         <PreviewModal />
       </div>

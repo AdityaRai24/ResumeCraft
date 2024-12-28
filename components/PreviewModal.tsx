@@ -5,10 +5,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
-import { ResumeTemplate } from "@/types/templateTypes";
 import {
   templateComponents,
   TemplateComponentType,
