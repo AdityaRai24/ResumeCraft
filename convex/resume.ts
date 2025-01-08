@@ -45,6 +45,8 @@ export const updateHeader = mutation({
           })
         )
       ),
+      role: v.optional(v.string()),
+      profilePic: v.optional(v.string()),
       location: v.optional(v.string()),
       summary: v.optional(v.string()),
     }),

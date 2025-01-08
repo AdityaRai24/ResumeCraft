@@ -98,17 +98,17 @@ body {
   #no-print {
     display: none;
   }
-  
+
   #pdf {
     display: block;
   }
-  
+
   body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
-  
+
   #hello {
     transform: none !important; /* Reset any transforms */
     position: absolute !important;
@@ -126,4 +126,10 @@ body {
 }
 .radial {
   background: radial-gradient(circle, #fff, #ffe4e6);
+}
+ul {
+  list-style-type: disc; /* Makes the list style disc */
+  list-style-position: outside; /* Positions the disc outside the list item */
+  padding-left: 1.25rem; /* Adds padding on the left (equivalent to pl-5 in Tailwind) */
+  text-align: justify; /* Justifies the text */
 }

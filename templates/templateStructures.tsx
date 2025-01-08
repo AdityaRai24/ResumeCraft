@@ -13,6 +13,7 @@ export const allSectionFields: any = {
     summary: "",
     location: "",
     photo: undefined,
+    role: "",
   },
   experience: {
     experience: [
@@ -134,6 +135,41 @@ export const templateStructures: any = {
       isVisible: true,
     },
     { type: "projects", fields: ["projects"], orderNumber: 3, isVisible: true },
+    {
+      type: "skills",
+      fields: ["description"],
+      orderNumber: 4,
+      isVisible: true,
+    },
+  ],
+  Template3: [
+    {
+      type: "header",
+      fields: [
+        "firstName",
+        "lastName",
+        "email",
+        "phone",
+        "socialLinks",
+        "role",
+        "summary",
+        "photo",
+      ],
+      orderNumber: 0,
+      isVisible: true,
+    },
+    {
+      type: "education",
+      fields: ["education"],
+      orderNumber: 1,
+      isVisible: true,
+    },
+    {
+      type: "experience",
+      fields: ["experience"],
+      orderNumber: 2,
+      isVisible: true,
+    },
     {
       type: "skills",
       fields: ["description"],

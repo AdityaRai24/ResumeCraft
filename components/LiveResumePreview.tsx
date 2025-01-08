@@ -19,6 +19,7 @@ import {
   poppinsFont,
   ralewayFont,
 } from "@/lib/font";
+import Template3 from "@/templates/template3/Template3";
 
 type TemplateComponentType = React.ComponentType<{
   obj: ResumeTemplate;
@@ -30,6 +31,7 @@ type TemplateComponentType = React.ComponentType<{
 const templateComponents: Record<string, TemplateComponentType> = {
   Template1: Template1,
   Template2: Template2,
+  Template3: Template3,
 };
 
 const LiveResumePreview = () => {

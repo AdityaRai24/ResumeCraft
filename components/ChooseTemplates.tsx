@@ -18,9 +18,6 @@ import PreviewModal from "./PreviewModal";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { useRouter } from "nextjs-toploader/app";
-import Template3 from "@/templates/template3/Template3";
-import temp1Obj from "@/templates/template1/temp1obj";
-import temp3obj from "@/templates/template3/temp3obj";
 
 const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   const { user } = useUser();
