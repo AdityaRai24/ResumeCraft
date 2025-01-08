@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import {
   createSection,
+  templateEmptyComponents,
   templateStructures,
 } from "@/templates/templateStructures";
 import { ResumeTemplate, SocialLink } from "@/types/templateTypes";
@@ -107,21 +108,23 @@ export const createUserResume = mutation({
       throw new Error("Invalid template name");
     }
 
-    const initialSections = templateSections.map((section: any) =>
-      createSection(
-        section.type,
-        section.fields,
-        section.orderNumber,
-        section.isVisible
-      )
-    );
+    // const initialSections = templateSections.map((section: any) =>
+    //   createSection(
+    //     section.type,
+    //     section.fields,
+    //     section.orderNumber,
+    //     section.isVisible
+    //   )
+    // );
+
+    console.log(templateEmptyComponents[args.templateName], "yes less goo");
 
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
       userId: args.userId,
       globalStyles: resume?.globalStyles!,
       templateName: args?.templateName,
-      sections: initialSections,
+      sections: templateEmptyComponents[args.templateName].sections,
     });
 
     return newResume;
@@ -235,6 +238,7 @@ export const updateCustomSection = mutation({
       sectionTitle: v.string(),
       sectionDescription: v.string(),
       sectionNumber: v.number(),
+      sectionDirection: v.optional(v.string()),
     }),
   },
   handler: async (ctx, args) => {
@@ -288,6 +292,7 @@ export const updateCustomSection = mutation({
           sectionTitle: args.content.sectionTitle,
           sectionDescription: args.content.sectionDescription,
           sectionNumber: args.content.sectionNumber,
+          sectionDirection: args.content.sectionDirection,
         },
         orderNumber: maxNumber + 1,
         isVisible: true,
@@ -665,7 +670,6 @@ export const migrateResumes = mutation({
   },
 });
 
-
 export const hideSection = mutation({
   args: {
     id: v.id("resumes"),
@@ -686,7 +690,9 @@ export const hideSection = mutation({
     }
 
     const resumeSections = resume?.sections;
-    let index = resumeSections.findIndex((item) => item.type === args.sectionId);
+    let index = resumeSections.findIndex(
+      (item) => item.type === args.sectionId
+    );
     if (index === -1) {
       throw new Error("Something went wrong index");
     } else {

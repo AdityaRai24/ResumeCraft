@@ -7,7 +7,12 @@ import { Button } from "../ui/button";
 import { debounce } from "lodash";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { XIcon } from "lucide-react";
+import {
+  XIcon,
+  ArrowLeftCircle,
+  ArrowRightCircle,
+  XCircle,
+} from "lucide-react";
 
 const CustomForm = ({
   resumeId,
@@ -22,24 +27,28 @@ const CustomForm = ({
     sectionTitle: string;
     sectionDescription: string;
     sectionNumber: number;
+    sectionDirection: "left" | "right";
   }
 
-  const [sectionsContent, setSectionsContent] = useState<SectionItem[]>([
-    { sectionTitle: "", sectionDescription: "", sectionNumber: 1 },
-  ]);
-  const update = useMutation(api.resume.updateCustomSection);
-  const removeSectionUpdate = useMutation(api.resume.removeCustomSection);
+  const [sectionsContent, setSectionsContent] = useState<SectionItem[]>([]);
+  const [isChoosingDirection, setIsChoosingDirection] = useState(false);
   const pendingChangesRef = useRef(false);
 
-  const handleAddSection = () => {
-    setSectionsContent([
-      ...sectionsContent,
-      {
-        sectionTitle: "",
-        sectionDescription: "",
-        sectionNumber: sectionsContent.length + 1,
-      },
-    ]);
+  const update = useMutation(api.resume.updateCustomSection);
+  const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
+  const isTwoColumn = resume?.globalStyles.columns === 2;
+  const removeSectionUpdate = useMutation(api.resume.removeCustomSection);
+
+  const addSection = (direction: "left" | "right" = "left") => {
+    const newSection: SectionItem = {
+      sectionTitle: "",
+      sectionDescription: "",
+      sectionNumber: sectionsContent.length + 1,
+      sectionDirection: direction,
+    };
+
+    setSectionsContent((prev) => [...prev, newSection]);
+    setIsChoosingDirection(false);
   };
 
   const debouncedUpdate = useMemo(() => {
@@ -96,6 +105,50 @@ const CustomForm = ({
     setSectionsContent(filteredContent);
   };
 
+  const DirectionChoice = () => (
+    <div className="mt-8">
+      <div className="flex items-center gap-4 mb-4">
+        <h2 className="text-lg font-semibold">Choose Section Direction</h2>
+        <button
+          onClick={() => setIsChoosingDirection(false)}
+          className="p-1 rounded-full hover:bg-gray-100 transition-colors"
+        >
+          <XCircle className="w-6 h-6 text-gray-500" />
+        </button>
+      </div>
+      <div className="flex gap-6">
+        <button
+          onClick={() => addSection("left")}
+          className="w-32 h-32 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-primary hover:bg-primary/5 transition-colors"
+        >
+          <ArrowLeftCircle className="w-12 h-12 text-primary" />
+          <span className="font-medium">Left</span>
+        </button>
+        <button
+          onClick={() => addSection("right")}
+          className="w-32 h-32 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-primary hover:bg-primary/5 transition-colors"
+        >
+          <ArrowRightCircle className="w-12 h-12 text-primary" />
+          <span className="font-medium">Right</span>
+        </button>
+      </div>
+    </div>
+  );
+
+  if (sectionsContent.length === 0) {
+    return (
+      <div>
+        <Button
+          className="px-3 w-[200px] mb-8"
+          onClick={() => isTwoColumn ? setIsChoosingDirection(true) : addSection()}
+        >
+          Add Section
+        </Button>
+        {isTwoColumn && isChoosingDirection && <DirectionChoice />}
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {sectionsContent.map((section, index) => (
@@ -126,11 +179,21 @@ const CustomForm = ({
               label="Section Description"
             />
           </div>
+          {isTwoColumn && (
+            <p className="text-sm mt-2">Direction: {section.sectionDirection}</p>
+          )}
         </div>
       ))}
-      <Button className="px-3 w-[200px]" onClick={handleAddSection}>
-        Add Another Section
-      </Button>
+      {!isChoosingDirection ? (
+        <Button
+          className="px-3 w-[200px]"
+          onClick={() => isTwoColumn ? setIsChoosingDirection(true) : addSection()}
+        >
+          Add Another Section
+        </Button>
+      ) : (
+        isTwoColumn && <DirectionChoice />
+      )}
     </div>
   );
 };

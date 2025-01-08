@@ -32,7 +32,7 @@ const temp3obj: ResumeTemplate = {
     {
       content: {
         description:
-          "<li><strong>Frontend :</strong> HTML5, CSS3, JavaScript (ES6+), TypeScript, React.js, Next.js, Redux, Tailwind CSS, Bootstrap, Responsive Design, Flexbox, CSS Grid, Webpack, Babel.</li><li><strong>Backend :</strong> Node.js, Express.js, REST APIs, GraphQL, Authentication (JWT, OAuth), MongoDB, Mongoose, PostgreSQL, WebSockets (Socket.io), Real-Time Data.</li><li><strong>DevOps:</strong> Docker, Kubernetes, AWS (S3, EC2, Lambda), DigitalOcean, CI/CD Pipelines (GitHub Actions, Jenkins), Nginx, Apache, PM2.</li><li><strong>Version Control &amp; Tools: </strong>Git, GitHub, GitLab, Postman, Insomnia, Swagger, VS Code, WebStorm. Testing: Jest, Mocha, Chai, Cypress, Selenium.</li>",
+          "<ul><li>Project Management</li><li>Public Relations</li><li>Teamwork</li><li>Time Management</li><li>Leadership</li><li>Critical Thinking</li><li>Digital Marketing</li></ul>",
       },
       isVisible: true,
       orderNumber: 1,
@@ -104,6 +104,33 @@ const temp3obj: ResumeTemplate = {
       orderNumber: 4,
       style: {},
       type: "education",
+    },
+    {
+      type: "custom",
+      content: {
+        sectionTitle: "Languages",
+        sectionDescription:
+          "<ul><li>English (Fluent)</li><li>French (Fluent)</li><li>German (Basic)</li><li>Spanish (Intermediate)</li></ul>",
+        sectionDirection: "left",
+        sectionNumber: 0,
+      },
+
+      isVisible: false,
+      orderNumber: 5,
+      style: {},
+    },
+    {
+      type: "custom",
+      content: {
+        sectionTitle: "Reference",
+        sectionDescription:
+          "<p><strong>Estelle Darcy</strong></p><p>Wardiere Inc. / CTO</p><p><strong>Phone: </strong>123-456-7890</p><p><strong>Email : </strong>hello@reallygreatsite.com</p>",
+        sectionDirection: "right",
+        sectionNumber: 0,
+      },
+      isVisible: false,
+      orderNumber: 6,
+      style: {},
     },
   ],
   globalStyles: {

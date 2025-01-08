@@ -16,6 +16,7 @@ import React from "react";
 import TemplateWrapper from "@/providers/TemplateWrapper";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
+import Image from "next/image";
 
 export interface TemplateType {
   obj: ResumeTemplate;
@@ -23,8 +24,6 @@ export interface TemplateType {
 }
 
 const Template3 = ({ obj, size }: TemplateType) => {
-  console.log({ obj });
-
   const headerLogoMap: any = {
     github: <Github size={20} className="mt-[2px]" />,
     linkedin: <Linkedin size={20} className="mt-[2px]" />,
@@ -43,10 +42,29 @@ const Template3 = ({ obj, size }: TemplateType) => {
   const uniqueSectionTypes = Array.from(
     new Set(sortedSections.map((item) => item.type))
   );
-  console.log({ uniqueSectionTypes });
 
-  const leftSections = ["header", "skills", "languages", "references"];
-  const rightSections = ["header", "experience", "education"];
+  const tempLeft = ["header", "skills"];
+  const customLeftSections = obj.sections
+    .filter((item) => item.type === "custom")
+    .filter((item) => item.content.sectionDirection === "left");
+
+  const leftSections = [
+    ...tempLeft,
+    ...customLeftSections.map((item) => item.type),
+  ];
+
+  const tempRight = ["header", "experience", "education"];
+
+  const customRightSections = obj.sections
+    .filter((item) => item.type === "custom")
+    .filter((item) => item.content.sectionDirection === "right");
+
+  const rightSections = [
+    ...tempRight,
+    ...customRightSections.map((item) => item.type),
+  ];
+
+  console.log(obj.sections, leftSections, rightSections);
 
   const content = (
     <div
@@ -66,12 +84,13 @@ const Template3 = ({ obj, size }: TemplateType) => {
                   )[0];
                   return (
                     <div key={index} className="flex flex-col">
-                      <Avatar className="size-[180px] border-[6px] border-[#d5d5d5]">
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>CN</AvatarFallback>
-                      </Avatar>
 
-                      <div className="flex flex-col gap-2">
+                        <div className="relative flex shrink-0 overflow-hidden w-[180px] h-[180px] border-[6px] border-[#d5d5d5] rounded-full">
+                          <Image src="/kohli.png" width={180} height={180} alt="kohli" className="aspect-square h-full w-full"/>
+                        </div>
+
+
+                      <div className="flex flex-col gap-2 mt-6">
                         <h2 className="font-medium text-[23px] tracking-wide mt-4">
                           CONTACT
                         </h2>
@@ -114,55 +133,50 @@ const Template3 = ({ obj, size }: TemplateType) => {
                   );
 
                 case "skills":
+                  const skillsContent = obj.sections.filter(
+                    (item) => item.type === "skills"
+                  )[0];
+
                   return (
                     <div key={index} className="flex flex-col gap-2 mt-4">
                       <h2 className="font-medium text-[23px] tracking-wide">
                         SKILLS
                       </h2>
                       <div className="h-[1.99px] mb-2 bg-[#fff]"></div>
-                      <ul className="list-disc tracking-wider font-light pl-4 text-sm space-y-[8px]">
-                        <li>Project Management</li>
-                        <li>Public Relations</li>
-                        <li>Teamwork</li>
-                        <li>Time Management</li>
-                        <li>Leadership</li>
-                        <li>Effective Communication</li>
-                        <li>Digital Marketing</li>
-                      </ul>
+                      <p
+                        className="quill-content tracking-wider font-light text-sm "
+                        dangerouslySetInnerHTML={{
+                          __html: skillsContent?.content.description ?? "",
+                        }}
+                      />
                     </div>
                   );
 
-                case "languages":
-                  return (
-                    <div key={index} className="flex flex-col gap-2 mt-4">
-                      <h2 className="font-medium text-[23px] tracking-wide">
-                        LANGUAGES
-                      </h2>
-                      <div className="h-[1.99px] mb-2 bg-[#fff]"></div>
-                      <ul className="list-disc tracking-wider font-light pl-4 text-sm space-y-[8px]">
-                        <li>English (Fluent)</li>
-                        <li>French (Fluent)</li>
-                        <li>German (Basic)</li>
-                        <li>Spanish (Intermediate)</li>
-                      </ul>
-                    </div>
-                  );
+                case "custom":
+                  const customContent = obj.sections
+                    .filter((item) => item.type === "custom")
+                    .filter((item) => item.content.sectionDirection === "left");
 
-                case "references":
-                  return (
-                    <div key={index} className="flex flex-col gap-2 mt-4">
-                      <h2 className="font-medium text-[23px] tracking-wide">
-                        REFERENCE
-                      </h2>
-                      <div className="h-[1.99px]  mb-2 bg-[#fff]"></div>
-                      <div className="text-sm tracking-wider font-light space-y-1">
-                        <p className="font-medium">Estelle Darcy</p>
-                        <p>Wardiere Inc. / CTO</p>
-                        <p>Phone: 123-456-7890</p>
-                        <p>Email: hello@reallygreatsite.com</p>
-                      </div>
-                    </div>
-                  );
+                  return customContent.map((item) => {
+                    if (visitedCustoms.includes(item.orderNumber)) return;
+                    visitedCustoms.push(item.orderNumber);
+                    return (
+                      <>
+                        <div key={index} className="flex flex-col gap-2 mt-4">
+                          <h2 className="font-medium uppercase text-[23px] tracking-wide">
+                            {item.content.sectionTitle}
+                          </h2>
+                          <div className="h-[1.99px] mb-2 bg-[#fff]"></div>
+                          <div
+                            className="tracking-wider text-sm "
+                            dangerouslySetInnerHTML={{
+                              __html: item.content.sectionDescription,
+                            }}
+                          />
+                        </div>
+                      </>
+                    );
+                  });
 
                 default:
                   return null;
@@ -195,10 +209,8 @@ const Template3 = ({ obj, size }: TemplateType) => {
                     </div>
 
                     <div className="max-w-[90%] mx-auto">
-                      <h1 className="text-2xl font-bold tracking-wider  text-[#444]">
-                        PROFILE
-                      </h1>
-                      <div className="h-[2px] mb-2 bg-[#153c54]"></div>
+                      <SectionHeader title="PROFILE" />
+
                       <p
                         className="quill-content text-sm text-[#444]"
                         dangerouslySetInnerHTML={{
@@ -214,10 +226,8 @@ const Template3 = ({ obj, size }: TemplateType) => {
                 )[0];
                 return (
                   <div className="max-w-[90%] mx-auto mt-4">
-                    <h1 className="text-2xl tracking-wider font-bold text-[#444]">
-                      WORK EXPERIENCE
-                    </h1>{" "}
-                    <div className="h-[2px] mb-2 bg-[#153c54]"></div>
+                    <SectionHeader title="WORK EXPERIENCE" />
+
                     <div className="relative">
                       <div className="absolute left-1.5 top-2 bottom-0 w-0.5 bg-gray-300"></div>
                       <div className="space-y-4">
@@ -265,10 +275,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
                 )[0];
                 return (
                   <div className="max-w-[90%] mx-auto mt-4">
-                    <h1 className="text-2xl tracking-wider font-bold text-[#444]">
-                      EDUCATION
-                    </h1>
-                    <div className="h-[2px] mb-2 bg-[#153c54]"></div>
+                    <SectionHeader title="EDUCATION" />
                     <div className="relative">
                       <div className="absolute left-1.5 top-2 bottom-0 w-0.5 bg-gray-300"></div>
                       <div className="space-y-3">
@@ -307,6 +314,31 @@ const Template3 = ({ obj, size }: TemplateType) => {
                     </div>
                   </div>
                 );
+              case "custom":
+                const customContent = obj.sections
+                  .filter((item) => item.type === "custom")
+                  .filter((item) => item.content.sectionDirection === "right");
+
+                return customContent.map((item) => {
+                  if(visitedCustoms.includes(item.orderNumber)) return;
+                  visitedCustoms.push(item.orderNumber);
+                  return (
+                    <>
+                      <div
+                        className="max-w-[90%] uppercase mx-auto mt-4"
+                        key={index}
+                      >
+                        <SectionHeader title={item.content.sectionTitle} />
+                        <div
+                          className="tracking-wider text-sm "
+                          dangerouslySetInnerHTML={{
+                            __html: item.content.sectionDescription,
+                          }}
+                        />
+                      </div>
+                    </>
+                  );
+                });
             }
           })}
         </div>
@@ -315,6 +347,17 @@ const Template3 = ({ obj, size }: TemplateType) => {
   );
 
   return <TemplateWrapper size={size}>{content}</TemplateWrapper>;
+};
+
+const SectionHeader = ({ title }: { title: string }) => {
+  return (
+    <div>
+      <h1 className="text-2xl tracking-wider font-bold text-[#444] uppercase">
+        {title}
+      </h1>
+      <div className="h-[2px] mb-2 bg-[#153c54]"></div>
+    </div>
+  );
 };
 
 export default Template3;

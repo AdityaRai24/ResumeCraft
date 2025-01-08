@@ -54,6 +54,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
       templateName: templateName,
     })
       .then((res) => {
+        console.log(res,"created")
         return router.push(`/build-resume/${res}/tips?sec=header`);
       })
       .catch((err) => {

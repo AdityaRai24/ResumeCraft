@@ -68,7 +68,6 @@ const HeaderForm = ({
   useEffect(() => {
     if (item?.content && !pendingChangesRef.current) {
       setHeader(item.content as HeaderContent);
-      console.log(item.content);
     }
   }, [item?.content, pendingChangesRef]);
 

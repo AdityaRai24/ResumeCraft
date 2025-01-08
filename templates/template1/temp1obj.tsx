@@ -128,17 +128,6 @@ const temp1Obj: ResumeTemplate = {
       orderNumber: 4,
       style: {},
     },
-    {
-      type: "custom",
-      content: {
-        sectionTitle: "About Me",
-        sectionDescription: "Summary",
-        sectionNumber: 0,
-      },
-      isVisible: false,
-      orderNumber: 5,
-      style: {},
-    },
   ],
   globalStyles: {
     fontFamily: "Geologica",

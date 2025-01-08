@@ -107,6 +107,7 @@ export interface CustomSection extends BaseSection {
     sectionTitle: string;
     sectionDescription: string;
     sectionNumber: number;
+    sectionDirection? : string;
   };
   isVisible: boolean;
   orderNumber: number;

@@ -103,6 +103,7 @@
         sectionTitle: v.optional(v.string()),
         sectionDescription: v.optional(v.string()),
         sectionNumber : v.optional(v.number()),
+        sectionDirection : v.optional(v.string()),
       }),
       isVisible : v.boolean(),
       orderNumber: v.optional(v.number()),

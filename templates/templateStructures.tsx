@@ -2,6 +2,9 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import Template1 from "@/templates/template1/Template1";
 import Template2 from "@/templates/template2/Template2";
 import Template3 from "./template3/Template3";
+import temp1EmptyObj from "./template1/temp1EmptyObj";
+import temp2EmptyObj from "./template2/temp2EmptyObj";
+import temp3EmptyObj from "./template3/temp3EmptyObj";
 
 export const allSectionFields: any = {
   header: {
@@ -189,4 +192,10 @@ export const templateComponents: Record<string, TemplateComponentType> = {
   Template1: Template1,
   Template2: Template2,
   Template3: Template3,
+};
+
+export const templateEmptyComponents: Record<string, any> = {
+  Template1: temp1EmptyObj,
+  Template2: temp2EmptyObj,
+  Template3: temp3EmptyObj,
 };
