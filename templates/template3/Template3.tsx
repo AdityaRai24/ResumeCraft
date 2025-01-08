@@ -86,7 +86,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
                     <div key={index} className="flex flex-col">
 
                         <div className="relative flex shrink-0 overflow-hidden w-[180px] h-[180px] border-[6px] border-[#d5d5d5] rounded-full">
-                          <Image src="/kohli.png" width={180} height={180} alt="kohli" className="aspect-square h-full w-full"/>
+                          <Image src={headerContent.content.photo || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"} width={180} height={180} alt="kohli" className="aspect-square h-full object-cover w-full"/>
                         </div>
 
 
@@ -94,7 +94,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
                         <h2 className="font-medium text-[23px] tracking-wide mt-4">
                           CONTACT
                         </h2>
-                        <div className="h-[1.99px] mb-2 bg-[#fff]"></div>
+                        <div className="h-[2px] mb-2 bg-[#fff]"></div>
                         <div className="flex flex-col gap-1">
                           {headerContent.content.phone && (
                             <div className="flex items-center text-sm font-light gap-2">
@@ -142,15 +142,17 @@ const Template3 = ({ obj, size }: TemplateType) => {
                       <h2 className="font-medium text-[23px] tracking-wide">
                         SKILLS
                       </h2>
-                      <div className="h-[1.99px] mb-2 bg-[#fff]"></div>
+                      <div className="h-[2px] mb-2 bg-[#fff]"></div>
                       <p
-                        className="quill-content tracking-wider font-light text-sm "
+                        className="quill-content tracking-wider break-words text-left font-extralight text-sm "
                         dangerouslySetInnerHTML={{
                           __html: skillsContent?.content.description ?? "",
                         }}
                       />
                     </div>
                   );
+
+                  
 
                 case "custom":
                   const customContent = obj.sections
@@ -166,7 +168,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
                           <h2 className="font-medium uppercase text-[23px] tracking-wide">
                             {item.content.sectionTitle}
                           </h2>
-                          <div className="h-[1.99px] mb-2 bg-[#fff]"></div>
+                          <div className="h-[2px] mb-2 bg-[#fff]"></div>
                           <div
                             className="tracking-wider text-sm "
                             dangerouslySetInnerHTML={{

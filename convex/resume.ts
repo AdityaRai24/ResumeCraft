@@ -47,7 +47,7 @@ export const updateHeader = mutation({
         )
       ),
       role: v.optional(v.string()),
-      profilePic: v.optional(v.string()),
+      photo: v.optional(v.string()),
       location: v.optional(v.string()),
       summary: v.optional(v.string()),
     }),
@@ -107,17 +107,6 @@ export const createUserResume = mutation({
     if (!templateSections) {
       throw new Error("Invalid template name");
     }
-
-    // const initialSections = templateSections.map((section: any) =>
-    //   createSection(
-    //     section.type,
-    //     section.fields,
-    //     section.orderNumber,
-    //     section.isVisible
-    //   )
-    // );
-
-    console.log(templateEmptyComponents[args.templateName], "yes less goo");
 
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,

@@ -81,7 +81,7 @@ const temp3EmptyObj: ResumeTemplate = {
     fontFamily: "Geologica",
     primaryTextColor: "#C026D3",
     primaryColor: "#C026D3",
-    photo: false,
+    photo: true,
     columns: 2,
   },
 };
