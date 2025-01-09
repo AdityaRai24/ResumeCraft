@@ -18,6 +18,7 @@ import PreviewModal from "./PreviewModal";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { useRouter } from "nextjs-toploader/app";
+import TemplateContainer from "./TemplateContainer";
 
 const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   const { user } = useUser();
@@ -30,7 +31,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   const preview = usePreview();
 
   const finalTemplates = myResumes ? myResumeTemplates : templates;
-  console.log(finalTemplates)
+  console.log(finalTemplates);
 
   if (finalTemplates === undefined) {
     return <ChooseSkeleton />;
@@ -80,13 +81,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
         }
 
         return (
-          <div
-            key={index}
-            className={cn(
-              "relative group mx-auto w-[159px] h-[225px] md:w-[295px] md:h-[415px]",
-              "transition-transform duration-300"
-            )}
-          >
+          <TemplateContainer index={index}>
             <div className="w-full h-full">
               <TemplateComponent
                 obj={item as ResumeTemplate}
@@ -98,7 +93,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
             <div className="absolute inset-0 w-full h-full p-4 sm:p-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-5 rounded-md cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
               <Button
                 onClick={() => preview.onOpen(item as ResumeTemplate)}
-                className="w-[50%] md:w-full  flex items-center justify-center gap-2"
+                className="w-[50%] md:w-full flex items-center justify-center gap-2"
               >
                 <p className="hidden md:block">Preview</p>{" "}
                 <Eye className="md:h-4 md:w-4 h-6 w-6" />
@@ -116,7 +111,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
                 <Edit className="md:h-4 md:w-4 h-5 w-5" />
               </Button>
             </div>
-          </div>
+          </TemplateContainer>
         );
       })}
       <div>

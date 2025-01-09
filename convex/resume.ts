@@ -687,7 +687,7 @@ export const hideSection = mutation({
    
 
       const currentCustomSectionIndex = resumeSections.findIndex(
-        (item) => item?.content?.sectionTitle === args.secondType
+        (item : any) => item?.content?.sectionTitle === args.secondType
       );
       if (currentCustomSectionIndex === -1) {
         throw new Error("Something went wrong index");

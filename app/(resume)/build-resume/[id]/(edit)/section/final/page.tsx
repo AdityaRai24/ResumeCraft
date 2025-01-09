@@ -16,7 +16,6 @@ import SortableList, { SortableItem } from "react-easy-sort";
 import { arrayMoveImmutable } from "array-move";
 
 const Page = () => {
-
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");
   const [primaryColor, setPrimaryColor] = useColor("#000");
   const [showPrimaryTextColorBox, setShowPrimaryTextColorBox] = useState(false);
@@ -36,6 +35,9 @@ const Page = () => {
   const resume = useQuery(api.resume.getTemplateDetails, {
     id: resumeId as Id<"resumes">,
   });
+
+  const headerObj =
+    resume?.sections?.filter((item) => item.type === "header") || [];
 
   useEffect(() => {
     if (!resume) return;
@@ -72,21 +74,20 @@ const Page = () => {
     }
   }, [resume]);
 
-  useEffect(() => {
-    if (resume?.sections) {
-      const mainSections = resume.sections.filter(
-        (item) => item.type !== "custom"
-      );
-      const customSections = resume.sections.filter(
-        (item) => item.type === "custom"
-      );
-      const sortedSections = [...mainSections, ...customSections].sort(
-        (a, b) => (a.orderNumber || 0) - (b.orderNumber || 0)
-      );
-      setSections(sortedSections);
-    }
-  }, [resume]);
-
+  // useEffect(() => {
+  //   if (resume?.sections) {
+  //     const mainSections = resume.sections.filter(
+  //       (item) => item.type !== "custom"
+  //     );
+  //     const customSections = resume.sections.filter(
+  //       (item) => item.type === "custom"
+  //     );
+  //     const sortedSections = [...mainSections, ...customSections].sort(
+  //       (a, b) => (a.orderNumber || 0) - (b.orderNumber || 0)
+  //     );
+  //     setSections(sortedSections);
+  //   }
+  // }, [resume]);
 
   const toggleSectionVisibility = (sectionId: string, secondType: string) => {
     hideSection({
@@ -127,7 +128,7 @@ const Page = () => {
 
       reorder({
         id: resumeId as Id<"resumes">,
-        updatedSections: [...updatedSections, ...rightSections],
+        updatedSections: [...headerObj, ...updatedSections, ...rightSections],
       });
       return updatedSections;
     });
@@ -145,7 +146,7 @@ const Page = () => {
 
       reorder({
         id: resumeId as Id<"resumes">,
-        updatedSections: [...leftSections, ...updatedSections],
+        updatedSections: [...headerObj, ...leftSections, ...updatedSections],
       });
       return updatedSections;
     });
@@ -172,7 +173,6 @@ const Page = () => {
   const handleChosePrimaryTextColor = (color: string) => {
     update({ id: resumeId as Id<"resumes">, color: color });
   };
-
 
   const fontOptions = [
     "Raleway",

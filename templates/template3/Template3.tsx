@@ -34,16 +34,21 @@ const Template3 = ({ obj, size }: TemplateType) => {
 
   const visitedCustoms: string[] = [];
 
-  const leftObj = obj?.sections?.filter((item) =>
+  const headerObj = obj?.sections?.filter((item) => item.type === "header");
+  const tempLeftObj = obj?.sections?.filter((item : any) =>
     item.type === "custom"
       ? item?.content?.sectionDirection === "left"
       : item?.style?.sectionDirection === "left"
   );
-  const rightObj = obj.sections.filter((item) =>
+
+  const leftObj = [...headerObj, ...tempLeftObj];
+
+  const tempRightObj = obj.sections.filter((item : any) =>
     item.type === "custom"
       ? item.content.sectionDirection === "right"
       : item?.style?.sectionDirection === "right"
   );
+  const rightObj = [...headerObj, ...tempRightObj];
 
   const headerContent = obj.sections.filter(
     (item) => item.type === "header"
@@ -51,6 +56,8 @@ const Template3 = ({ obj, size }: TemplateType) => {
   const leftHeaderContent = obj.sections.filter(
     (item) => item.type === "header"
   )[0];
+
+  console.log({ obj, leftObj, rightObj });
 
   const content = (
     <div
@@ -65,62 +72,70 @@ const Template3 = ({ obj, size }: TemplateType) => {
           className={`col-span-1  text-white py-8 px-6`}
         >
           <div className="flex flex-col gap-2">
-            <>
-              <div className="flex flex-col">
-                <div className="relative flex shrink-0 overflow-hidden w-[180px] h-[180px] border-[6px] border-[#d5d5d5] rounded-full">
-                  <Image
-                    src={
-                      leftHeaderContent?.content?.photo ||
-                      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
-                    }
-                    width={180}
-                    height={180}
-                    alt="kohli"
-                    className="aspect-square h-full object-cover w-full"
-                  />
-                </div>
-
-                <div className="flex flex-col gap-2 mt-6">
-                  <h2 className="font-medium text-[23px] tracking-wide mt-4">
-                    CONTACT
-                  </h2>
-                  <div className="h-[2px] mb-2 bg-[#fff]"></div>
-                  <div className="flex flex-col gap-1">
-                    {leftHeaderContent?.content?.phone && (
-                      <div className="flex items-center text-sm font-light gap-2">
-                        <PhoneCall size={20} className="flex-shrink-0 mt-1" />
-                        <p className="break-all">
-                          {leftHeaderContent?.content?.phone}
-                        </p>
-                      </div>
-                    )}
-                    {leftHeaderContent?.content?.email && (
-                      <div className="flex items-center text-sm font-light gap-2">
-                        <Mail size={20} className="flex-shrink-0 mt-1" />
-                        <p className="break-all">
-                          {leftHeaderContent?.content?.email}
-                        </p>
-                      </div>
-                    )}
-                    {leftHeaderContent?.content?.socialLinks.map(
-                      (item, index) => {
-                        return (
-                          <div className="flex items-center text-sm font-light gap-2">
-                            {headerLogoMap[item.type]}
-                            <Link href={item.url} className="break-all">
-                              {item.name}
-                            </Link>
-                          </div>
-                        );
-                      }
-                    )}
-                  </div>
-                </div>
-              </div>
-            </>
-
             {leftObj?.map((item: any, index: any) => {
               switch (item.type) {
+                case "header":
+                  return (
+                    <>
+                      <div className="flex flex-col">
+                        <div className="relative flex shrink-0 overflow-hidden w-[180px] h-[180px] border-[6px] border-[#d5d5d5] rounded-full">
+                          <Image
+                            src={
+                              leftHeaderContent?.content?.photo ||
+                              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
+                            }
+                            width={180}
+                            height={180}
+                            alt="kohli"
+                            className="aspect-square h-full object-cover w-full"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-2 mt-6">
+                          <h2 className="font-medium text-[23px] tracking-wide mt-4">
+                            CONTACT
+                          </h2>
+                          <div className="h-[2px] mb-2 bg-[#fff]"></div>
+                          <div className="flex flex-col gap-1">
+                            {leftHeaderContent?.content?.phone && (
+                              <div className="flex items-center text-sm font-light gap-2">
+                                <PhoneCall
+                                  size={20}
+                                  className="flex-shrink-0 mt-1"
+                                />
+                                <p className="break-all">
+                                  {leftHeaderContent?.content?.phone}
+                                </p>
+                              </div>
+                            )}
+                            {leftHeaderContent?.content?.email && (
+                              <div className="flex items-center text-sm font-light gap-2">
+                                <Mail
+                                  size={20}
+                                  className="flex-shrink-0 mt-1"
+                                />
+                                <p className="break-all">
+                                  {leftHeaderContent?.content?.email}
+                                </p>
+                              </div>
+                            )}
+                            {leftHeaderContent?.content?.socialLinks.map(
+                              (item, index) => {
+                                return (
+                                  <div className="flex items-center text-sm font-light gap-2">
+                                    {headerLogoMap[item.type]}
+                                    <Link href={item.url} className="break-all">
+                                      {item.name}
+                                    </Link>
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  );
                 case "skills":
                   return (
                     <div
@@ -176,44 +191,46 @@ const Template3 = ({ obj, size }: TemplateType) => {
         </div>
 
         <div className="col-span-2 bg-[#fff] ">
-          <>
-            <div className="flex flex-col px-16 py-16">
-              <h1 className="text-4xl font-normal uppercase">
-                <span
-                  style={{ color: primaryTextColor }}
-                  className=" mr-2  font-extrabold "
-                >
-                  {headerContent?.content?.firstName}
-                </span>
-                {headerContent?.content?.lastName}
-              </h1>
-              {(headerContent?.content?.firstName ||
-                headerContent?.content?.lastName) && (
-                <div
-                  className="w-28 h-[4px] mt-2"
-                  style={{ background: primaryColor }}
-                ></div>
-              )}
-            </div>
-
-            <div className="max-w-[90%] mx-auto">
-              <SectionHeader
-                primaryColor={primaryColor}
-                primaryTextColor={primaryTextColor}
-                title="PROFILE"
-              />
-
-              <p
-                className="quill-content text-sm text-[#000]"
-                dangerouslySetInnerHTML={{
-                  __html: headerContent?.content?.summary ?? "",
-                }}
-              />
-            </div>
-          </>
-
           {rightObj.map((item, index) => {
             switch (item.type) {
+              case "header":
+                return (
+                  <>
+                    <div className="flex flex-col px-16 py-16">
+                      <h1 className="text-4xl font-normal uppercase">
+                        <span
+                          style={{ color: primaryTextColor }}
+                          className=" mr-2  font-extrabold "
+                        >
+                          {headerContent?.content?.firstName}
+                        </span>
+                        {headerContent?.content?.lastName}
+                      </h1>
+                      {(headerContent?.content?.firstName ||
+                        headerContent?.content?.lastName) && (
+                        <div
+                          className="w-28 h-[4px] mt-2"
+                          style={{ background: primaryColor }}
+                        ></div>
+                      )}
+                    </div>
+
+                    <div className="max-w-[90%] mx-auto">
+                      <SectionHeader
+                        primaryColor={primaryColor}
+                        primaryTextColor={primaryTextColor}
+                        title="PROFILE"
+                      />
+
+                      <p
+                        className="quill-content text-sm text-[#000]"
+                        dangerouslySetInnerHTML={{
+                          __html: headerContent?.content?.summary ?? "",
+                        }}
+                      />
+                    </div>
+                  </>
+                );
               case "experience":
                 return (
                   <div
