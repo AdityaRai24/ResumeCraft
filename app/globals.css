@@ -134,3 +134,9 @@ ul {
   padding-left: 1.25rem; /* Adds padding on the left (equivalent to pl-5 in Tailwind) */
   text-align: justify; /* Justifies the text */
 }
+.dragged {
+  cursor: grabbing;
+  z-index: 50;
+  opacity: 0.8;
+  transform: scale(1.05);
+}

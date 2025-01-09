@@ -118,7 +118,6 @@ const Template2 = ({  obj, size }: TemplateType) => {
                 </div>
               </div>
             );
-
           case "education":
             const educationContent = item.content as EducationContent;
 
@@ -157,7 +156,6 @@ const Template2 = ({  obj, size }: TemplateType) => {
                 ))}
               </div>
             );
-
           case "experience":
             const experienceContent = item.content as ExperienceContent;
             return (
@@ -203,7 +201,6 @@ const Template2 = ({  obj, size }: TemplateType) => {
                 ))}
               </div>
             );
-
           case "skills":
             const skillsContent = item as SkillsContent;
 
@@ -228,7 +225,6 @@ const Template2 = ({  obj, size }: TemplateType) => {
                 />
               </div>
             );
-
           case "projects":
             const projectContent = item.content as ProjectContent;
             return (
@@ -278,7 +274,6 @@ const Template2 = ({  obj, size }: TemplateType) => {
                 ))}
               </div>
             );
-
           case "custom":
             return sortedSections.map((item, index) => {
               if (item.type === "custom") {

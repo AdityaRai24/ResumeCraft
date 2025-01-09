@@ -663,6 +663,7 @@ export const hideSection = mutation({
   args: {
     id: v.id("resumes"),
     sectionId: v.string(),
+    secondType: v.string(),
   },
   handler: async (ctx, args) => {
     const resume = await ctx.db.get(args.id);
@@ -679,13 +680,28 @@ export const hideSection = mutation({
     }
 
     const resumeSections = resume?.sections;
-    let index = resumeSections.findIndex(
-      (item) => item.type === args.sectionId
-    );
-    if (index === -1) {
-      throw new Error("Something went wrong index");
+    console.log(resumeSections,args.secondType,args.sectionId);
+    let index;
+
+    if (args.sectionId !== args.secondType) {
+   
+
+      const currentCustomSectionIndex = resumeSections.findIndex(
+        (item) => item?.content?.sectionTitle === args.secondType
+      );
+      if (currentCustomSectionIndex === -1) {
+        throw new Error("Something went wrong index");
+      } else {
+        resumeSections[currentCustomSectionIndex].isVisible =
+          !resumeSections[currentCustomSectionIndex].isVisible;
+      }
     } else {
-      resumeSections[index].isVisible = !resumeSections[index].isVisible;
+      index = resumeSections.findIndex((item) => item.type === args.sectionId);
+      if (index === -1) {
+        throw new Error("Something went wrong index");
+      } else {
+        resumeSections[index].isVisible = !resumeSections[index].isVisible;
+      }
     }
 
     const updatedResume = await ctx.db.patch(args.id, {

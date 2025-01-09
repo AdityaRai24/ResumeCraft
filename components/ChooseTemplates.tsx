@@ -30,6 +30,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   const preview = usePreview();
 
   const finalTemplates = myResumes ? myResumeTemplates : templates;
+  console.log(finalTemplates)
 
   if (finalTemplates === undefined) {
     return <ChooseSkeleton />;
@@ -54,11 +55,9 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
       templateName: templateName,
     })
       .then((res) => {
-        console.log(res,"created")
         return router.push(`/build-resume/${res}/tips?sec=header`);
       })
       .catch((err) => {
-        console.log(err);
         toast.error("Something went wrong...");
       });
   };

@@ -1,4 +1,3 @@
-
 import { ResumeTemplate } from "@/types/templateTypes";
 
 const temp3EmptyObj: ResumeTemplate = {
@@ -29,7 +28,9 @@ const temp3EmptyObj: ResumeTemplate = {
       },
       isVisible: true,
       orderNumber: 1,
-      style: {},
+      style: {
+        sectionDirection: "left",
+      },
       type: "skills",
     },
     {
@@ -37,8 +38,10 @@ const temp3EmptyObj: ResumeTemplate = {
         experience: [],
       },
       isVisible: true,
-      orderNumber: 3,
-      style: {},
+      orderNumber: 2,
+      style: {
+        sectionDirection: "right",
+      },
       type: "experience",
     },
     {
@@ -46,8 +49,10 @@ const temp3EmptyObj: ResumeTemplate = {
         education: [],
       },
       isVisible: true,
-      orderNumber: 4,
-      style: {},
+      orderNumber: 3,
+      style: {
+        sectionDirection: "right",
+      },
       type: "education",
     },
     {
@@ -60,7 +65,7 @@ const temp3EmptyObj: ResumeTemplate = {
         sectionNumber: 0,
       },
       isVisible: true,
-      orderNumber: 5,
+      orderNumber: 4,
       style: {},
     },
     {
@@ -70,10 +75,10 @@ const temp3EmptyObj: ResumeTemplate = {
         sectionDescription:
           "<p><strong>Estelle Darcy</strong></p><p>Wardiere Inc. / CTO</p><p><strong>Phone: </strong>123-456-7890</p><p><strong>Email : </strong>hello@reallygreatsite.com</p>",
         sectionDirection: "left",
-        sectionNumber: 0,
+        sectionNumber: 1,
       },
       isVisible: true,
-      orderNumber: 6,
+      orderNumber: 5,
       style: {},
     },
   ],

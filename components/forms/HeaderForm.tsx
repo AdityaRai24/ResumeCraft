@@ -68,7 +68,6 @@ const HeaderForm = ({
 
   const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
   const hasPhoto = resume?.globalStyles.photo || false;
-  console.log(hasPhoto,resume)
 
   const update = useMutation(api.resume.updateHeader);
   const pendingChangesRef = useRef(false);

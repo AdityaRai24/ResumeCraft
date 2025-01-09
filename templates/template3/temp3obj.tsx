@@ -36,7 +36,9 @@ const temp3obj: ResumeTemplate = {
       },
       isVisible: true,
       orderNumber: 1,
-      style: {},
+      style: {
+        sectionDirection: "left",
+      },
       type: "skills",
     },
     {
@@ -70,7 +72,9 @@ const temp3obj: ResumeTemplate = {
       },
       isVisible: true,
       orderNumber: 3,
-      style: {},
+      style: {
+        sectionDirection: "right",
+      },
       type: "experience",
     },
     {
@@ -102,7 +106,9 @@ const temp3obj: ResumeTemplate = {
       },
       isVisible: true,
       orderNumber: 4,
-      style: {},
+      style: {
+        sectionDirection: "right",
+      },
       type: "education",
     },
     {
@@ -125,10 +131,10 @@ const temp3obj: ResumeTemplate = {
         sectionTitle: "Reference",
         sectionDescription:
           "<p><strong>Estelle Darcy</strong></p><p>Wardiere Inc. / CTO</p><p><strong>Phone: </strong>123-456-7890</p><p><strong>Email : </strong>hello@reallygreatsite.com</p>",
-        sectionDirection: "right",
+        sectionDirection: "left",
         sectionNumber: 0,
       },
-      isVisible: false,
+      isVisible: true,
       orderNumber: 6,
       style: {},
     },
