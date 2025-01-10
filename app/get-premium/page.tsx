@@ -1,16 +1,19 @@
 "use client";
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import {
   Star,
   FileText,
   Download,
   Check,
-  FastForward,
   Timer,
+  Shield,
+  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
-import { montserratFont, poppinsFont, ralewayFont } from "@/lib/font";
+import { poppinsFont } from "@/lib/font";
 import { useUser } from "@clerk/nextjs";
 import Script from "next/script";
 import { Button } from "@/components/ui/button";
@@ -18,6 +21,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 declare global {
   interface Window {
@@ -25,23 +29,64 @@ declare global {
   }
 }
 
+const container = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+  },
+};
+
+const benefits = [
+  {
+    icon: <FileText className="text-primary" size={24} />,
+    title: "Premium Templates",
+    description: "Access our entire collection of professional templates",
+  },
+  {
+    icon: <Download className="text-primary" size={24} />,
+    title: "Unlimited Downloads",
+    description: "Download as many resumes as you need, whenever you need",
+  },
+  {
+    icon: <Star className="text-primary" size={24} />,
+    title: "Lifetime Access",
+    description: "One-time payment for permanent premium features",
+  },
+  {
+    icon: <Timer className="text-primary" size={24} />,
+    title: "Instant Access",
+    description: "Start creating professional resumes immediately",
+  },
+];
+
 export default function PremiumPaymentPage() {
-  const AMOUNT = 100;
+  const AMOUNT = 99;
   const [isProcessing, setIsProcessing] = useState(false);
   const { user } = useUser();
-
   const premiumUser = useMutation(api.premiumUsers.makeUserPremium);
   const router = useRouter();
 
   if (!user || !user.id) {
-    return;
+    return null;
   }
 
   const checkPayment = async () => {
     try {
       const res = await premiumUser({ userId: user.id });
       if (res.success) {
-        toast.success("You are now a premium member");
+        toast.success("Welcome to Premium!");
         router.push("/build-resume/templates");
       }
     } catch (error: any) {
@@ -61,7 +106,7 @@ export default function PremiumPaymentPage() {
         amount: AMOUNT * 100,
         currency: "INR",
         name: "Resume Craft",
-        description: "Purchase Premium Plan",
+        description: "Premium Membership",
         order_id: data.orderId,
         handler: function (response: any) {
           checkPayment();
@@ -88,78 +133,156 @@ export default function PremiumPaymentPage() {
     <>
       <Navbar />
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <div className={`${poppinsFont.className} h-[90vh] p-6 space-y-6`}>
-        <div className="flex flex-col items-center gap-2 my-16">
-          <h1 className="font-semibold  text-4xl">
-            Unlock Premium with a One-Time Purchase
-          </h1>
-          <p className="text-gray-600">Create your Job Winning Resume !!</p>
-        </div>
+      <div className={`${poppinsFont.className} min-h-screen bg-gray-50/50`}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-6xl mx-auto px-4 py-12"
+        >
+          {/* Header Section */}
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="visible"
+            className="text-center mb-16 space-y-4"
+          >
+            <motion.div
+              variants={item}
+              className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-4 py-2"
+            >
+              <Sparkles size={20} />
+              <span className="font-medium">Limited Time Offer</span>
+            </motion.div>
+            <motion.h1
+              variants={item}
+              className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 text-transparent bg-clip-text"
+            >
+              Upgrade to Premium
+            </motion.h1>
+            <motion.p
+              variants={item}
+              className="text-gray-600 text-lg max-w-2xl mx-auto"
+            >
+              Take your resume to the next level with our premium features
+            </motion.p>
+          </motion.div>
 
-        <div className="flex items-center max-w-[80%] mx-auto justify-center gap-16 ">
-          <div className="w-[40%]">
-            <div className="bg-gray-50 shadow-sm shadow-primary/20 px-4 py-8 rounded-lg  mb-6">
-              <ul className="space-y-6">
-                <li className="flex items-center gap-2">
-                  <FileText className="text-green-600" size={20} />
-                  <span>Access to All Premium Templates</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Download className="text-green-600" size={20} />
-                  <span>Unlimited Downloads</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Star className="text-green-600" size={20} />
-                  <span>Lifetime Premium Membership</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Timer className="text-green-600" size={20} />
-                  <span>Instant Access</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+          {/* Main Content */}
+          <div className="grid md:grid-cols-2 gap-8 items-start">
+            {/* Benefits Section */}
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="visible"
+              className="space-y-6"
+            >
+              <div className="grid gap-2">
+                {benefits.map((benefit, index) => (
+                  <motion.div
+                    key={index}
+                    variants={item}
+                    className="flex gap-4 cursor-pointer bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="bg-primary/10 p-3 rounded-lg h-fit">
+                      {benefit.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg mb-1">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-gray-600">{benefit.description}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
 
-          <div className="w-1/2">
-            <Card className="cursor-pointer border-2 border-primary shadow-md shadow-primary/20 rounded-2xl overflow-hidden">
-              <div className="p-6 space-y-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-normal">Lifetime Premium</h2>
-                  <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-medium">
-                    BEST DEAL
+            {/* Pricing Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <Card className="sticky top-6 overflow-hidden bg-white border-2 border-primary/20 shadow-xl shadow-primary/10">
+                <div className="absolute top-4 right-4">
+                  <span className="bg-green-100 text-green-600 px-4 py-1 rounded-full text-sm font-medium">
+                    BEST VALUE
                   </span>
                 </div>
+                <div className="p-8 space-y-6">
+                  <div className="space-y-2">
+                    <h2 className="text-2xl font-bold">Lifetime Premium</h2>
+                    <p className="text-gray-600">
+                      One-time payment, forever access
+                    </p>
+                  </div>
 
-                <div className={` flex items-baseline gap-2`}>
-                  <span className="text-3xl font-bold">₹99</span>
-                  <span className="text-gray-600">one-time payment</span>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-5xl font-bold">₹{AMOUNT}</span>
+                    <span className="text-gray-600 line-through">₹499</span>
+                    <span className="text-green-600 font-medium">80% OFF</span>
+                  </div>
+
+                  <Button
+                    onClick={handlePayment}
+                    disabled={isProcessing}
+                    className="w-full h-12 text-lg font-medium group"
+                  >
+                    {isProcessing ? (
+                      "Processing..."
+                    ) : (
+                      <>
+                        Upgrade Now
+                        <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )}
+                  </Button>
+
+                  <div className="pt-6 border-t">
+                    <div className="flex flex-col gap-4">
+                      <div className="flex gap-4 items-center">
+                        <div className="flex -space-x-2">
+                          {["/visa.png", "/mastercard.png", "/upi.png"].map(
+                            (src, i) => (
+                              <motion.div
+                                key={i}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.6 + i * 0.1 }}
+                              >
+                                <Image
+                                  src={src}
+                                  alt="Payment method"
+                                  width={40}
+                                  height={40}
+                                  className="rounded-md bg-white"
+                                />
+                              </motion.div>
+                            )
+                          )}
+                        </div>
+                        <span className="text-sm text-gray-600">
+                          Secured by{" "}
+                          <Image
+                            src="/razorpay.png"
+                            alt="Razorpay"
+                            width={60}
+                            height={20}
+                            className="inline"
+                          />
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                        <Shield size={16} className="text-primary" />
+                        100% secure payment
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </Card>
-            <Button
-              onClick={handlePayment}
-              disabled={isProcessing}
-              className="w-full mt-4 disabled:opacity-20 font-semibold py-6 px-6 rounded-lg transition-colors"
-            >
-              {isProcessing ? "Processing Payment..." : "Upgrade"}
-            </Button>
-
-            <div className="pt-4 border-t border-gray-200">
-              <div className="flex flex-wrap gap-2">
-                <img src="/visa.png" alt="Visa" className="h-8" />
-                <img src="/mastercard.png" alt="Mastercard" className="h-8" />
-                <img src="/upi.png" alt="Google Pay" className="h-8" />
-              </div>
-            </div>
+              </Card>
+            </motion.div>
           </div>
-        </div>
-
-        <div className="flex items-center gap-2  !mt-12 justify-center">
-          <span className="text-sm text-gray-600">
-            Secured by{" "}
-            <img src="/razorpay.png" className="h-4" alt="Razorpay" />
-          </span>
-        </div>
+        </motion.div>
       </div>
     </>
   );

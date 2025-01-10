@@ -680,7 +680,6 @@ export const hideSection = mutation({
     }
 
     const resumeSections = resume?.sections;
-    console.log(resumeSections,args.secondType,args.sectionId);
     let index;
 
     if (args.sectionId !== args.secondType) {

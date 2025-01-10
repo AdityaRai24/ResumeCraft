@@ -98,7 +98,6 @@ const Page = () => {
   };
 
   const onSortEndSingleColumn = (oldIndex: number, newIndex: number) => {
-    console.log("started draggings");
     setSections((prev: any) => {
       const newSections = arrayMoveImmutable(prev, oldIndex, newIndex);
       const updatedSections = newSections.map(

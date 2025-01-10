@@ -68,6 +68,18 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
 
   const resumeId = params.id as Id<"resumes">;
   const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
+  const isPremiumMember = useQuery(api.premiumUsers.isPremiumMember, {
+    userId: user?.id ? user?.id : "randomuserid",
+  });
+  const premiumTemplates = ["Template2"];
+
+  if (
+    premiumTemplates.includes(resume?.templateName as string) &&
+    !isPremiumMember
+  ) {
+    router.push("/get-premium");
+    toast.error("You need to be a premium member to use this template");
+  }
 
   // Helper functions
   const validateSection = (section: string): section is Section => {
@@ -157,7 +169,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
       </div>
       <div className="relative pt-6 w-full px-4  flex md:hidden items-center justify-between">
         <Button
-        onClick={()=>router.push('/build-resume/templates')}
+          onClick={() => router.push("/build-resume/templates")}
           variant={"outline"}
           className="  cursor-pointer"
         >

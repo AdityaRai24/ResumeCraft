@@ -28,7 +28,6 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Backdrop */}
       {isMenuOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
@@ -44,9 +43,8 @@ const Navbar = () => {
         <div
           className={`${poppinsFont.className} w-[90%] md:w-[85%] mx-auto flex items-center justify-between py-4`}
         >
-          {/* Logo Section */}
           <div className="flex items-center gap-2">
-            <Image src={'/favicon.svg'} width={32} height={32} alt="Icon"/>
+            <Image src={"/favicon.svg"} width={32} height={32} alt="Icon" />
             <Link href="/">
               <h1 className="text-xl md:text-2xl font-semibold">
                 Resume<span className="text-primary">Craft</span>
@@ -67,21 +65,32 @@ const Navbar = () => {
           </button>
 
           {/* Loading State */}
+
+          {!isLoaded && (
+            <div className="flex items-center gap-4">
+              <Skeleton className="w-[130px] h-[40px] bg-slate-500/20" />
+              <Skeleton className="w-[130px] h-[40px] bg-slate-500/20" />
+              <Skeleton className="w-[160px] h-[40px] bg-slate-500/20" />
+            </div>
+          )}
           {!isLoaded && (
             <div className="hidden md:flex items-center justify-center gap-2">
-              <Skeleton className="w-[120px] h-[32px] bg-slate-500/20" />
-              <Skeleton className="w-[100px] h-[32px] bg-slate-500/20" />
+              <Skeleton className="w-[80px] h-[40px] bg-slate-500/20" />
               <Skeleton className="w-[38px] h-[38px] rounded-full bg-slate-500/20" />
             </div>
           )}
 
           {isSignedIn && isLoaded && (
-            <div className="flex items-center justify-center gap-6">
+            <div className=" hidden md:flex items-center justify-center gap-6">
               <p
                 onClick={() => {
                   router.push(`/build-resume/templates`);
                   setIsMenuOpen(false);
-                }} className="text-gray-600 cursor-pointer">Dashboard</p>
+                }}
+                className="text-gray-600 cursor-pointer"
+              >
+                Dashboard
+              </p>
               <p
                 onClick={() => {
                   router.push(`/my-resumes`);
@@ -91,7 +100,10 @@ const Navbar = () => {
               >
                 My Resumes
               </p>{" "}
-              {isPremiumMember ? (
+              {isPremiumMember === undefined && (
+                <Skeleton className="w-[160px] h-[40px] bg-slate-500/20" />
+              )}
+              {isPremiumMember === true && (
                 <Button
                   onClick={() =>
                     toast.success("You are already a premium member !!")
@@ -101,7 +113,8 @@ const Navbar = () => {
                 >
                   <Laugh /> Premium Member
                 </Button>
-              ) : (
+              )}
+              {isPremiumMember === false && (
                 <Button
                   onClick={() => {
                     router.push(`/get-premium`);
@@ -109,7 +122,7 @@ const Navbar = () => {
                   variant={"outline"}
                   className="flex gap-2 border-gray-800"
                 >
-                  <Crown /> Upgrade
+                  <Crown /> Buy Premium
                 </Button>
               )}
             </div>
@@ -156,6 +169,45 @@ const Navbar = () => {
                   <UserButton />
                   <h1 className="text-lg font-semibold">{user?.firstName}</h1>
                 </div>
+                <p
+                  onClick={() => {
+                    router.push(`/build-resume/templates`);
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-gray-600 cursor-pointer"
+                >
+                  Dashboard
+                </p>
+                <p
+                  onClick={() => {
+                    router.push(`/my-resumes`);
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-gray-600 cursor-pointer"
+                >
+                  My Resumes
+                </p>{" "}
+                {isPremiumMember ? (
+                  <Button
+                    onClick={() =>
+                      toast.success("You are already a premium member !!")
+                    }
+                    variant={"outline"}
+                    className="flex gap-2 border-gray-800"
+                  >
+                    <Laugh /> Premium Member
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      router.push(`/get-premium`);
+                    }}
+                    variant={"outline"}
+                    className="flex gap-2 border-gray-800"
+                  >
+                    <Crown /> Upgrade
+                  </Button>
+                )}
               </>
             ) : (
               isLoaded && (

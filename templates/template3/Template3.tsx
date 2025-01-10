@@ -57,8 +57,6 @@ const Template3 = ({ obj, size }: TemplateType) => {
     (item) => item.type === "header"
   )[0];
 
-  console.log({ obj, leftObj, rightObj });
-
   const content = (
     <div
       id="resumeSection"
