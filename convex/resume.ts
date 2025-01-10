@@ -1,10 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import {
-  createSection,
-  templateEmptyComponents,
-  templateStructures,
-} from "@/templates/templateStructures";
+import { templateEmptyComponents } from "@/templates/templateStructures";
 import { ResumeTemplate, SocialLink } from "@/types/templateTypes";
 
 export const getTemplates = query({
@@ -102,12 +98,6 @@ export const createUserResume = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-
-    const templateSections: any = templateStructures[args.templateName];
-    if (!templateSections) {
-      throw new Error("Invalid template name");
-    }
-
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
       userId: args.userId,
@@ -683,10 +673,8 @@ export const hideSection = mutation({
     let index;
 
     if (args.sectionId !== args.secondType) {
-   
-
       const currentCustomSectionIndex = resumeSections.findIndex(
-        (item : any) => item?.content?.sectionTitle === args.secondType
+        (item: any) => item?.content?.sectionTitle === args.secondType
       );
       if (currentCustomSectionIndex === -1) {
         throw new Error("Something went wrong index");

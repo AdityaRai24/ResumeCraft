@@ -21,6 +21,7 @@ import MobilePreviewButton from "@/components/MobilePreviewButton";
 import PreviewModal from "@/components/PreviewModal";
 import { ResumeTemplate } from "@/types/templateTypes";
 import { Button } from "@/components/ui/button";
+import { premiumTemplates } from "@/templates/templateStructures";
 
 // Types
 type Section =
@@ -71,7 +72,6 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
   const isPremiumMember = useQuery(api.premiumUsers.isPremiumMember, {
     userId: user?.id ? user?.id : "randomuserid",
   });
-  const premiumTemplates = ["Template2"];
 
   if (
     premiumTemplates.includes(resume?.templateName as string) &&

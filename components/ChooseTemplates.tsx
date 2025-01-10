@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { Id } from "@/convex/_generated/dataModel";
 import { Skeleton } from "./ui/skeleton";
 import {
+  premiumTemplates,
   templateComponents,
   TemplateComponentType,
 } from "@/templates/templateStructures";
@@ -32,7 +33,6 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   const isPremiumMember = useQuery(api.premiumUsers.isPremiumMember, {
     userId: user?.id ? user?.id : "randomuserid",
   });
-  const premiumTemplates = ["Template2"];
 
   const finalTemplates = myResumes ? myResumeTemplates : templates;
 
@@ -89,6 +89,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
     router.push(`/build-resume/${resumeId}/tips?sec=header`);
   };
 
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       {finalTemplates?.map((item, index) => {
@@ -101,6 +102,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
           );
           return null;
         }
+
 
         return (
           <TemplateContainer index={index}>
