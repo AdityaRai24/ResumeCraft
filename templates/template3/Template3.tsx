@@ -35,7 +35,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
   const visitedCustoms: string[] = [];
 
   const headerObj = obj?.sections?.filter((item) => item.type === "header");
-  const tempLeftObj = obj?.sections?.filter((item : any) =>
+  const tempLeftObj = obj?.sections?.filter((item: any) =>
     item.type === "custom"
       ? item?.content?.sectionDirection === "left"
       : item?.style?.sectionDirection === "left"
@@ -43,7 +43,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
 
   const leftObj = [...headerObj, ...tempLeftObj];
 
-  const tempRightObj = obj.sections.filter((item : any) =>
+  const tempRightObj = obj.sections.filter((item: any) =>
     item.type === "custom"
       ? item.content.sectionDirection === "right"
       : item?.style?.sectionDirection === "right"
@@ -71,7 +71,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
           style={{ backgroundColor: primaryColor }}
           className={`col-span-1  text-white py-8 px-6`}
         >
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-6">
             {leftObj?.map((item: any, index: any) => {
               switch (item.type) {
                 case "header":

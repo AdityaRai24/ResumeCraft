@@ -35,6 +35,7 @@
     "nextjs-toploader": "^3.7.15",
     "nprogress": "^0.2.0",
     "quill": "^2.0.2",
+    "razorpay": "^2.9.5",
     "react": "^18",
     "react-color-palette": "^7.1.1",
     "react-color-pallete": "^1.0.1",

@@ -3,9 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Computer, LayoutTemplate, PencilLine } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { motion } from "framer-motion";
-import { container, item } from "@/lib/motion";
-import { geologicaFont, poppinsFont } from "@/lib/font";
+import { poppinsFont } from "@/lib/font";
 
 const Page = () => {
   return (
@@ -36,7 +34,10 @@ const Page = () => {
                   Back
                 </Button>
               </Link>
-              <Link href={"/build-resume/templates"} className="w-full sm:w-[45%]">
+              <Link
+                href={"/build-resume/templates"}
+                className="w-full sm:w-[45%]"
+              >
                 <Button className="py-6 lg:py-[28px] w-full px-6 flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
                   Next <ArrowRight size={18} className="mb-[2px]" />
                 </Button>
@@ -92,21 +93,23 @@ const Page = () => {
             </div>
           </div>
           <div className="flex md:hidden mt-4 items-center max-w-full lg:max-w-[70%] justify-between flex-col sm:flex-row gap-4 sm:gap-6">
-              <Link href={"/"} className="w-full sm:w-[45%]">
-                <Button
-                  variant={"outline"}
-                  className="py-6 lg:py-[28px] w-full px-6 border-primary border-2 active:scale-[0.97] transition duration-300 ease"
-                >
-                  Back
-                </Button>
-              </Link>
-              <Link href={"/build-resume/templates"} className="w-full sm:w-[45%]">
-                <Button 
-                className="py-6 lg:py-[28px] w-full px-6 flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
-                  Next <ArrowRight size={18} className="mb-[2px]" />
-                </Button>
-              </Link>
-            </div>
+            <Link href={"/"} className="w-full sm:w-[45%]">
+              <Button
+                variant={"outline"}
+                className="py-6 lg:py-[28px] w-full px-6 border-primary border-2 active:scale-[0.97] transition duration-300 ease"
+              >
+                Back
+              </Button>
+            </Link>
+            <Link
+              href={"/build-resume/templates"}
+              className="w-full sm:w-[45%]"
+            >
+              <Button className="py-6 lg:py-[28px] w-full px-6 flex items-center gap-2 hover:gap-4 active:scale-[0.97] transition-all duration-300 ease-out">
+                Next <ArrowRight size={18} className="mb-[2px]" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </>

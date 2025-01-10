@@ -1,5 +1,5 @@
 "use client";
-import { ChevronDown, File, Menu, X } from "lucide-react";
+import { ChevronDown, Crown, File, Laugh, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -8,11 +8,19 @@ import { Skeleton } from "./ui/skeleton";
 import { useRouter } from "nextjs-toploader/app";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import toast from "react-hot-toast";
+import Image from "next/image";
 
 const Navbar = () => {
   const { user, isLoaded, isSignedIn } = useUser();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const isPremiumMember = useQuery(api.premiumUsers.isPremiumMember, {
+    userId: user?.id ? user?.id : "randomuserid",
+  });
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -28,13 +36,17 @@ const Navbar = () => {
         />
       )}
 
-      <div className={cn(`shadow-[0_2px_4px_rgba(0,0,0,0.1)] relative z-50 ${isMenuOpen ? "bg-white" : "bg-background"} `)}>
+      <div
+        className={cn(
+          `shadow-[0_2px_4px_rgba(0,0,0,0.1)] relative z-50 ${isMenuOpen ? "bg-white" : "bg-background"} `
+        )}
+      >
         <div
           className={`${poppinsFont.className} w-[90%] md:w-[85%] mx-auto flex items-center justify-between py-4`}
         >
           {/* Logo Section */}
           <div className="flex items-center gap-2">
-            <File className="size-6 md:size-8" />
+            <Image src={'/favicon.svg'} width={32} height={32} alt="Icon"/>
             <Link href="/">
               <h1 className="text-xl md:text-2xl font-semibold">
                 Resume<span className="text-primary">Craft</span>
@@ -63,15 +75,49 @@ const Navbar = () => {
             </div>
           )}
 
+          {isSignedIn && isLoaded && (
+            <div className="flex items-center justify-center gap-6">
+              <p
+                onClick={() => {
+                  router.push(`/build-resume/templates`);
+                  setIsMenuOpen(false);
+                }} className="text-gray-600 cursor-pointer">Dashboard</p>
+              <p
+                onClick={() => {
+                  router.push(`/my-resumes`);
+                  setIsMenuOpen(false);
+                }}
+                className="text-gray-600 cursor-pointer"
+              >
+                My Resumes
+              </p>{" "}
+              {isPremiumMember ? (
+                <Button
+                  onClick={() =>
+                    toast.success("You are already a premium member !!")
+                  }
+                  variant={"outline"}
+                  className="flex gap-2 border-gray-800"
+                >
+                  <Laugh /> Premium Member
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => {
+                    router.push(`/get-premium`);
+                  }}
+                  variant={"outline"}
+                  className="flex gap-2 border-gray-800"
+                >
+                  <Crown /> Upgrade
+                </Button>
+              )}
+            </div>
+          )}
+
           {/* Desktop Navigation */}
           {isSignedIn && (
             <div className="hidden md:flex items-center gap-4">
-              <Button
-                onClick={() => router.push(`/my-resumes`)}
-                variant="outline"
-              >
-                My Resumes
-              </Button>
               <h1 className="text-xl font-semibold">{user?.firstName}</h1>
               <UserButton />
             </div>
@@ -98,7 +144,9 @@ const Navbar = () => {
         <div
           className={cn(
             "md:hidden absolute top-full left-0 right-0 border-b shadow-lg transition-all duration-300 ease-in-out",
-            isMenuOpen ? "opacity-100 visible bg-white" : "opacity-0 bg-background invisible h-0"
+            isMenuOpen
+              ? "opacity-100 visible bg-white"
+              : "opacity-0 bg-background invisible h-0"
           )}
         >
           <div className="w-[90%] mx-auto py-4 flex flex-col gap-4">
@@ -108,16 +156,6 @@ const Navbar = () => {
                   <UserButton />
                   <h1 className="text-lg font-semibold">{user?.firstName}</h1>
                 </div>
-                <Button
-                  onClick={() => {
-                    router.push(`/my-resumes`);
-                    setIsMenuOpen(false);
-                  }}
-                  variant="outline"
-                  className="w-full justify-start"
-                >
-                  My Resumes
-                </Button>
               </>
             ) : (
               isLoaded && (

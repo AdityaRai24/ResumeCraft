@@ -29,9 +29,12 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
     userId: user?.id || "",
   });
   const preview = usePreview();
+  const isPremiumMember = useQuery(api.premiumUsers.isPremiumMember, {
+    userId: user?.id ? user?.id : "randomuserid",
+  });
+  const premiumTemplates = ["Template2"];
 
   const finalTemplates = myResumes ? myResumeTemplates : templates;
-  console.log(finalTemplates);
 
   if (finalTemplates === undefined) {
     return <ChooseSkeleton />;
@@ -50,17 +53,36 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   }
 
   const selectResume = async (id: Id<"resumes">, templateName: string) => {
-    createUserResume({
-      id: id,
-      userId: user?.id,
-      templateName: templateName,
-    })
-      .then((res) => {
-        return router.push(`/build-resume/${res}/tips?sec=header`);
+    if (premiumTemplates.includes(templateName)) {
+      if (isPremiumMember) {
+        createUserResume({
+          id: id,
+          userId: user?.id,
+          templateName: templateName,
+        })
+          .then((res) => {
+            return router.push(`/build-resume/${res}/tips?sec=header`);
+          })
+          .catch((err) => {
+            toast.error("Something went wrong...");
+          });
+      } else {
+        toast.error("You need to be a premium member to use this template.");
+        router.push("/get-premium");
+      }
+    } else {
+      createUserResume({
+        id: id,
+        userId: user?.id,
+        templateName: templateName,
       })
-      .catch((err) => {
-        toast.error("Something went wrong...");
-      });
+        .then((res) => {
+          return router.push(`/build-resume/${res}/tips?sec=header`);
+        })
+        .catch((err) => {
+          toast.error("Something went wrong...");
+        });
+    }
   };
 
   const editResume = (resumeId: Id<"resumes">) => {

@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import Template1 from "@/templates/template1/Template1";
 import temp1Obj from "@/templates/template1/temp1obj";
 import useMobile from "@/lib/useMobile";
+import Template3 from "@/templates/template3/Template3";
+import temp3obj from "@/templates/template3/temp3obj";
 
 export default function Home() {
   
@@ -118,7 +120,7 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Template2 obj={temp2Obj} />
+            <Template2 size="lg" obj={temp2Obj} />
           </motion.div>
 
           <motion.div
