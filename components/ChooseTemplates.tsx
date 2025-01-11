@@ -105,7 +105,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
 
 
         return (
-          <TemplateContainer index={index}>
+          <TemplateContainer premium={premiumTemplates.includes(item.templateName)} key={index}>
             <div className="w-full h-full">
               <TemplateComponent
                 obj={item as ResumeTemplate}

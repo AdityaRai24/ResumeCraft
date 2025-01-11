@@ -29,4 +29,4 @@ export const templateEmptyComponents: Record<string, any> = {
   Template4: temp4EmptyObj,
 };
 
-export const premiumTemplates = ["Template2"];
+export const premiumTemplates = ["Template2","Template4"];

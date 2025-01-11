@@ -225,14 +225,15 @@ export default function PremiumPaymentPage() {
 
                   <Button
                     onClick={handlePayment}
-                    disabled={isProcessing}
+                    disabled={true}
                     className="w-full h-12 text-lg font-medium group"
                   >
                     {isProcessing ? (
                       "Processing..."
                     ) : (
                       <>
-                        Upgrade Now
+                        {/* Upgrade Now */}
+                        Coming Soon
                         <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}

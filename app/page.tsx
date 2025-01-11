@@ -232,7 +232,7 @@ export default function Home() {
                   md:block absolute 
                   top-20 md:-top-60 
                   -right-full
-                  md:-right-16 hover:-rotate-3 
+                  md:-right-16 -rotate-3 hover:-rotate-6
                   transition-all duration-300`}
                 variants={template2Variants}
                 initial="hidden"
@@ -247,7 +247,7 @@ export default function Home() {
                   md:block absolute 
                   top-20 md:-top-56 
                   -right-full
-                  md:-right-48 hover:rotate-3  
+                  md:-right-48 rotate-3  hover:rotate-6
                   transition-all duration-300`}
                 variants={template3Variants}
                 initial="hidden"
