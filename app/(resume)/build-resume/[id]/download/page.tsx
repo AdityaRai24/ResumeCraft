@@ -96,7 +96,7 @@ const LiveResumePreview = () => {
                 geologicaFont.className
               )}
             >
-              Your Resume is Ready !!
+              Your Resume is Ready!
             </h1>
 
             <div className="flex flex-col gap-4 mt-6 lg:mt-8 md:max-w-[50%]">
@@ -111,8 +111,8 @@ const LiveResumePreview = () => {
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  When downloading, select &apos;<b>Save as Pdf</b>&apos; and
-                  Paper Size &apos;<b>ISO A4</b>&apos; to ensure the resume text
+                  When downloading, select &quot;Save as PDF&quot; and
+                  Paper Size &quot;ISO A4&quot; to ensure the resume text
                   remains selectable, allowing easy copy-pasting by recruiters.
                 </p>
               </div>
@@ -120,7 +120,7 @@ const LiveResumePreview = () => {
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  Ensure to **check** the <b>"Background Graphics"</b> option
+                  Ensure to check the &quot;Background Graphics&quot; option
                   while downloading, so your resume design remains intact.
                 </p>
               </div>
