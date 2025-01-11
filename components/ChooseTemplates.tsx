@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { Id } from "@/convex/_generated/dataModel";
 import { Skeleton } from "./ui/skeleton";
 import {
+  premiumTemplates,
   templateComponents,
   TemplateComponentType,
 } from "@/templates/templateStructures";
@@ -18,9 +19,7 @@ import PreviewModal from "./PreviewModal";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { useRouter } from "nextjs-toploader/app";
-import Template3 from "@/templates/template3/Template3";
-import temp1Obj from "@/templates/template1/temp1obj";
-import temp3obj from "@/templates/template3/temp3obj";
+import TemplateContainer from "./TemplateContainer";
 
 const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   const { user } = useUser();
@@ -31,6 +30,9 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
     userId: user?.id || "",
   });
   const preview = usePreview();
+  const isPremiumMember = useQuery(api.premiumUsers.isPremiumMember, {
+    userId: user?.id ? user?.id : "randomuserid",
+  });
 
   const finalTemplates = myResumes ? myResumeTemplates : templates;
 
@@ -51,23 +53,42 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   }
 
   const selectResume = async (id: Id<"resumes">, templateName: string) => {
-    createUserResume({
-      id: id,
-      userId: user?.id,
-      templateName: templateName,
-    })
-      .then((res) => {
-        return router.push(`/build-resume/${res}/tips?sec=header`);
+    if (premiumTemplates.includes(templateName)) {
+      if (isPremiumMember) {
+        createUserResume({
+          id: id,
+          userId: user?.id,
+          templateName: templateName,
+        })
+          .then((res) => {
+            return router.push(`/build-resume/${res}/tips?sec=header`);
+          })
+          .catch((err) => {
+            toast.error("Something went wrong...");
+          });
+      } else {
+        toast.error("You need to be a premium member to use this template.");
+        router.push("/get-premium");
+      }
+    } else {
+      createUserResume({
+        id: id,
+        userId: user?.id,
+        templateName: templateName,
       })
-      .catch((err) => {
-        console.log(err);
-        toast.error("Something went wrong...");
-      });
+        .then((res) => {
+          return router.push(`/build-resume/${res}/tips?sec=header`);
+        })
+        .catch((err) => {
+          toast.error("Something went wrong...");
+        });
+    }
   };
 
   const editResume = (resumeId: Id<"resumes">) => {
     router.push(`/build-resume/${resumeId}/tips?sec=header`);
   };
+
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -82,14 +103,9 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
           return null;
         }
 
+
         return (
-          <div
-            key={index}
-            className={cn(
-              "relative group mx-auto w-[159px] h-[225px] md:w-[295px] md:h-[415px]",
-              "transition-transform duration-300"
-            )}
-          >
+          <TemplateContainer premium={premiumTemplates.includes(item.templateName)} key={index}>
             <div className="w-full h-full">
               <TemplateComponent
                 obj={item as ResumeTemplate}
@@ -101,7 +117,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
             <div className="absolute inset-0 w-full h-full p-4 sm:p-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-5 rounded-md cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
               <Button
                 onClick={() => preview.onOpen(item as ResumeTemplate)}
-                className="w-[50%] md:w-full  flex items-center justify-center gap-2"
+                className="w-[50%] md:w-full flex items-center justify-center gap-2"
               >
                 <p className="hidden md:block">Preview</p>{" "}
                 <Eye className="md:h-4 md:w-4 h-6 w-6" />
@@ -119,7 +135,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
                 <Edit className="md:h-4 md:w-4 h-5 w-5" />
               </Button>
             </div>
-          </div>
+          </TemplateContainer>
         );
       })}
       <div>

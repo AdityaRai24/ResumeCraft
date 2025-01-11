@@ -23,7 +23,9 @@ import {
   Plus,
   Twitter,
   XIcon,
+  Upload,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface SocialLink {
   type: string;
@@ -39,6 +41,7 @@ interface HeaderContent {
   location: string;
   summary: string;
   socialLinks: SocialLink[];
+  photo?: string;
 }
 
 const initialHeader: HeaderContent = {
@@ -49,6 +52,7 @@ const initialHeader: HeaderContent = {
   location: "",
   summary: "",
   socialLinks: [],
+  photo: "",
 };
 
 const HeaderForm = ({
@@ -59,8 +63,11 @@ const HeaderForm = ({
   item: HeaderSection;
 }) => {
   const [header, setHeader] = useState<HeaderContent>(initialHeader);
-  const [activeLink, setActiveLink] = useState("");
-  const [activeLinkValue, setActiveLinkValue] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
+  const hasPhoto = resume?.globalStyles.photo || false;
 
   const update = useMutation(api.resume.updateHeader);
   const pendingChangesRef = useRef(false);
@@ -68,7 +75,6 @@ const HeaderForm = ({
   useEffect(() => {
     if (item?.content && !pendingChangesRef.current) {
       setHeader(item.content as HeaderContent);
-      console.log(item.content);
     }
   }, [item?.content, pendingChangesRef]);
 
@@ -146,6 +152,57 @@ const HeaderForm = ({
     [debouncedUpdate]
   );
 
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Show loading toast
+    const loadingToast = toast.loading("Uploading image...");
+
+    try {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append(
+        "upload_preset",
+        process.env.NEXT_PUBLIC_CLOUDINARY_PRESET as string
+      );
+
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const data = await response.json();
+
+      setHeader((prev) => {
+        const newHeader = { ...prev, photo: data.secure_url };
+        debouncedUpdate(newHeader);
+        return newHeader;
+      });
+
+      // Success toast
+      toast.success("Image uploaded successfully!", {
+        id: loadingToast,
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      // Error toast
+      toast.error("Failed to upload image. Please try again.", {
+        id: loadingToast,
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const socialOptions = [
     { value: "github", label: "GitHub", icon: Github },
     { value: "linkedin", label: "LinkedIn", icon: Linkedin },
@@ -157,6 +214,43 @@ const HeaderForm = ({
   return (
     <>
       <motion.form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 md:p-8 rounded-lg shadow shadow-primary">
+        {hasPhoto && (
+          <div className="flex items-start mb-6">
+            <div className="relative">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleImageUpload}
+                accept="image/*"
+                className="hidden"
+              />
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="relative cursor-pointer group"
+              >
+                {header.photo ? (
+                  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary">
+                    <img
+                      src={header.photo}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Upload className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-20 h-20 rounded-full border-2 border-dashed border-primary flex items-center justify-center bg-white/50 hover:bg-white/80 transition-colors">
+                    <Upload
+                      className={`w-5 h-5 ${uploading ? "animate-pulse" : ""}`}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 w-full md:max-w-[85%] gap-6 md:gap-8">
           <InputField
             label="First Name"
@@ -195,7 +289,10 @@ const HeaderForm = ({
         <div className="mt-8">
           <h3 className="text-lg font-semibold mb-2">Social Links</h3>
           {header?.socialLinks?.map((link, index) => (
-            <div key={link.type} className="mb-4 flex flex-col md:flex-row items-start justify-start md:items-center gap-6">
+            <div
+              key={link.type}
+              className="mb-4 flex flex-col md:flex-row items-start justify-start md:items-center gap-6"
+            >
               <InputField
                 label={link.type}
                 name={`socialLinks`}
@@ -216,7 +313,7 @@ const HeaderForm = ({
               />
               <button
                 type="button"
-                className="mb-8 absolute right-20 md:block "
+                className="mb-8 absolute right-20 md:block"
                 onClick={() => handleRemoveSocialLink(index)}
               >
                 <XIcon className="w-5 h-5" />
@@ -242,7 +339,7 @@ const HeaderForm = ({
         </div>
 
         {item?.content?.summary !== undefined && (
-          <div className="mt-8 w-full md:w-[85%] ">
+          <div className="mt-8 w-full md:w-[85%]">
             <QuillEditorComponent
               label="Summary"
               placeholder="Write something about yourself..."
@@ -258,7 +355,7 @@ const HeaderForm = ({
 
 interface InputFieldProps {
   label: string;
-  name: keyof HeaderContent;
+  name: keyof HeaderContent | string;
   value: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;

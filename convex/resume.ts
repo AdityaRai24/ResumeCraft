@@ -1,9 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import {
-  createSection,
-  templateStructures,
-} from "@/templates/templateStructures";
+import { templateEmptyComponents } from "@/templates/templateStructures";
 import { ResumeTemplate, SocialLink } from "@/types/templateTypes";
 
 export const getTemplates = query({
@@ -45,6 +42,8 @@ export const updateHeader = mutation({
           })
         )
       ),
+      role: v.optional(v.string()),
+      photo: v.optional(v.string()),
       location: v.optional(v.string()),
       summary: v.optional(v.string()),
     }),
@@ -99,27 +98,12 @@ export const createUserResume = mutation({
     if (!resume) {
       throw new Error("Something went wrong");
     }
-
-    const templateSections: any = templateStructures[args.templateName];
-    if (!templateSections) {
-      throw new Error("Invalid template name");
-    }
-
-    const initialSections = templateSections.map((section: any) =>
-      createSection(
-        section.type,
-        section.fields,
-        section.orderNumber,
-        section.isVisible
-      )
-    );
-
     const newResume = await ctx.db.insert("resumes", {
       isTemplate: false,
       userId: args.userId,
       globalStyles: resume?.globalStyles!,
       templateName: args?.templateName,
-      sections: initialSections,
+      sections: templateEmptyComponents[args.templateName].sections,
     });
 
     return newResume;
@@ -233,6 +217,7 @@ export const updateCustomSection = mutation({
       sectionTitle: v.string(),
       sectionDescription: v.string(),
       sectionNumber: v.number(),
+      sectionDirection: v.optional(v.string()),
     }),
   },
   handler: async (ctx, args) => {
@@ -286,6 +271,7 @@ export const updateCustomSection = mutation({
           sectionTitle: args.content.sectionTitle,
           sectionDescription: args.content.sectionDescription,
           sectionNumber: args.content.sectionNumber,
+          sectionDirection: args.content.sectionDirection,
         },
         orderNumber: maxNumber + 1,
         isVisible: true,
@@ -663,11 +649,11 @@ export const migrateResumes = mutation({
   },
 });
 
-
 export const hideSection = mutation({
   args: {
     id: v.id("resumes"),
     sectionId: v.string(),
+    secondType: v.string(),
   },
   handler: async (ctx, args) => {
     const resume = await ctx.db.get(args.id);
@@ -684,11 +670,25 @@ export const hideSection = mutation({
     }
 
     const resumeSections = resume?.sections;
-    let index = resumeSections.findIndex((item) => item.type === args.sectionId);
-    if (index === -1) {
-      throw new Error("Something went wrong index");
+    let index;
+
+    if (args.sectionId !== args.secondType) {
+      const currentCustomSectionIndex = resumeSections.findIndex(
+        (item: any) => item?.content?.sectionTitle === args.secondType
+      );
+      if (currentCustomSectionIndex === -1) {
+        throw new Error("Something went wrong index");
+      } else {
+        resumeSections[currentCustomSectionIndex].isVisible =
+          !resumeSections[currentCustomSectionIndex].isVisible;
+      }
     } else {
-      resumeSections[index].isVisible = !resumeSections[index].isVisible;
+      index = resumeSections.findIndex((item) => item.type === args.sectionId);
+      if (index === -1) {
+        throw new Error("Something went wrong index");
+      } else {
+        resumeSections[index].isVisible = !resumeSections[index].isVisible;
+      }
     }
 
     const updatedResume = await ctx.db.patch(args.id, {

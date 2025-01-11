@@ -19,18 +19,8 @@ import {
   poppinsFont,
   ralewayFont,
 } from "@/lib/font";
+import { templateComponents } from "@/templates/templateStructures";
 
-type TemplateComponentType = React.ComponentType<{
-  obj: ResumeTemplate;
-  isPreview: boolean;
-  isLive?: boolean;
-  size: "sm" | "md" | "lg";
-}>;
-
-const templateComponents: Record<string, TemplateComponentType> = {
-  Template1: Template1,
-  Template2: Template2,
-};
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -92,7 +82,6 @@ const LiveResumePreview = () => {
         >
           <TemplateComponent
             obj={templateDetails as ResumeTemplate}
-            isLive
             size="md"
             isPreview
           />

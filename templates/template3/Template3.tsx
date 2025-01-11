@@ -7,25 +7,13 @@ import {
   Link2,
   Linkedin,
   Mail,
-  MapPin,
-  MessageCircle,
-  Phone,
   PhoneCall,
   Twitter,
-  User2,
 } from "lucide-react";
-import Link from "next/link";
 import React from "react";
-import {
-  EducationContent,
-  ExperienceContent,
-  HeaderContent,
-  ProjectContent,
-  SkillsContent,
-} from "../template1/Temp1Types";
 import TemplateWrapper from "@/providers/TemplateWrapper";
+import Link from "next/link";
 import Image from "next/image";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export interface TemplateType {
   obj: ResumeTemplate;
@@ -34,410 +22,372 @@ export interface TemplateType {
 
 const Template3 = ({ obj, size }: TemplateType) => {
   const headerLogoMap: any = {
-    github: <Github size={18} className="mt-[2px]" />,
-    linkedin: <Linkedin size={18} className="mt-[2px]" />,
-    portfolio: <Globe size={18} className="mt-[2px]" />,
-    twitter: <Twitter size={18} className="mt-[2px]" />,
-    other: <Link2 size={18} className="mt-[2px]" />,
+    github: <Github size={20} className="mt-[2px]" />,
+    linkedin: <Linkedin size={20} className="mt-[2px]" />,
+    portfolio: <Globe size={20} className="mt-[2px]" />,
+    twitter: <Twitter size={20} className="mt-[2px]" />,
+    other: <Link2 size={20} className="mt-[2px]" />,
   };
 
-  const visitedCustoms: number[] = [];
   const primaryTextColor = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColor = obj?.globalStyles?.primaryColor || "black";
-  const sortedSections = [...obj.sections].sort(
-    (a, b) => a.orderNumber - b.orderNumber
+
+  const visitedCustoms: string[] = [];
+
+  const headerObj = obj?.sections?.filter((item) => item.type === "header");
+  const tempLeftObj = obj?.sections?.filter((item: any) =>
+    item.type === "custom"
+      ? item?.content?.sectionDirection === "left"
+      : item?.style?.sectionDirection === "left"
   );
 
-  console.log(obj);
+  const leftObj = [...headerObj, ...tempLeftObj];
 
-  const uniqueSectionTypes = Array.from(
-    new Set(sortedSections.map((item) => item.type))
+  const tempRightObj = obj.sections.filter((item: any) =>
+    item.type === "custom"
+      ? item.content.sectionDirection === "right"
+      : item?.style?.sectionDirection === "right"
   );
+  const rightObj = [...headerObj, ...tempRightObj];
 
-  const renderSection = (type: string) => {
-    return <div>hello</div>;
-
-    // return sortedSections?.map((item, index) => {
-    //   if (item.type === type) {
-    //     return null;
-    //     switch (type) {
-    //       case "header":
-    //         const headerContent = item.content as HeaderContent;
-
-    //         return (
-    //           <div
-    //             key={`header-section-${index}`}
-    //             className={` ${item.isVisible ? "block" : "hidden"}`}
-    //           >
-    //             <div>
-    //               <h1
-    //                 className={`text-4xl uppercase text-left font-bold  `}
-    //                 style={{ color: "black" }}
-    //               >
-    //                 {headerContent?.firstName} {headerContent?.lastName}
-    //               </h1>
-
-    //               <div className="flex items-center flex-wrap justify-start text-xs gap-3 my-2">
-    //                 {headerContent.phone && (
-    //                   <div className="flex gap-1 items-center">
-    //                     <Phone size={18} className="mt-[2px]" />
-    //                     <p>{`${headerContent.phone}`} </p>
-    //                   </div>
-    //                 )}
-    //                 {headerContent.email && (
-    //                   <div className="flex gap-1 items-center">
-    //                     <Mail size={18} className="mt-[2px]" />
-    //                     <p className="underline underline-offset-2">
-    //                       {`${headerContent.email}`}
-    //                     </p>
-    //                   </div>
-    //                 )}
-    //                 {headerContent.socialLinks.map((item) => {
-    //                   return (
-    //                     <div className="flex items-center justify-center gap-1">
-    //                       {headerLogoMap[item.type]}
-    //                       <a
-    //                         href={item.url}
-    //                         className="underline underline-offset-2"
-    //                       >
-    //                         {item.name}
-    //                       </a>
-    //                     </div>
-    //                   );
-    //                 })}
-    //               </div>
-    //             </div>
-
-    //             {/* SUMMARY */}
-    //             {/* <div
-    //               className={`py-2`}
-    //               style={{ borderTop: `1px solid ${primaryColor}` }}
-    //             >
-    //               <h1
-    //                 className={`text-lg font-bold`}
-    //                 style={{ color: primaryTextColor }}
-    //               >
-    //                 SUMMARY
-    //               </h1>
-    //               <div
-    //                 className="quill-content text-sm font-normal"
-    //                 dangerouslySetInnerHTML={{
-    //                   __html: headerContent?.summary || "",
-    //                 }}
-    //               />
-    //             </div> */}
-    //           </div>
-    //         );
-
-    //       case "education":
-    //         const educationContent = item.content as EducationContent;
-    //         return (
-    //           <div
-    //             className={`py-2 !bg-[red] ${item.isVisible ? "block" : "hidden"}`}
-    //             style={{ borderTop: `1px solid ${primaryColor}` }}
-    //           >
-    //             {" "}
-    //             <h1
-    //               className={`text-lg font-bold `}
-    //               style={{ color: primaryTextColor }}
-    //             >
-    //               EDUCATION
-    //             </h1>
-    //             <div key={index} className="flex flex-col gap-1">
-    //               {educationContent?.education.map((edu, index2) => {
-    //                 return (
-    //                   <div
-    //                     key={index2}
-    //                     className="flex items-center text-sm justify-between"
-    //                   >
-    //                     <div>
-    //                       <h1 className="font-semibold text-sm">
-    //                         {edu?.courseName}
-    //                       </h1>
-    //                       <h1 className="text-sm">{edu?.instituteName}</h1>
-    //                     </div>
-    //                     <div>
-    //                       {edu?.startYear && edu?.endYear && (
-    //                         <h1 className="font-bold text-sm">
-    //                           {`${edu?.startMonth ? `${edu.startMonth} ` : ""}${edu?.startYear ? edu.startYear : ""}${!edu?.studyingHere && (edu?.endMonth || edu?.endYear) ? ` - ${edu.endMonth} ${edu.endYear}` : edu?.studyingHere ? " - Present" : ""}`}
-    //                         </h1>
-    //                       )}
-    //                     </div>
-    //                   </div>
-    //                 );
-    //               })}
-    //             </div>
-    //           </div>
-    //         );
-
-    //       case "experience":
-    //         const experienceContent = item.content as ExperienceContent;
-    //         return (
-    //           <div
-    //             className={`border-t py-2 ${item.isVisible ? "block" : "hidden"}`}
-    //             style={{ borderTop: `1px solid ${primaryColor}` }}
-    //           >
-    //             <h1
-    //               className={`text-lg font-bold `}
-    //               style={{ color: primaryTextColor }}
-    //             >
-    //               WORK EXPERIENCE
-    //             </h1>
-    //             {experienceContent.experience?.map((exp, index) => {
-    //               return (
-    //                 <div key={index}>
-    //                   <div className="flex items-center justify-between gap-2">
-    //                     <h1 className="font-semibold text-base">
-    //                       {exp?.role} {exp?.role && exp?.companyName && ","}{" "}
-    //                       {exp?.companyName}
-    //                     </h1>
-    //                     <div className="flex items-center text-sm gap-2">
-    //                       {exp?.startMonth &&
-    //                         exp?.startYear &&
-    //                         exp?.endMonth &&
-    //                         exp?.endYear && (
-    //                           <h1>
-    //                             {exp?.startMonth}, {exp?.startYear} -{" "}
-    //                             {exp?.endMonth}, {exp?.endYear}
-    //                           </h1>
-    //                         )}
-    //                     </div>
-    //                   </div>
-    //                   <div
-    //                     className="quill-content text-sm"
-    //                     dangerouslySetInnerHTML={{
-    //                       __html: exp?.jobDescription,
-    //                     }}
-    //                   />
-    //                 </div>
-    //               );
-    //             })}
-    //           </div>
-    //         );
-
-    //       case "projects":
-    //         const projectContent = item.content as ProjectContent;
-    //         return (
-    //           <>
-    //             <div
-    //               className={`border-t py-2 ${item.isVisible ? "block" : "hidden"}`}
-    //               style={{ borderTop: `1px solid ${primaryColor}` }}
-    //               key={index}
-    //             >
-    //               <h1
-    //                 className={`text-lg font-bold `}
-    //                 style={{ color: primaryTextColor }}
-    //               >
-    //                 PROJECTS
-    //               </h1>
-
-    //               <div className="flex flex-col">
-    //                 {projectContent?.projects?.map((project, index) => {
-    //                   return (
-    //                     <div key={index}>
-    //                       <div className="flex items-center gap-2 justify-start">
-    //                         <h1
-    //                           className={`font-semibold text-sm underline underline-offset-2 mb-[1px]`}
-    //                         >
-    //                           {project?.name}
-    //                         </h1>
-    //                         {project?.githuburl && (
-    //                           <Link href={project?.githuburl}>
-    //                             <Github
-    //                               size={16}
-    //                               className={`cursor-pointer`}
-    //                               style={{ color: primaryTextColor }}
-    //                             />
-    //                           </Link>
-    //                         )}
-
-    //                         {project?.liveurl && (
-    //                           <Link href={project?.liveurl}>
-    //                             <Globe
-    //                               size={16}
-    //                               className={`cursor-pointer`}
-    //                               style={{ color: primaryTextColor }}
-    //                             />
-    //                           </Link>
-    //                         )}
-    //                       </div>
-    //                       <div
-    //                         className="quill-content text-sm"
-    //                         dangerouslySetInnerHTML={{
-    //                           __html: project?.description,
-    //                         }}
-    //                       />
-    //                     </div>
-    //                   );
-    //                 })}
-    //               </div>
-    //             </div>
-    //           </>
-    //         );
-
-    //       case "skills":
-    //         const skillsContent = item as SkillsContent;
-
-    //         return (
-    //           <div
-    //             className={`py-2 border-t ${item.isVisible ? "block" : "hidden"}`}
-    //             style={{ borderTop: `1px solid ${primaryColor}` }}
-    //             key={index}
-    //           >
-    //             {" "}
-    //             <h1
-    //               className={`text-lg font-bold `}
-    //               style={{
-    //                 color: primaryTextColor,
-    //               }}
-    //             >
-    //               SKILLS
-    //             </h1>
-    //             <div>
-    //               <div
-    //                 className="quill-content text-sm"
-    //                 dangerouslySetInnerHTML={{
-    //                   __html: skillsContent.content.description,
-    //                 }}
-    //               />{" "}
-    //             </div>
-    //           </div>
-    //         );
-
-    //       case "custom":
-    //         return sortedSections.map((item, index) => {
-    //           if (item.type === "custom") {
-    //             if (visitedCustoms.includes(item.orderNumber)) return;
-    //             visitedCustoms.push(item.orderNumber);
-
-    //             return (
-    //               <div
-    //                 key={`custom-${index}-${item.content.sectionTitle}`}
-    //                 className={`py-2 ${item.isVisible ? "block" : "hidden"}`}
-    //                 style={{ borderTop: `1px solid ${primaryColor}` }}
-    //               >
-    //                 <h1
-    //                   className={`text-lg font-bold`}
-    //                   style={{ color: primaryTextColor }}
-    //                 >
-    //                   {item.content.sectionTitle}
-    //                 </h1>
-    //                 <div
-    //                   className="quill-content text-sm"
-    //                   dangerouslySetInnerHTML={{
-    //                     __html: item.content.sectionDescription,
-    //                   }}
-    //                 />
-    //               </div>
-    //             );
-    //           }
-    //           return null;
-    //         });
-    //     }
-    //   }
-    // });
-  };
+  const headerContent = obj.sections.filter(
+    (item) => item.type === "header"
+  )[0];
+  const leftHeaderContent = obj.sections.filter(
+    (item) => item.type === "header"
+  )[0];
 
   const content = (
     <div
       id="resumeSection"
       className={cn(
-        "bg-[red] text-black overflow-hidden overflow-x-hidden  w-[211mm] h-[297mm]  select-none cursor-pointer rounded-3xl print:rounded-none transition duration-300 ease-in  shadow-2xl print:border-0 border border-primary"
+        " text-black overflow-hidden overflow-x-hidden  w-[211mm] h-[297mm]  select-none cursor-pointer rounded-3xl print:rounded-none transition duration-300 ease-in  shadow-2xl print:border-0 border border-primary"
       )}
     >
       <div className="grid grid-cols-3 h-full">
-        <div className="col-span-1 bg-[#153c54] text-white p-8">
-          <div className="flex flex-col">
-            <Avatar className="size-[180px] border-[6px] border-[#d5d5d5]">
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+        <div
+          style={{ backgroundColor: primaryColor }}
+          className={`col-span-1  text-white py-8 px-6`}
+        >
+          <div className="flex flex-col gap-6">
+            {leftObj?.map((item: any, index: any) => {
+              switch (item.type) {
+                case "header":
+                  return (
+                    <>
+                      <div className="flex flex-col">
+                        <div className="relative flex shrink-0 overflow-hidden w-[180px] h-[180px] border-[6px] border-[#d5d5d5] rounded-full">
+                          <Image
+                            src={
+                              leftHeaderContent?.content?.photo ||
+                              "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
+                            }
+                            width={180}
+                            height={180}
+                            alt="kohli"
+                            className="aspect-square h-full object-cover w-full"
+                          />
+                        </div>
 
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col gap-2">
-                <h2 className="font-medium text-[23px] tracking-wide mt-6">
-                  CONTACT
-                </h2>
-                <div className="h-[0.7px] bg-[#fff] border-none outline-none mb-2" />
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center font-light justify-start gap-4">
-                    <PhoneCall /> <p>+91 1234567890</p>
-                  </div>
-                  <div className="flex items-center font-light justify-start gap-4">
-                    <MessageCircle /> <p>Yv7Xf@example.com</p>
-                  </div>
-                  <div className="flex items-center font-light justify-start gap-4">
-                    <MapPin /> <p>Delhi, India</p>
-                  </div>
-                  <div className="flex items-center font-light justify-start gap-4">
-                    <Globe /> <p>www.portfolio.com</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <h2 className="font-medium text-[23px] tracking-wide mt-4">
-                  EDUCATION
-                </h2>
-                <div className="h-[0.7px] bg-[#fff] border-none outline-none mb-2" />
-
-                <div className="flex flex-col font-light text-sm tracking-normal gap-3">
-                  <div className="flex flex-col font-light tracking-normal">
-                    <h1 className="tracking-wider text-[14px] font-medium">
-                      Information Technology
-                    </h1>
-                    <h1 className="tracking-wide text-[14px] font-medium">
-                      DJ Sanghvi College Of Engineering
-                    </h1>
-                    <h1>2022 - Present</h1>
-                  </div>
-
-                  <div className="flex flex-col font-light tracking-normal">
-                    <h1 className="tracking-wider text-[14px] font-medium">
-                      HSC
-                    </h1>
-                    <h1 className="tracking-wide text-[14px] font-medium">
-                      TP Bhatia College Of Science
-                    </h1>
-                    <h1>2022 - Present</h1>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <h2 className="font-medium text-[23px] tracking-wide mt-4">
-                  SKILLS
-                </h2>
-                <div className="h-[0.7px] bg-[#fff] border-none outline-none mb-2" />
-                <div className="flex flex-col font-light text-sm tracking-normal gap-3">
-                  <li>Project Management</li>
-                  <li>Public Relations</li>
-                  <li>Team Work</li>
-                  <li>Time Management</li>
-                  <li>Leadership</li>
-                  <li>Effective Communication</li>
-                  <li>Critical Thinking</li>
-                </div>
-              </div>
-            </div>
+                        <div className="flex flex-col gap-2 mt-6">
+                          <h2 className="font-medium text-[23px] tracking-wide mt-4">
+                            CONTACT
+                          </h2>
+                          <div className="h-[2px] mb-2 bg-[#fff]"></div>
+                          <div className="flex flex-col gap-1">
+                            {leftHeaderContent?.content?.phone && (
+                              <div className="flex items-center text-sm font-light gap-2">
+                                <PhoneCall
+                                  size={20}
+                                  className="flex-shrink-0 mt-1"
+                                />
+                                <p className="break-all">
+                                  {leftHeaderContent?.content?.phone}
+                                </p>
+                              </div>
+                            )}
+                            {leftHeaderContent?.content?.email && (
+                              <div className="flex items-center text-sm font-light gap-2">
+                                <Mail
+                                  size={20}
+                                  className="flex-shrink-0 mt-1"
+                                />
+                                <p className="break-all">
+                                  {leftHeaderContent?.content?.email}
+                                </p>
+                              </div>
+                            )}
+                            {leftHeaderContent?.content?.socialLinks.map(
+                              (item, index) => {
+                                return (
+                                  <div className="flex items-center text-sm font-light gap-2">
+                                    {headerLogoMap[item.type]}
+                                    <Link href={item.url} className="break-all">
+                                      {item.name}
+                                    </Link>
+                                  </div>
+                                );
+                              }
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  );
+                case "skills":
+                  return (
+                    <div
+                      key={index}
+                      className={`${item.isVisible ? "block" : "hidden"} flex flex-col gap-2`}
+                    >
+                      <h2 className="font-medium text-[23px] tracking-wide">
+                        SKILLS
+                      </h2>
+                      <div className="h-[2px] mb-2 bg-[#fff]"></div>
+                      <p
+                        className="quill-content tracking-wider break-words text-left !text-[#fff] font-light text-sm "
+                        dangerouslySetInnerHTML={{
+                          __html: item?.content.description ?? "",
+                        }}
+                      />
+                    </div>
+                  );
+                case "custom":
+                  if (
+                    visitedCustoms.includes(
+                      `${item.orderNumber}-${item.content.sectionTitle}`
+                    )
+                  )
+                    return;
+                  visitedCustoms.push(
+                    `${item.orderNumber}-${item.content.sectionTitle}`
+                  );
+                  return (
+                    <>
+                      <div
+                        key={item.orderNumber}
+                        className={`${item.isVisible ? "block" : "hidden"} flex flex-col gap-2`}
+                      >
+                        <h2 className="font-medium uppercase text-[23px] tracking-wide">
+                          {item.content.sectionTitle}
+                        </h2>
+                        <div className="h-[2px] mb-2 bg-[#fff]"></div>
+                        <div
+                          className="quill-content font-light tracking-wider text-sm "
+                          dangerouslySetInnerHTML={{
+                            __html: item.content.sectionDescription,
+                          }}
+                        />
+                      </div>
+                    </>
+                  );
+                default:
+                  return null;
+              }
+            })}
           </div>
         </div>
-        <div className="col-span-2 bg-[#fff] "></div>
-      </div>
 
-      {/* <div className="grid grid-cols-[60%_40%] p-8 min-h-screen">
-        {uniqueSectionTypes?.map((section, index) => {
-          return (
-            <React.Fragment key={index}>
-              <div className="">{renderSection(section)} </div>
-            </React.Fragment>
-          );
-        })}
-      </div> */}
+        <div className="col-span-2 bg-[#fff] ">
+          {rightObj.map((item, index) => {
+            switch (item.type) {
+              case "header":
+                return (
+                  <>
+                    <div className="flex flex-col px-16 py-16">
+                      <h1 className="text-4xl font-normal uppercase">
+                        <span
+                          style={{ color: primaryTextColor }}
+                          className=" mr-2  font-extrabold "
+                        >
+                          {headerContent?.content?.firstName}
+                        </span>
+                        {headerContent?.content?.lastName}
+                      </h1>
+                      {(headerContent?.content?.firstName ||
+                        headerContent?.content?.lastName) && (
+                        <div
+                          className="w-28 h-[4px] mt-2"
+                          style={{ background: primaryColor }}
+                        ></div>
+                      )}
+                    </div>
+
+                    <div className="max-w-[90%] mx-auto">
+                      <SectionHeader
+                        primaryColor={primaryColor}
+                        primaryTextColor={primaryTextColor}
+                        title="PROFILE"
+                      />
+
+                      <p
+                        className="quill-content text-sm text-[#000]"
+                        dangerouslySetInnerHTML={{
+                          __html: headerContent?.content?.summary ?? "",
+                        }}
+                      />
+                    </div>
+                  </>
+                );
+              case "experience":
+                return (
+                  <div
+                    className={` ${item.isVisible ? "block" : "hidden"} max-w-[90%] mx-auto mt-4`}
+                  >
+                    <SectionHeader
+                      primaryColor={primaryColor}
+                      primaryTextColor={primaryTextColor}
+                      title="WORK EXPERIENCE"
+                    />
+
+                    <div className="relative">
+                      <div className="absolute left-1.5 top-2 bottom-0 w-0.5 bg-gray-300"></div>
+                      <div className="space-y-4">
+                        {item?.content?.experience.map((exp, index) => {
+                          return (
+                            <div className={`relative`} key={index}>
+                              <div className="absolute left-0 top-2 w-3 h-3 rounded-full bg-gray-500"></div>
+                              <div className="ml-8 text-sm">
+                                <div className="flex items-center justify-between gap-2">
+                                  <h1 className="font-bold tracking-wide text-[#000]">
+                                    {exp.companyName}
+                                  </h1>
+                                  {exp?.startYear && exp?.endYear && (
+                                    <h1>
+                                      {exp?.startMonth} {exp?.startYear}{" "}
+                                      {(exp?.startYear || exp?.startMonth) &&
+                                        (exp?.endYear || exp?.endMonth) &&
+                                        "-"}
+                                      {exp?.endMonth} {exp?.endYear}
+                                    </h1>
+                                  )}
+                                </div>
+                                <h1 className="text-[#000] font-medium tracking-wide">
+                                  {exp.role}
+                                </h1>
+                                <div
+                                  className="quill-content text-sm text-[#000]"
+                                  dangerouslySetInnerHTML={{
+                                    __html: exp?.jobDescription,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              case "education":
+                return (
+                  <div
+                    className={` ${item.isVisible ? "block" : "hidden"} max-w-[90%] mx-auto mt-4`}
+                  >
+                    <SectionHeader
+                      primaryColor={primaryColor}
+                      primaryTextColor={primaryTextColor}
+                      title="EDUCATION"
+                    />
+                    <div className="relative">
+                      <div className="absolute left-1.5 top-2 bottom-0 w-0.5 bg-gray-300"></div>
+                      <div className="space-y-3">
+                        {item?.content?.education.map((edu, index) => (
+                          <div className="relative" key={index}>
+                            <div className="absolute left-0 top-2 w-3 h-3 rounded-full bg-gray-500"></div>
+                            <div className="ml-8 text-sm">
+                              <div className="flex justify-between items-start gap-4">
+                                <div className="flex-1">
+                                  <h1 className="font-semibold tracking-wide text-[#000] break-normal">
+                                    {edu.courseName}
+                                  </h1>
+                                  <h1 className="text-[#000] tracking-wide">
+                                    {edu.instituteName},{" "}
+                                    {edu.location && edu.location}
+                                  </h1>
+                                  <h1 className="text-[#000] tracking-wide">
+                                    {edu.grade && `Grade : ${edu.grade}`}
+                                  </h1>
+                                </div>
+                                <div className="flex-shrink-0 whitespace-nowrap">
+                                  {edu?.startYear && edu?.endYear && (
+                                    <span>
+                                      {edu?.startMonth} {edu?.startYear} -
+                                      {edu?.endMonth} {edu?.endYear}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              case "custom":
+                if (
+                  visitedCustoms.includes(
+                    `${item.orderNumber}-${item.content.sectionTitle}`
+                  )
+                )
+                  return;
+                visitedCustoms.push(
+                  `${item.orderNumber}-${item.content.sectionTitle}`
+                );
+                return (
+                  <>
+                    <div
+                      className={`${item.isVisible ? "block" : "hidden"} max-w-[90%] uppercase mx-auto mt-4`}
+                      key={item.orderNumber}
+                    >
+                      <SectionHeader
+                        primaryColor={primaryColor}
+                        primaryTextColor={primaryTextColor}
+                        title={item.content.sectionTitle}
+                      />
+                      <div
+                        className="tracking-wider text-sm "
+                        dangerouslySetInnerHTML={{
+                          __html: item.content.sectionDescription,
+                        }}
+                      />
+                    </div>
+                  </>
+                );
+            }
+          })}
+        </div>
+      </div>
     </div>
   );
 
   return <TemplateWrapper size={size}>{content}</TemplateWrapper>;
+};
+
+const SectionHeader = ({
+  title,
+  primaryColor,
+  primaryTextColor,
+}: {
+  title: string;
+  primaryColor: string;
+  primaryTextColor: string;
+}) => {
+  return (
+    <div>
+      <h1
+        className="text-2xl tracking-wider font-bold  uppercase"
+        style={{ color: primaryTextColor }}
+      >
+        {title}
+      </h1>
+      <div
+        className="h-[2px] mb-2"
+        style={{ backgroundColor: primaryColor }}
+      ></div>
+    </div>
+  );
 };
 
 export default Template3;

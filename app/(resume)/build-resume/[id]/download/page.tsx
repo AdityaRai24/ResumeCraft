@@ -27,6 +27,7 @@ import {
   ralewayFont,
 } from "@/lib/font";
 import useMobile from "@/lib/useMobile";
+import { templateComponents } from "@/templates/templateStructures";
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -59,11 +60,6 @@ const LiveResumePreview = () => {
     obj: ResumeTemplate;
     size: "md" | "sm" | "lg";
   }>;
-
-  const templateComponents: Record<string, TemplateComponentType> = {
-    Template1: Template1,
-    Template2: Template2,
-  };
 
   const TemplateComponent = templateComponents[templateDetails.templateName];
 
@@ -115,9 +111,17 @@ const LiveResumePreview = () => {
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  When downloading, select &apos;Save as Pdf&apos; and Paper
-                  Size &apos;ISO A4&apos; to ensure the resume text remains
-                  selectable, allowing easy copy-pasting by recruiters.
+                  When downloading, select &apos;<b>Save as Pdf</b>&apos; and
+                  Paper Size &apos;<b>ISO A4</b>&apos; to ensure the resume text
+                  remains selectable, allowing easy copy-pasting by recruiters.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 text-gray-600">
+                <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
+                <p className="text-sm sm:text-base">
+                  Ensure to **check** the <b>"Background Graphics"</b> option
+                  while downloading, so your resume design remains intact.
                 </p>
               </div>
 
@@ -183,10 +187,7 @@ const LiveResumePreview = () => {
             id="pdf"
           >
             {templateDetails && (
-              <TemplateComponent
-                obj={templateDetails}
-                size="lg"
-              />
+              <TemplateComponent isPreview obj={templateDetails} size="lg" />
             )}
           </div>
         </div>

@@ -15,55 +15,89 @@ import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import SortableList, { SortableItem } from "react-easy-sort";
 import { arrayMoveImmutable } from "array-move";
 
-interface Section {
-  type: string;
-  title: string;
-}
-
 const Page = () => {
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");
   const [primaryColor, setPrimaryColor] = useColor("#000");
   const [showPrimaryTextColorBox, setShowPrimaryTextColorBox] = useState(false);
   const [showPrimaryColorBox, setShowPrimaryColorBox] = useState(false);
+  const [sections, setSections] = useState<any>([]);
+  const [leftSections, setLeftSections] = useState<any>([]);
+  const [rightSections, setRightSections] = useState<any>([]);
+  const colorOptions = ["#000", "#C026D3", "#153b66", "#a1be29", "#955b15"];
 
   const params = useParams();
   const resumeId = params.id;
-  const resume = useQuery(api.resume.getTemplateDetails, {
-    id: resumeId as Id<"resumes">,
-  });
-
-  const sortedSections = resume?.sections.sort(
-    (a: any, b: any) => a.orderNumber - b.orderNumber
-  );
-  const [sections, setSections] = useState<any>(sortedSections);
-
   const reorder = useMutation(api.resume.reorderSections);
   const update = useMutation(api.resume.updateColor);
   const updatePC = useMutation(api.resume.updateColorPC);
   const updateFont = useMutation(api.resume.updateFont);
-
   const hideSection = useMutation(api.resume.hideSection);
+  const resume = useQuery(api.resume.getTemplateDetails, {
+    id: resumeId as Id<"resumes">,
+  });
 
-  const toggleSectionVisibility = (sectionId: string) => {
-    hideSection({ id: resumeId as Id<"resumes">, sectionId: sectionId });
-  };
+  const headerObj =
+    resume?.sections?.filter((item) => item.type === "header") || [];
 
   useEffect(() => {
-    if (resume?.sections) {
-      const mainSections = resume.sections.filter(
-        (item) => item.type !== "custom"
+    if (!resume) return;
+
+    if (resume?.globalStyles?.columns === 2) {
+      const tempLeftSections = resume?.sections?.filter((item) =>
+        item.type === "custom"
+          ? item?.content?.sectionDirection === "left"
+          : item?.style?.sectionDirection === "left"
       );
-      const customSections = resume.sections.filter(
-        (item) => item.type === "custom"
+      const tempRightSections = resume?.sections?.filter((item) =>
+        item.type === "custom"
+          ? item?.content?.sectionDirection === "right"
+          : item?.style?.sectionDirection === "right"
       );
-      const updatedSections = [...mainSections, ...customSections].sort(
+
+      setLeftSections(
+        tempLeftSections.map((section, index) => ({
+          ...section,
+          orderNumber: index,
+        }))
+      );
+      setRightSections(
+        tempRightSections.map((section, index) => ({
+          ...section,
+          orderNumber: index,
+        }))
+      );
+    } else {
+      const sortedSections = resume?.sections.sort(
         (a: any, b: any) => a.orderNumber - b.orderNumber
       );
-      setSections(updatedSections);
+      setSections(sortedSections);
     }
   }, [resume]);
 
-  const onSortEnd = (oldIndex: number, newIndex: number) => {
+  // useEffect(() => {
+  //   if (resume?.sections) {
+  //     const mainSections = resume.sections.filter(
+  //       (item) => item.type !== "custom"
+  //     );
+  //     const customSections = resume.sections.filter(
+  //       (item) => item.type === "custom"
+  //     );
+  //     const sortedSections = [...mainSections, ...customSections].sort(
+  //       (a, b) => (a.orderNumber || 0) - (b.orderNumber || 0)
+  //     );
+  //     setSections(sortedSections);
+  //   }
+  // }, [resume]);
+
+  const toggleSectionVisibility = (sectionId: string, secondType: string) => {
+    hideSection({
+      id: resumeId as Id<"resumes">,
+      sectionId: sectionId,
+      secondType: secondType,
+    });
+  };
+
+  const onSortEndSingleColumn = (oldIndex: number, newIndex: number) => {
     setSections((prev: any) => {
       const newSections = arrayMoveImmutable(prev, oldIndex, newIndex);
       const updatedSections = newSections.map(
@@ -76,6 +110,42 @@ const Page = () => {
       reorder({
         id: resumeId as Id<"resumes">,
         updatedSections: updatedSections,
+      });
+      return updatedSections;
+    });
+  };
+
+  const onSortEndLeftColumn = (oldIndex: number, newIndex: number) => {
+    setLeftSections((prev: any) => {
+      const newSections = arrayMoveImmutable(prev, oldIndex, newIndex);
+      const updatedSections = newSections.map(
+        (section: any, index: number) => ({
+          ...section,
+          orderNumber: index,
+        })
+      );
+
+      reorder({
+        id: resumeId as Id<"resumes">,
+        updatedSections: [...headerObj, ...updatedSections, ...rightSections],
+      });
+      return updatedSections;
+    });
+  };
+
+  const onSortEndRightColumn = (oldIndex: number, newIndex: number) => {
+    setRightSections((prev: any) => {
+      const newSections = arrayMoveImmutable(prev, oldIndex, newIndex);
+      const updatedSections = newSections.map(
+        (section: any, index: number) => ({
+          ...section,
+          orderNumber: index,
+        })
+      );
+
+      reorder({
+        id: resumeId as Id<"resumes">,
+        updatedSections: [...headerObj, ...leftSections, ...updatedSections],
       });
       return updatedSections;
     });
@@ -103,14 +173,6 @@ const Page = () => {
     update({ id: resumeId as Id<"resumes">, color: color });
   };
 
-  const colorOptions = [
-    "#000",
-    "#C026D3",
-    "#153b66",
-    "#a1be29",
-    "#955b15",
-  ];
-
   const fontOptions = [
     "Raleway",
     "Inter",
@@ -126,9 +188,35 @@ const Page = () => {
 
   const currentFont = resume?.globalStyles?.fontFamily || "Inter";
 
+  const SectionItem = ({ item }: { item: any }) => (
+    <div className="flex items-center gap-1 uppercase">
+      <div className="w-[35px] bg-[white] shadow-sm hover:cursor-move border flex items-center justify-center border-black/30 p-[10px] my-[4px]">
+        {item?.orderNumber + 1}
+      </div>
+      <div className="w-[80%] md:w-[80%] bg-white shadow-sm border hover:cursor-move border-black/30 px-[10px] py-[5px] my-[4px] flex justify-between items-center">
+        <span>
+          {item.type === "custom" ? item.content.sectionTitle : item.type}
+        </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() =>
+            toggleSectionVisibility(
+              item.type,
+              item.type === "custom" ? item.content.sectionTitle : item.type
+            )
+          }
+          className="ml-2"
+        >
+          {item.isVisible ? <Eye size={16} /> : <EyeOff size={16} />}
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <FinalLayout>
-      <div className="max-w-[95%] md:max-w-[70%] overflow-y-hidden px-0 md:px-2 mt-16 mx-4 md:mx-16">
+      <div className="max-w-[95%] md:max-w-[90%] overflow-y-hidden px-0 md:px-2 mt-16 mx-4 md:mx-16">
         <div className="mb-8">
           <h1 className="text-4xl md:text-6xl font-bold">Almost Done !!</h1>
           <p className="font-normal text-lg text-gray-700">
@@ -141,42 +229,59 @@ const Page = () => {
             <Label className="text-xl">Reorder Sections :</Label>
             <p className="text-gray-600">Reorder the sections if you want...</p>
           </div>
-          <SortableList
-            onSortEnd={onSortEnd}
-            className="list"
-            draggedItemClassName="dragged"
-          >
-            {sections?.map((item: any, index: number) => {
-              return (
-                <SortableItem key={index}>
-                  <div className="flex items-center gap-1 uppercase">
-                    <div className="w-[35px] bg-[white] shadow-sm hover:cursor-move border flex items-center justify-center border-black/30 p-[10px] my-[4px]">
-                      {item?.orderNumber + 1}
+
+          {resume?.globalStyles?.columns === 2 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Left Column</h3>
+                <SortableList
+                  onSortEnd={onSortEndLeftColumn}
+                  className="list"
+                  draggedItemClassName="dragged"
+                >
+                  {leftSections.map((item: any, index: number) => (
+                    <SortableItem key={index}>
+                      <div>
+                        <SectionItem item={item} />
+                      </div>
+                    </SortableItem>
+                  ))}
+                </SortableList>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Right Column</h3>
+                <SortableList
+                  onSortEnd={onSortEndRightColumn}
+                  className="list"
+                  draggedItemClassName="dragged"
+                >
+                  {rightSections.map((item: any, index: number) => (
+                    <SortableItem key={index}>
+                      <div>
+                        <SectionItem item={item} />
+                      </div>
+                    </SortableItem>
+                  ))}
+                </SortableList>
+              </div>
+            </div>
+          ) : (
+            <SortableList
+              onSortEnd={onSortEndSingleColumn}
+              className="list"
+              draggedItemClassName="dragged"
+            >
+              {sections.length > 0 &&
+                sections?.map((item: any, index: number) => (
+                  <SortableItem key={index}>
+                    <div>
+                      <SectionItem item={item} />
                     </div>
-                    <div className="w-[80%] md:w-[60%] bg-white shadow-sm border hover:cursor-move border-black/30 px-[10px] py-[5px] my-[4px] flex justify-between items-center">
-                      <span>
-                        {item.type === "custom"
-                          ? item.content.sectionTitle
-                          : item.type}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleSectionVisibility(item.type)}
-                        className="ml-2"
-                      >
-                        {item.isVisible ? (
-                          <Eye size={16} />
-                        ) : (
-                          <EyeOff size={16} />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </SortableItem>
-              );
-            })}
-          </SortableList>
+                  </SortableItem>
+                ))}
+            </SortableList>
+          )}
         </div>
 
         <div className="mb-8">
@@ -187,22 +292,20 @@ const Page = () => {
             </p>
           </div>
           <div className="flex items-center justify-start gap-2 ">
-            {colorOptions.map((item) => {
-              return (
-                <motion.div
-                  key={item}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                  onClick={() => handleChosePrimaryTextColor(item)}
-                  className={`size-[35px] ${
-                    resume?.globalStyles?.primaryTextColor === item &&
-                    "size-[38px] ring-2 ring-offset-2 ring-black"
-                  } rounded-full cursor-pointer`}
-                  style={{ backgroundColor: item }}
-                ></motion.div>
-              );
-            })}
+            {colorOptions.map((item) => (
+              <motion.div
+                key={item}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+                onClick={() => handleChosePrimaryTextColor(item)}
+                className={`size-[35px] ${
+                  resume?.globalStyles?.primaryTextColor === item &&
+                  "size-[38px] ring-2 ring-offset-2 ring-black"
+                } rounded-full cursor-pointer`}
+                style={{ backgroundColor: item }}
+              ></motion.div>
+            ))}
 
             <motion.div
               initial={false}
@@ -250,22 +353,20 @@ const Page = () => {
             </p>
           </div>
           <div className="flex items-center justify-start gap-2 ">
-            {colorOptions.map((item) => {
-              return (
-                <motion.div
-                  key={item}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                  onClick={() => handleChosePrimaryColor(item)}
-                  className={`size-[35px] ${
-                    resume?.globalStyles?.primaryColor === item &&
-                    "size-[38px] ring-2 ring-offset-2 ring-black"
-                  } rounded-full cursor-pointer`}
-                  style={{ backgroundColor: item }}
-                ></motion.div>
-              );
-            })}
+            {colorOptions.map((item) => (
+              <motion.div
+                key={item}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+                onClick={() => handleChosePrimaryColor(item)}
+                className={`size-[35px] ${
+                  resume?.globalStyles?.primaryColor === item &&
+                  "size-[38px] ring-2 ring-offset-2 ring-black"
+                } rounded-full cursor-pointer`}
+                style={{ backgroundColor: item }}
+              ></motion.div>
+            ))}
 
             <motion.div
               initial={false}
@@ -308,6 +409,7 @@ const Page = () => {
             Choose a font style for your resume...
           </p>
         </div>
+
         <div className="flex flex-wrap items-center gap-2 mb-2 md:gap-3">
           {fontOptions?.map((item, index) => {
             return (
