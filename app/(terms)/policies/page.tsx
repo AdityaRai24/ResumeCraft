@@ -29,11 +29,11 @@ const PoliciesPage = () => {
                 <div className="space-y-4">
                   <p>
                     ResumeCraft is your premier destination for creating
-                    ATS-friendly resumes that help you stand out in today's
+                    ATS-friendly resumes that help you stand out in today&apos;s
                     competitive job market. Our platform offers both free and
                     premium templates designed to maximize your chances of
                     getting through Applicant Tracking Systems and catching the
-                    recruiter's eye.
+                    recruiter&apos;s eye.
                   </p>
                   <div>
                     <h3 className="text-xl font-semibold mb-2">
@@ -62,7 +62,7 @@ const PoliciesPage = () => {
                 <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
                 <div className="space-y-4">
                   <p>
-                    We're here to help you create the perfect resume. Get in
+                    We&apos;re here to help you create the perfect resume. Get in
                     touch with our support team:
                   </p>
                   <div className="space-y-2">
