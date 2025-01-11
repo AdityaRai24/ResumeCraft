@@ -13,6 +13,7 @@ import useMobile from "@/lib/useMobile";
 import temp3obj from "@/templates/template3/temp3obj";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 // Dynamically import templates with no SSR
 const Template2 = dynamic(() => import("@/templates/template2/Template2"), {
@@ -150,115 +151,132 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen overflow-x-hidden">
-      <Navbar />
-      <div className="relative w-full px-4 md:px-0">
-        <div className="flex flex-col md:flex-row relative items-center justify-between w-full md:max-w-[85%] mx-auto">
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate="visible"
-            className={`w-full md:w-1/2 my-12 md:my-24 ${poppinsFont.className}`}
-          >
-            <div className="w-full md:pr-8">
-              <motion.h1
-                className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] text-center md:text-left !leading-[1.1] font-semibold mb-2"
-                variants={item}
-              >
-                Transform Your Experience into an Impactful Resume
-              </motion.h1>
-
-              <motion.p
-                className="text-sm md:text-base font-medium text-gray-700 text-center md:text-left mb-4"
-                variants={item}
-              >
-                {!isMobile && (
-                  <span>Create standout resumes and impress employers. </span>
-                )}
-                Our user-friendly builder offers customizable templates to
-                ensure your resume is job-ready.
-              </motion.p>
-
-              <motion.ul
-                className="hidden !pl-0 md:flex flex-col gap-2 mb-6"
-                variants={featureListVariants}
-                initial="hidden"
-                animate="visible"
-              >
-                {features.map((feature, index) => (
-                  <motion.li
-                    key={index}
-                    variants={featureItemVariants}
-                    className="flex items-center text-gray-600 gap-2 text-sm lg:text-base"
-                  >
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: index * 0.2 + 0.5 }}
-                    >
-                      {feature.icon}
-                    </motion.div>
-                    {feature.msg}
-                  </motion.li>
-                ))}
-              </motion.ul>
-
-              <motion.div
-                className="flex justify-center md:justify-start"
-                variants={item}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
+    <>
+      <div className="h-screen overflow-x-hidden">
+        <Navbar />
+        <div className="relative w-full px-4 md:px-0">
+          <div className="flex flex-col md:flex-row relative items-center justify-between w-full md:max-w-[85%] mx-auto">
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="visible"
+              className={`w-full md:w-1/2 my-12 md:my-24 ${poppinsFont.className}`}
+            >
+              <div className="w-full md:pr-8">
+                <motion.h1
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] text-center md:text-left !leading-[1.1] font-semibold mb-2"
+                  variants={item}
                 >
-                  <Button
-                    variant="default"
-                    className="px-8 shadow-md group shadow-primary/30 py-7"
-                    onClick={() => router.push("/build-resume/steps")}
-                  >
-                    Create Free Resume
-                    <ArrowRight size={18} className="ml-2 group-hover:ml-4 transition-all mt-[2.5px]" />
-                  </Button>
-                </motion.div>
-              </motion.div>
-            </div>
-          </motion.div>
+                  Transform Your Experience into an Impactful Resume
+                </motion.h1>
 
-          {isClient && (
-            <>
-              <motion.div
-                className={`
+                <motion.p
+                  className="text-sm md:text-base font-medium text-gray-700 text-center md:text-left mb-4"
+                  variants={item}
+                >
+                  {!isMobile && (
+                    <span>Create standout resumes and impress employers. </span>
+                  )}
+                  Our user-friendly builder offers customizable templates to
+                  ensure your resume is job-ready.
+                </motion.p>
+
+                <motion.ul
+                  className="hidden !pl-0 md:flex flex-col gap-2 mb-6"
+                  variants={featureListVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {features.map((feature, index) => (
+                    <motion.li
+                      key={index}
+                      variants={featureItemVariants}
+                      className="flex items-center text-gray-600 gap-2 text-sm lg:text-base"
+                    >
+                      <motion.div
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: index * 0.2 + 0.5 }}
+                      >
+                        {feature.icon}
+                      </motion.div>
+                      {feature.msg}
+                    </motion.li>
+                  ))}
+                </motion.ul>
+
+                <motion.div
+                  className="flex justify-center md:justify-start"
+                  variants={item}
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                  >
+                    <Button
+                      variant="default"
+                      className="px-8 shadow-md group shadow-primary/30 py-7"
+                      onClick={() => router.push("/build-resume/steps")}
+                    >
+                      Create Free Resume
+                      <ArrowRight
+                        size={18}
+                        className="ml-2 group-hover:ml-4 transition-all mt-[2.5px]"
+                      />
+                    </Button>
+                  </motion.div>
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {isClient && (
+              <>
+                <motion.div
+                  className={`
                   !scale-[0.6] md:!scale-[0.46]
                   md:block absolute 
                   top-20 md:-top-60 
                   -right-full
                   md:-right-16 -rotate-3 hover:-rotate-6
                   transition-all duration-300`}
-                variants={template2Variants}
-                initial="hidden"
-                animate="visible"
-              >
-                <Template2 size="lg" obj={temp2Obj} />
-              </motion.div>
+                  variants={template2Variants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <Template2 size="lg" obj={temp2Obj} />
+                </motion.div>
 
-              <motion.div
-                className={`
+                <motion.div
+                  className={`
                   !scale-[0.6] md:!scale-[0.46]
                   md:block absolute 
                   top-20 md:-top-56 
                   -right-full
                   md:-right-48 rotate-3  hover:rotate-6
                   transition-all duration-300`}
-                variants={template3Variants}
-                initial="hidden"
-                animate="visible"
-              >
-                <Template3 size="lg" obj={temp3obj} />
-              </motion.div>
-            </>
-          )}
+                  variants={template3Variants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <Template3 size="lg" obj={temp3obj} />
+                </motion.div>
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+      <div className="bg-slate-700 text-white p-3">
+        <div className="max-w-[80%] mx-auto flex items-center justify-between gap-8">
+          <div className="flex items-center gap-8">
+            <Link href={'/about'}>About</Link>
+            <Link href={'/contact'}>Contact</Link>
+          </div>
+          <div className="flex items-center gap-8">
+            <Link href={'/privacy'}> Privacy Policy</Link>
+            <Link href={'/terms'}>Terms and conditions</Link>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

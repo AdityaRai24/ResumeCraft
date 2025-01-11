@@ -80,53 +80,64 @@ const Navbar = () => {
             </div>
           )}
 
-          {isSignedIn && isLoaded && (
-            <div className=" hidden md:flex items-center justify-center gap-6">
-              <p
-                onClick={() => {
-                  router.push(`/build-resume/templates`);
-                  setIsMenuOpen(false);
-                }}
-                className="text-gray-600 cursor-pointer"
-              >
-                Dashboard
-              </p>
-              <p
-                onClick={() => {
-                  router.push(`/my-resumes`);
-                  setIsMenuOpen(false);
-                }}
-                className="text-gray-600 cursor-pointer"
-              >
-                My Resumes
-              </p>{" "}
-              {isPremiumMember === undefined && (
-                <Skeleton className="w-[160px] h-[40px] bg-slate-500/20" />
-              )}
-              {isPremiumMember === true && (
-                <Button
-                  onClick={() =>
-                    toast.success("You are already a premium member !!")
-                  }
-                  variant={"outline"}
-                  className="flex gap-2 border-gray-800"
-                >
-                  <Laugh /> Premium Member
-                </Button>
-              )}
-              {isPremiumMember === false && (
-                <Button
+          <div className=" hidden md:flex items-center justify-center gap-6">
+            <p
+              onClick={() => {
+                router.push(`/policies`);
+                setIsMenuOpen(false);
+              }}
+              className="text-gray-600 cursor-pointer"
+            >
+              Policies
+            </p>
+            {isSignedIn && isLoaded && (
+              <>
+                <p
                   onClick={() => {
-                    router.push(`/get-premium`);
+                    router.push(`/build-resume/templates`);
+                    setIsMenuOpen(false);
                   }}
-                  variant={"outline"}
-                  className="flex gap-2 border-gray-800"
+                  className="text-gray-600 cursor-pointer"
                 >
-                  <Crown /> Buy Premium
-                </Button>
-              )}
-            </div>
-          )}
+                  Dashboard
+                </p>
+                <p
+                  onClick={() => {
+                    router.push(`/my-resumes`);
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-gray-600 cursor-pointer"
+                >
+                  My Resumes
+                </p>{" "}
+                {isPremiumMember === undefined && (
+                  <Skeleton className="w-[160px] h-[40px] bg-slate-500/20" />
+                )}
+                {isPremiumMember === true && (
+                  <Button
+                    onClick={() =>
+                      toast.success("You are already a premium member !!")
+                    }
+                    variant={"outline"}
+                    className="flex gap-2 border-gray-800"
+                  >
+                    <Laugh /> Premium Member
+                  </Button>
+                )}
+                {isPremiumMember === false && (
+                  <Button
+                    onClick={() => {
+                      router.push(`/get-premium`);
+                    }}
+                    variant={"outline"}
+                    className="flex gap-2 border-gray-800"
+                  >
+                    <Crown /> Buy Premium
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
 
           {/* Desktop Navigation */}
           {isSignedIn && (
@@ -163,6 +174,15 @@ const Navbar = () => {
           )}
         >
           <div className="w-[90%] mx-auto py-4 flex flex-col gap-4">
+            <p
+              onClick={() => {
+                router.push(`/policies`);
+                setIsMenuOpen(false);
+              }}
+              className="text-gray-600 cursor-pointer"
+            >
+              Policies
+            </p>
             {isSignedIn ? (
               <>
                 <div className="flex items-center gap-2">
