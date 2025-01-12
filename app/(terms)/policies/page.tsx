@@ -62,11 +62,13 @@ const PoliciesPage = () => {
                 <h2 className="text-2xl font-bold mb-4">Contact Us</h2>
                 <div className="space-y-4">
                   <p>
-                    We&apos;re here to help you create the perfect resume. Get in
-                    touch with our support team:
+                    We&apos;re here to help you create the perfect resume. Get
+                    in touch with our support team:
                   </p>
                   <div className="space-y-2">
                     <p>📧 Email: support@resumecraft.com</p>
+                    <p>Mobile : +91 8070078504</p>
+                    <p>Address : Powai, Mumbai 400076</p>
                     <p>💬 Response Time: Within 24 hours</p>
                   </div>
                 </div>
