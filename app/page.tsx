@@ -265,18 +265,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="bg-slate-700 text-white p-3">
-        <div className="max-w-[80%] mx-auto flex items-center justify-between gap-8">
-          <div className="flex items-center gap-8">
-            <Link href={'/about'}>About</Link>
-            <Link href={'/contact'}>Contact</Link>
-          </div>
-          <div className="flex items-center gap-8">
-            <Link href={'/privacy'}> Privacy Policy</Link>
-            <Link href={'/terms'}>Terms and conditions</Link>
-          </div>
-        </div>
-      </div>
     </>
   );
 }

@@ -69,6 +69,7 @@ const PoliciesPage = () => {
                     <p>📧 Email: support@resumecraft.com</p>
                     <p>Mobile : +91 8070078504</p>
                     <p>Address : Powai, Mumbai 400076</p>
+                    <p> Business Name : ADITYAKUMAR ARVIND RAI. </p>
                     <p>💬 Response Time: Within 24 hours</p>
                   </div>
                 </div>
