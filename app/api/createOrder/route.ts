@@ -9,7 +9,7 @@ const razorpay = new Razorpay({
 export async function POST(req : NextRequest, res : NextResponse) {
     try {
         const order = await razorpay.orders.create({
-            amount : 100*100,
+            amount : 99*100,
             currency : "INR",
             receipt : "receipt_"+Math.random().toString(36).substring(7),
         })
