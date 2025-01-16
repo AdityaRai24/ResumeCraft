@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ResumeCraft - ATS-Optimized Resume Builder
 
-## Getting Started
+ResumeCraft is a modern, feature-rich resume builder that helps users create ATS-friendly resumes with real-time previews and AI-powered content assistance. Built with Next.js and TypeScript, it offers a seamless experience for creating professional resumes.
 
-First, run the development server:
+## 🚀 Live Demo
 
+https://resume-craft-virid.vercel.app
+
+## ✨ Features
+
+- **ATS-Optimized Templates**: Multiple professional templates designed to pass Applicant Tracking Systems
+- **Real-time Preview**: See changes instantly as you type
+- **AI-Powered Magic Write**: Generate professional descriptions for projects and experiences
+- **Premium Templates**: Access exclusive templates with lifetime premium membership
+- **Customization Options**:
+  - Custom sections creation
+  - Section reordering
+  - Template color customization
+  - Font selection
+  - Real-time updates
+- **User Authentication**: Secure login and registration system
+- **Cloud Storage**: Save and access resumes from anywhere
+- **Responsive Design**: Works seamlessly on all devices
+
+## 🛠️ Tech Stack
+
+- **Frontend**:
+  - Next.js
+  - TypeScript
+  - Framer Motion (animations)
+  - Shadcn UI (component library)
+  - TailwindCSS
+
+- **Backend & Database**:
+  - Convex DB (database for real-time updates)
+  - Clerk (authentication)
+  - Cloudinary (image storage)
+
+- **Payment Integration**:
+  - Razorpay
+
+## 📸 Screenshots
+
+<table>
+  <tr>
+    <td>Home Page</td>
+    <td>Template Selection</td>
+  </tr>
+  <tr>
+    <td><img src="https://res.cloudinary.com/dhanvyweu/image/upload/v1737028931/Screenshot_2025-01-16_173141_jtbanv.png" width="100%"></td>
+    <td><img src="https://res.cloudinary.com/dhanvyweu/image/upload/v1737028968/Screenshot_2025-01-16_173238_fmnpde.png" width="100%"></td>
+  </tr>
+  <tr>
+    <td>Resume Editor</td>
+    <td>Premium Features</td>
+  </tr>
+  <tr>
+    <td><img src="https://res.cloudinary.com/dhanvyweu/image/upload/v1737029004/Screenshot_2025-01-16_173314_ljffgj.png" width="100%"></td>
+    <td><img src="https://res.cloudinary.com/dhanvyweu/image/upload/v1737029039/Screenshot_2025-01-16_173349_lnxlx9.png" width="100%"></td>
+  </tr>
+</table>
+
+## ⚙️ Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+git clone https://github.com/AdityaRai24/ResumeCraft.git
