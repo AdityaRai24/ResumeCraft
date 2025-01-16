@@ -1,7 +1,15 @@
+"use client";
 import ChooseTemplates from "@/components/ChooseTemplates";
 import Navbar from "@/components/Navbar";
+import { useUser } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
 
 const Page = () => {
+  const { user } = useUser();
+  if (!user) {
+    return redirect("/sign-up");
+  }
+
   return (
     <>
       <div className="w-full">

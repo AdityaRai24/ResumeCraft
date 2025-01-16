@@ -112,17 +112,20 @@ const LiveResumePreview = () => {
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  When downloading, select &quot;Save as PDF&quot; and Paper
-                  Size &quot;ISO A4&quot; to ensure the resume text remains
-                  selectable, allowing easy copy-pasting by recruiters.
+                  When downloading, select &quot;
+                  <span className="font-bold">Save as PDF</span>&quot; and Paper
+                  Size &quot;<span className="font-bold">ISO A4</span>&quot; to ensure the resume text
+                  remains selectable, allowing easy copy-pasting by recruiters.
                 </p>
               </div>
 
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  Ensure to check the &quot;Background Graphics&quot; option
-                  while downloading, so your resume design remains intact.
+                  Ensure to check the &quot;
+                  <span className="font-bold">Background Graphics</span>&quot;
+                  option while downloading, so your resume design remains
+                  intact.
                 </p>
               </div>
 

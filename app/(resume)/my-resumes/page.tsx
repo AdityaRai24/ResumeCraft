@@ -2,8 +2,15 @@
 import Navbar from "@/components/Navbar";
 import React from "react";
 import ChooseTemplates from "@/components/ChooseTemplates";
+import { redirect } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 
 const Page = () => {
+  const { user } = useUser();
+  if (!user) {
+    return redirect("/sign-up");
+  }
+
   return (
     <>
       <div className="w-full">

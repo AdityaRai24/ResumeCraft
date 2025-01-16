@@ -350,7 +350,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
                         title={item.content.sectionTitle}
                       />
                       <div
-                        className="tracking-wider text-sm "
+                        className="quill-content tracking-wider text-sm "
                         dangerouslySetInnerHTML={{
                           __html: item.content.sectionDescription,
                         }}

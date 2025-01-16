@@ -57,7 +57,6 @@ const Template4 = ({ obj, size }: TemplateType) => {
     (item) => item.type === "header"
   )[0];
 
-
   const content = (
     <div
       id="resumeSection"
@@ -75,9 +74,9 @@ const Template4 = ({ obj, size }: TemplateType) => {
             {headerContent?.content?.role}
           </p>
         </div>
-        <div className="w-full h-[2px] bg-[#606060]" />
+        <div className="w-full h-[2px] " style={{ background: primaryColor }} />
       </div>
-      <div className="grid grid-cols-5 h-full">
+      <div className="grid  grid-cols-5 h-full">
         {/* Left Column */}
         <div className="col-span-2 bg-[#f8f8f8]  py-5 px-[12.5%]">
           <div className="flex flex-col">
@@ -85,9 +84,12 @@ const Template4 = ({ obj, size }: TemplateType) => {
               switch (item.type) {
                 case "header":
                   return (
-                    <div key={index} className="flex flex-col">
+                    <div key={index} className="flex flex-col max-w-full break-words">
                       <div className="flex flex-col">
-                        <LeftSectionHeader title="CONTACT" />
+                        <LeftSectionHeader
+                          primaryTextColor={primaryTextColor}
+                          title="CONTACT"
+                        />
                         <div className="flex flex-col gap-3">
                           {leftHeaderContent?.content?.phone && (
                             <div className="flex items-center text-sm gap-2">
@@ -103,6 +105,18 @@ const Template4 = ({ obj, size }: TemplateType) => {
                               </p>
                             </div>
                           )}
+                          {leftHeaderContent?.content?.socialLinks.map(
+                            (item, index) => {
+                              return (
+                                <div className="flex items-center text-sm gap-2">
+                                  {headerLogoMap[item.type]}
+                                  <Link href={item.url} className="break-all">
+                                    {item.name}
+                                  </Link>
+                                </div>
+                              );
+                            }
+                          )}
                         </div>
                       </div>
                       <LeftHR primaryColor={primaryColor} />
@@ -112,12 +126,15 @@ const Template4 = ({ obj, size }: TemplateType) => {
                   return (
                     <div
                       key={index}
-                      className={`${item.isVisible ? "block" : "hidden"} flex flex-col`}
+                      className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words flex flex-col`}
                     >
-                      <LeftSectionHeader title="SKILLS" />
+                      <LeftSectionHeader
+                        primaryTextColor={primaryTextColor}
+                        title="SKILLS"
+                      />
                       <div className="flex flex-col gap-3">
                         <div
-                          className="text-sm tracking-wider"
+                          className="quill-content text-sm tracking-wider"
                           dangerouslySetInnerHTML={{
                             __html: item?.content.description ?? "",
                           }}
@@ -130,9 +147,12 @@ const Template4 = ({ obj, size }: TemplateType) => {
                   return (
                     <div
                       key={index}
-                      className={`${item.isVisible ? "block" : "hidden"}`}
+                      className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words`}
                     >
-                      <LeftSectionHeader title="EDUCATION" />
+                      <LeftSectionHeader
+                        primaryTextColor={primaryTextColor}
+                        title="EDUCATION"
+                      />
                       <div className="flex flex-col gap-3">
                         {item?.content?.education.map((edu, idx) => (
                           <div key={idx} className="flex flex-col gap-1">
@@ -173,11 +193,14 @@ const Template4 = ({ obj, size }: TemplateType) => {
                   return (
                     <div
                       key={index}
-                      className={`${item.isVisible ? "block" : "hidden"} flex flex-col`}
+                      className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words flex flex-col`}
                     >
-                      <LeftSectionHeader title={item.content.sectionTitle} />
+                      <LeftSectionHeader
+                        primaryTextColor={primaryTextColor}
+                        title={item.content.sectionTitle}
+                      />
                       <div
-                        className="text-sm tracking-wider"
+                        className="quill-content text-sm tracking-wider"
                         dangerouslySetInnerHTML={{
                           __html: item.content.sectionDescription,
                         }}
@@ -199,17 +222,18 @@ const Template4 = ({ obj, size }: TemplateType) => {
             switch (item.type) {
               case "header":
                 return (
-                  <div key={index} className="">
+                  <div key={index} className="max-w-full break-words">
                     <RightSectionHeader
-                      primaryTextColor={"#606060"}
+                      primaryTextColor={primaryTextColor}
                       title="PROFILE"
                     />
                     {headerContent?.content?.summary && (
-                      <>
-                        <p className="text-sm text-gray-600 leading-relaxed">
-                          {headerContent?.content?.summary}
-                        </p>
-                      </>
+                      <p
+                        className="quill-content text-sm text-gray-600"
+                        dangerouslySetInnerHTML={{
+                          __html: headerContent?.content?.summary ?? "",
+                        }}
+                      />
                     )}
                     <RightHR primaryColor={primaryColor} />
                   </div>
@@ -218,10 +242,10 @@ const Template4 = ({ obj, size }: TemplateType) => {
                 return (
                   <div
                     key={index}
-                    className={`${item.isVisible ? "block" : "hidden"}`}
+                    className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words`}
                   >
                     <RightSectionHeader
-                      primaryTextColor={"#606060"}
+                      primaryTextColor={primaryTextColor}
                       title="WORK EXPERIENCE"
                     />
                     <div className="flex flex-col gap-6">
@@ -240,7 +264,7 @@ const Template4 = ({ obj, size }: TemplateType) => {
                             {exp.companyName}
                           </p>
                           <div
-                            className="text-sm text-gray-600"
+                            className="quill-content text-sm text-gray-600"
                             dangerouslySetInnerHTML={{
                               __html: exp?.jobDescription,
                             }}
@@ -255,17 +279,17 @@ const Template4 = ({ obj, size }: TemplateType) => {
                 return (
                   <div
                     key={index}
-                    className={`${item.isVisible ? "block" : "hidden"}`}
+                    className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words`}
                   >
                     <RightSectionHeader
-                      primaryTextColor={"#606060"}
+                      primaryTextColor={primaryTextColor}
                       title="PROJECTS"
                     />
                     <div className="flex flex-col gap-6">
                       {item?.content?.projects.map((project, idx) => (
                         <div key={idx} className="flex flex-col gap-1">
                           <div className="flex items-center justify-start gap-2">
-                            <h1 className="text-base font-semibold">
+                            <h1 className="text-base  max-w-[80%] font-semibold">
                               {project?.name}
                             </h1>
                             {project?.githuburl && (
@@ -290,7 +314,7 @@ const Template4 = ({ obj, size }: TemplateType) => {
                           </div>
 
                           <div
-                            className="text-sm text-gray-600"
+                            className="quill-content text-sm text-gray-600"
                             dangerouslySetInnerHTML={{
                               __html: project?.description,
                             }}
@@ -314,11 +338,17 @@ const Template4 = ({ obj, size }: TemplateType) => {
                 return (
                   <div
                     key={index}
-                    className={`${item.isVisible ? "block" : "hidden"}`}
+                    className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words`}
                   >
                     <RightSectionHeader
                       title={item.content.sectionTitle}
                       primaryTextColor={primaryTextColor}
+                    />
+                    <div
+                      className="quill-content tracking-wider text-sm "
+                      dangerouslySetInnerHTML={{
+                        __html: item.content.sectionDescription,
+                      }}
                     />
                     <RightHR primaryColor={primaryColor} />
                   </div>
@@ -354,9 +384,18 @@ const RightHR = ({ primaryColor }: { primaryColor: string }) => {
   );
 };
 
-const LeftSectionHeader = ({ title }: { title: string }) => {
+const LeftSectionHeader = ({
+  title,
+  primaryTextColor,
+}: {
+  title: string;
+  primaryTextColor: string;
+}) => {
   return (
-    <h2 className="font-bold text-[16px] mb-2 tracking-[2px] uppercase">
+    <h2
+      className="font-bold text-[16px] mb-2 tracking-[2px] uppercase"
+      style={{ color: primaryTextColor }}
+    >
       {title}
     </h2>
   );
@@ -372,7 +411,7 @@ const RightSectionHeader = ({
   return (
     <div>
       <h1
-        className="text-2xl tracking-[2px] font-bold  uppercase"
+        className="text-2xl tracking-[2px] font-bold uppercase"
         style={{ color: primaryTextColor }}
       >
         {title}

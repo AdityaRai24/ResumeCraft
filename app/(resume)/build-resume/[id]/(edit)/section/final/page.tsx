@@ -25,6 +25,8 @@ const Page = () => {
   const [leftSections, setLeftSections] = useState<any>([]);
   const [rightSections, setRightSections] = useState<any>([]);
   const colorOptions = ["#000", "#C026D3", "#153b66", "#a1be29", "#955b15"];
+  const [initialTextColor, setInitialTextColor] = useState<string | null>(null);
+  const [initialColor, setInitialColor] = useState<string | null>(null);
 
   const params = useParams();
   const resumeId = params.id;
@@ -75,20 +77,16 @@ const Page = () => {
     }
   }, [resume]);
 
-  // useEffect(() => {
-  //   if (resume?.sections) {
-  //     const mainSections = resume.sections.filter(
-  //       (item) => item.type !== "custom"
-  //     );
-  //     const customSections = resume.sections.filter(
-  //       (item) => item.type === "custom"
-  //     );
-  //     const sortedSections = [...mainSections, ...customSections].sort(
-  //       (a, b) => (a.orderNumber || 0) - (b.orderNumber || 0)
-  //     );
-  //     setSections(sortedSections);
-  //   }
-  // }, [resume]);
+  useEffect(() => {
+    if (resume?.globalStyles) {
+      if (!initialTextColor) {
+        setInitialTextColor(resume.globalStyles.primaryTextColor);
+      }
+      if (!initialColor) {
+        setInitialColor(resume.globalStyles.primaryColor);
+      }
+    }
+  }, [resume?.globalStyles]);
 
   const toggleSectionVisibility = (sectionId: string, secondType: string) => {
     hideSection({
@@ -284,7 +282,7 @@ const Page = () => {
               This is for all the title text that you can see in the resume..
             </p>
           </div>
-          <div className="flex items-center justify-start gap-2 ">
+          <div className="flex items-center justify-start gap-2">
             {colorOptions.map((item) => (
               <motion.div
                 key={item}
@@ -292,13 +290,37 @@ const Page = () => {
                 whileTap={{ scale: 0.9 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 onClick={() => handleChosePrimaryTextColor(item)}
-                className={`size-[35px] ${
+                className={`size-[35px] relative ${
                   resume?.globalStyles?.primaryTextColor === item &&
                   "size-[38px] ring-2 ring-offset-2 ring-black"
                 } rounded-full cursor-pointer`}
                 style={{ backgroundColor: item }}
-              ></motion.div>
+              >
+                {initialTextColor === item && (
+                  <div className="absolute -top-2 -right-2 bg-white text-xs px-1 rounded-full border border-gray-300">
+                    Default
+                  </div>
+                )}
+              </motion.div>
             ))}
+            
+            {initialTextColor && !colorOptions.includes(initialTextColor) && (
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+                onClick={() => handleChosePrimaryTextColor(initialTextColor)}
+                className={`size-[35px] relative ${
+                  resume?.globalStyles?.primaryTextColor === initialTextColor &&
+                  "size-[38px] ring-2 ring-offset-2 ring-black"
+                } rounded-full cursor-pointer`}
+                style={{ backgroundColor: initialTextColor }}
+              >
+                <div className="absolute -top-2 -right-2 bg-white text-xs px-1 rounded-full border border-gray-300">
+                  Default
+                </div>
+              </motion.div>
+            )}
 
             <motion.div
               initial={false}
@@ -306,13 +328,11 @@ const Page = () => {
               whileTap={{ scale: 0.9 }}
             >
               <Button
-                onClick={() =>
-                  setShowPrimaryTextColorBox(!showPrimaryTextColorBox)
-                }
-                variant={"outline"}
+                onClick={() => setShowPrimaryTextColorBox(!showPrimaryTextColorBox)}
+                variant="outline"
                 className="flex items-center justify-center gap-2"
               >
-                <p>Custom</p>{" "}
+                <p>Custom</p>
                 <motion.div
                   variants={{ open: { rotate: 180 }, closed: { rotate: 0 } }}
                   transition={{ duration: 0.2 }}
@@ -341,11 +361,10 @@ const Page = () => {
           <div className="mb-4">
             <Label className="text-xl">Border/Design Style :</Label>
             <p className="text-gray-600">
-              This is for all the borders or designs that you can see in the
-              resume.
+              This is for all the borders or designs that you can see in the resume.
             </p>
           </div>
-          <div className="flex items-center justify-start gap-2 ">
+          <div className="flex items-center justify-start gap-2">
             {colorOptions.map((item) => (
               <motion.div
                 key={item}
@@ -353,25 +372,49 @@ const Page = () => {
                 whileTap={{ scale: 0.9 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
                 onClick={() => handleChosePrimaryColor(item)}
-                className={`size-[35px] ${
+                className={`size-[35px] relative ${
                   resume?.globalStyles?.primaryColor === item &&
                   "size-[38px] ring-2 ring-offset-2 ring-black"
                 } rounded-full cursor-pointer`}
                 style={{ backgroundColor: item }}
-              ></motion.div>
+              >
+                {initialColor === item && (
+                  <div className="absolute -top-2 -right-2 bg-white text-xs px-1 rounded-full border border-gray-300">
+                    Default
+                  </div>
+                )}
+              </motion.div>
             ))}
+
+            {initialColor && !colorOptions.includes(initialColor) && (
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
+                onClick={() => handleChosePrimaryColor(initialColor)}
+                className={`size-[35px] relative ${
+                  resume?.globalStyles?.primaryColor === initialColor &&
+                  "size-[38px] ring-2 ring-offset-2 ring-black"
+                } rounded-full cursor-pointer`}
+                style={{ backgroundColor: initialColor }}
+              >
+                <div className="absolute -top-2 -right-2 bg-white text-xs px-1 rounded-full border border-gray-300">
+                  Default
+                </div>
+              </motion.div>
+            )}
 
             <motion.div
               initial={false}
-              animate={showPrimaryTextColorBox ? "open" : "closed"}
+              animate={showPrimaryColorBox ? "open" : "closed"}
               whileTap={{ scale: 0.9 }}
             >
               <Button
                 onClick={() => setShowPrimaryColorBox(!showPrimaryColorBox)}
-                variant={"outline"}
+                variant="outline"
                 className="flex items-center justify-center gap-2"
               >
-                <p>Custom</p>{" "}
+                <p>Custom</p>
                 <motion.div
                   variants={{ open: { rotate: 180 }, closed: { rotate: 0 } }}
                   transition={{ duration: 0.2 }}

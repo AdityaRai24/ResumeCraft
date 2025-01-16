@@ -286,14 +286,14 @@ const HeaderForm = ({
             placeholder="9876543210"
             type="tel"
           />
-          <InputField
+          {header.role || header.role === '' && <InputField
             label="Role"
             name="role"
             value={header.role}
             onChange={handleChange}
             placeholder="Software Developer"
             type="text"
-          />
+          />}
         </div>
 
         <div className="mt-8">

@@ -12,6 +12,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 const Navbar = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -21,6 +22,7 @@ const Navbar = () => {
   const isPremiumMember = useQuery(api.premiumUsers.isPremiumMember, {
     userId: user?.id ? user?.id : "randomuserid",
   });
+
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -81,17 +83,17 @@ const Navbar = () => {
           )}
 
           <div className=" hidden md:flex items-center justify-center gap-6">
-            <p
-              onClick={() => {
-                router.push(`/policies`);
-                setIsMenuOpen(false);
-              }}
-              className="text-gray-600 cursor-pointer"
-            >
-              Policies
-            </p>
             {isSignedIn && isLoaded && (
               <>
+                <p
+                  onClick={() => {
+                    router.push(`/policies`);
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-gray-600 cursor-pointer"
+                >
+                  Policies
+                </p>
                 <p
                   onClick={() => {
                     router.push(`/build-resume/templates`);
@@ -174,17 +176,17 @@ const Navbar = () => {
           )}
         >
           <div className="w-[90%] mx-auto py-4 flex flex-col gap-4">
-            <p
-              onClick={() => {
-                router.push(`/policies`);
-                setIsMenuOpen(false);
-              }}
-              className="text-gray-600 cursor-pointer"
-            >
-              Policies
-            </p>
             {isSignedIn ? (
               <>
+                <p
+                  onClick={() => {
+                    router.push(`/policies`);
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-gray-600 cursor-pointer"
+                >
+                  Policies
+                </p>
                 <div className="flex items-center gap-2">
                   <UserButton />
                   <h1 className="text-lg font-semibold">{user?.firstName}</h1>

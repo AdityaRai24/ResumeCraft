@@ -22,17 +22,21 @@ import { useRouter } from "nextjs-toploader/app";
 import TemplateContainer from "./TemplateContainer";
 
 const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
-  const { user } = useUser();
   const createUserResume = useMutation(api.resume.createUserResume);
   const router = useRouter();
   const templates = useQuery(api.resume.getTemplates);
+  const preview = usePreview();
+  const { user } = useUser();
   const myResumeTemplates = useQuery(api.resume.getUserResumes, {
     userId: user?.id || "",
   });
-  const preview = usePreview();
   const isPremiumMember = useQuery(api.premiumUsers.isPremiumMember, {
     userId: user?.id ? user?.id : "randomuserid",
   });
+
+  if (!user) {
+    return redirect("/sign-up");
+  }
 
   const finalTemplates = myResumes ? myResumeTemplates : templates;
 
@@ -56,10 +60,6 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
         premiumTemplates.includes(item.templateName)
       )
     );
-
-  if (!user) {
-    return redirect("/sign-up");
-  }
 
   const selectResume = async (id: Id<"resumes">, templateName: string) => {
     if (premiumTemplates.includes(templateName)) {
