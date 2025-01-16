@@ -48,6 +48,15 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
       </div>
     );
   }
+
+  const sortedFinalTemplates = finalTemplates
+    .filter((item) => !premiumTemplates.includes(item.templateName))
+    .concat(
+      finalTemplates.filter((item) =>
+        premiumTemplates.includes(item.templateName)
+      )
+    );
+
   if (!user) {
     return redirect("/sign-up");
   }
@@ -89,10 +98,9 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
     router.push(`/build-resume/${resumeId}/tips?sec=header`);
   };
 
-
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-      {finalTemplates?.map((item, index) => {
+      {sortedFinalTemplates?.map((item, index) => {
         const TemplateComponent: TemplateComponentType =
           templateComponents[item.templateName];
 
@@ -103,9 +111,11 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
           return null;
         }
 
-
         return (
-          <TemplateContainer premium={premiumTemplates.includes(item.templateName)} key={index}>
+          <TemplateContainer
+            premium={premiumTemplates.includes(item.templateName)}
+            key={index}
+          >
             <div className="w-full h-full">
               <TemplateComponent
                 obj={item as ResumeTemplate}

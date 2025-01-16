@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import SortableList, { SortableItem } from "react-easy-sort";
 import { arrayMoveImmutable } from "array-move";
+import { fontOptions } from "@/lib/font";
 
 const Page = () => {
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");
@@ -173,15 +174,7 @@ const Page = () => {
     update({ id: resumeId as Id<"resumes">, color: color });
   };
 
-  const fontOptions = [
-    "Raleway",
-    "Inter",
-    "OpenSans",
-    "Poppins",
-    "Montserrat",
-    "Geologica",
-  ];
-
+ 
   const handleFontChange = (font: string) => {
     updateFont({ id: resumeId as Id<"resumes">, font });
   };
@@ -404,7 +397,7 @@ const Page = () => {
         )}
 
         <div className="mb-4">
-          <Label className="text-xl">Font Style :</Label>
+          <Label className={`text-xl`} >Font Style :</Label>
           <p className="text-gray-600">
             Choose a font style for your resume...
           </p>

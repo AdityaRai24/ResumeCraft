@@ -18,9 +18,9 @@ import {
   openSansFont,
   poppinsFont,
   ralewayFont,
+  robotoFont,
 } from "@/lib/font";
 import { templateComponents } from "@/templates/templateStructures";
-
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -77,7 +77,9 @@ const LiveResumePreview = () => {
             templateDetails?.globalStyles?.fontFamily === "Geologica" &&
               geologicaFont.className,
             templateDetails?.globalStyles?.fontFamily === "Raleway" &&
-              ralewayFont.className
+              ralewayFont.className,
+            templateDetails?.globalStyles?.fontFamily === "Roboto" &&
+              robotoFont.className
           )}
         >
           <TemplateComponent

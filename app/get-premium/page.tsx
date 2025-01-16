@@ -100,14 +100,14 @@ export default function PremiumPaymentPage() {
     try {
       const response = await fetch("/api/createOrder", { method: "POST" });
       const data = await response.json();
-
+      
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: AMOUNT * 100,
         currency: "INR",
         name: "Resume Craft",
         description: "Premium Membership",
-        order_id: data.orderId,
+        order_id: data.orderId, 
         handler: function (response: any) {
           checkPayment();
         },
@@ -225,15 +225,14 @@ export default function PremiumPaymentPage() {
 
                   <Button
                     onClick={handlePayment}
-                    disabled={true}
+                    disabled={isProcessing}
                     className="w-full h-12 text-lg font-medium group"
                   >
                     {isProcessing ? (
                       "Processing..."
                     ) : (
                       <>
-                        {/* Upgrade Now */}
-                        Coming Soon
+                        Upgrade Now
                         <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}

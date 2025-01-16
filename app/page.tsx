@@ -162,7 +162,7 @@ export default function Home() {
               animate="visible"
               className={`w-full md:w-1/2 my-12 md:my-24 ${poppinsFont.className}`}
             >
-              <div className="w-full md:pr-8">
+              <div className="w-full md:pr-8 mt-16 md:mt-0">
                 <motion.h1
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] text-center md:text-left !leading-[1.1] font-semibold mb-2"
                   variants={item}
@@ -180,9 +180,12 @@ export default function Home() {
                   Our user-friendly builder offers customizable templates to
                   ensure your resume is job-ready.
                 </motion.p>
+                
 
                 <motion.ul
-                  className="hidden !pl-0 md:flex flex-col gap-2 mb-6"
+                  className={`flex flex-col gap-2 mb-6 ${
+                    isMobile ? 'pl-0' : 'hidden md:flex !pl-0'
+                  }`}
                   variants={featureListVariants}
                   initial="hidden"
                   animate="visible"
@@ -191,7 +194,9 @@ export default function Home() {
                     <motion.li
                       key={index}
                       variants={featureItemVariants}
-                      className="flex items-center text-gray-600 gap-2 text-sm lg:text-base"
+                      className={`flex items-center text-gray-600 gap-2 text-sm lg:text-base ${
+                        isMobile ? 'justify-start max-w-[90%] px-6' : ''
+                      }`}
                     >
                       <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
@@ -233,12 +238,12 @@ export default function Home() {
               <>
                 <motion.div
                   className={`
-                  !scale-[0.6] md:!scale-[0.46]
+                  hidden
                   md:block absolute 
-                  top-20 md:-top-60 
-                  -right-full
+                  md:-top-60 
                   md:-right-16 -rotate-3 hover:-rotate-6
-                  transition-all duration-300`}
+                  transition-all duration-300
+                  !scale-[0.46]`}
                   variants={template2Variants}
                   initial="hidden"
                   animate="visible"
@@ -248,12 +253,12 @@ export default function Home() {
 
                 <motion.div
                   className={`
-                  !scale-[0.6] md:!scale-[0.46]
+                  hidden
                   md:block absolute 
-                  top-20 md:-top-56 
-                  -right-full
-                  md:-right-48 rotate-3  hover:rotate-6
-                  transition-all duration-300`}
+                  md:-top-56 
+                  md:-right-48 rotate-3 hover:rotate-6
+                  transition-all duration-300
+                  !scale-[0.46]`}
                   variants={template3Variants}
                   initial="hidden"
                   animate="visible"

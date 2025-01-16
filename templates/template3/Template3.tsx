@@ -204,6 +204,9 @@ const Template3 = ({ obj, size }: TemplateType) => {
                         </span>
                         {headerContent?.content?.lastName}
                       </h1>
+                      <h1 className="text-base font-normal uppercase">
+                        {headerContent?.content?.role}
+                      </h1>
                       {(headerContent?.content?.firstName ||
                         headerContent?.content?.lastName) && (
                         <div

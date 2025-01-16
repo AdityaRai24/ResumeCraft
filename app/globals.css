@@ -141,3 +141,14 @@ ul {
   transform: scale(1.05);
 }
 
+.font-arial {
+  font-family: Arial, "Helvetica Neue", sans-serif;
+}
+
+.font-helvetica {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.font-times-new-roman {
+  font-family: "Times New Roman", Times, serif;
+}

@@ -57,7 +57,6 @@ const Template4 = ({ obj, size }: TemplateType) => {
     (item) => item.type === "header"
   )[0];
 
-  console.log({obj,leftObj,rightObj})
 
   const content = (
     <div
@@ -69,19 +68,18 @@ const Template4 = ({ obj, size }: TemplateType) => {
       <div className="max-w-[90%] mx-auto">
         <div className="flex flex-col gap-2 mt-12 mb-8">
           <h1 className="text-5xl text-center uppercase font-semibold">
-            RICHARD SANCHEZ
+            {headerContent?.content?.firstName}{" "}
+            {headerContent?.content?.lastName}
           </h1>
           <p className="text-2xl text-center uppercase font-medium">
-            UI / UX DESIGNER
+            {headerContent?.content?.role}
           </p>
         </div>
         <div className="w-full h-[2px] bg-[#606060]" />
       </div>
       <div className="grid grid-cols-5 h-full">
         {/* Left Column */}
-        <div
-          className="col-span-2 bg-[#f8f8f8]  py-5 px-[12.5%]"
-        >
+        <div className="col-span-2 bg-[#f8f8f8]  py-5 px-[12.5%]">
           <div className="flex flex-col">
             {leftObj?.map((item, index) => {
               switch (item.type) {

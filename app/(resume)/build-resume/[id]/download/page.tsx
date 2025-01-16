@@ -25,6 +25,7 @@ import {
   openSansFont,
   poppinsFont,
   ralewayFont,
+  robotoFont,
 } from "@/lib/font";
 import useMobile from "@/lib/useMobile";
 import { templateComponents } from "@/templates/templateStructures";
@@ -111,9 +112,9 @@ const LiveResumePreview = () => {
               <div className="flex items-start gap-3 text-gray-600">
                 <CheckCircle className="w-6 h-6 shrink-0 mt-1" />
                 <p className="text-sm sm:text-base">
-                  When downloading, select &quot;Save as PDF&quot; and
-                  Paper Size &quot;ISO A4&quot; to ensure the resume text
-                  remains selectable, allowing easy copy-pasting by recruiters.
+                  When downloading, select &quot;Save as PDF&quot; and Paper
+                  Size &quot;ISO A4&quot; to ensure the resume text remains
+                  selectable, allowing easy copy-pasting by recruiters.
                 </p>
               </div>
 
@@ -182,7 +183,9 @@ const LiveResumePreview = () => {
               templateDetails?.globalStyles?.fontFamily === "Geologica" &&
                 geologicaFont.className,
               templateDetails?.globalStyles?.fontFamily === "Raleway" &&
-                ralewayFont.className
+                ralewayFont.className,
+              templateDetails?.globalStyles?.fontFamily === "Roboto" &&
+                robotoFont.className
             )}
             id="pdf"
           >

@@ -42,6 +42,7 @@ interface HeaderContent {
   summary: string;
   socialLinks: SocialLink[];
   photo?: string;
+  role: string;
 }
 
 const initialHeader: HeaderContent = {
@@ -53,6 +54,7 @@ const initialHeader: HeaderContent = {
   summary: "",
   socialLinks: [],
   photo: "",
+  role: "",
 };
 
 const HeaderForm = ({
@@ -215,7 +217,7 @@ const HeaderForm = ({
     <>
       <motion.form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 md:p-8 rounded-lg shadow shadow-primary">
         {hasPhoto && (
-          <div className="flex items-start mb-6">
+          <div className="flex items-center gapp-8 mb-6">
             <div className="relative">
               <input
                 type="file"
@@ -283,6 +285,14 @@ const HeaderForm = ({
             onChange={handleChange}
             placeholder="9876543210"
             type="tel"
+          />
+          <InputField
+            label="Role"
+            name="role"
+            value={header.role}
+            onChange={handleChange}
+            placeholder="Software Developer"
+            type="text"
           />
         </div>
 
