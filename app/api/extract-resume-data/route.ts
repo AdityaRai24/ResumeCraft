@@ -3,7 +3,8 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import { jobDescription, parseStringToArray } from "@/lib/utils";
 
-const structure = {
+// Structure for Skills and Education Analysis
+const skillsEducationStructure = {
   type: "object",
   properties: {
     skillsAnalysis: {
@@ -12,11 +13,20 @@ const structure = {
         matchingSkills: { type: "array", items: { type: "string" } },
         missingSkills: { type: "array", items: { type: "string" } },
         suggestedEnhancements: { type: "array", items: { type: "string" } },
-        sassyComments: { type: "array", items: { type: "string" } }
+        sassyComments: { type: "array", items: { type: "string" } },
+        overallScore: { type: "number" },
+        review: { type: "string" }
       },
-      required: ["matchingSkills", "missingSkills", "suggestedEnhancements", "sassyComments"],
+      required: [
+        "matchingSkills",
+        "missingSkills",
+        "suggestedEnhancements",
+        "sassyComments",
+        "overallScore",
+        "review"
+      ],
     },
-    educationCompleteness: {
+    educationAnalysis: {
       type: "object",
       properties: {
         entries: {
@@ -43,10 +53,20 @@ const structure = {
             ],
           },
         },
-        overallRoast: { type: "string" }
+        overallRoast: { type: "string" },
+        overallScore: { type: "number" },
+        review: { type: "string" }
       },
-      required: ["entries", "overallRoast"],
-    },
+      required: ["entries", "overallRoast", "overallScore", "review"],
+    }
+  },
+  required: ["skillsAnalysis", "educationAnalysis"]
+};
+
+// Structure for Projects and Experience Analysis
+const projectsExperienceStructure = {
+  type: "object",
+  properties: {
     projectsAnalysis: {
       type: "object",
       properties: {
@@ -77,9 +97,11 @@ const structure = {
           },
         },
         overallSuggestions: { type: "array", items: { type: "string" } },
-        comedicSummary: { type: "string" }
+        comedicSummary: { type: "string" },
+        overallScore: { type: "number" },
+        review: { type: "string" }
       },
-      required: ["entries", "overallSuggestions", "comedicSummary"],
+      required: ["entries", "overallSuggestions", "comedicSummary", "overallScore", "review"],
     },
     experienceAnalysis: {
       type: "object",
@@ -116,18 +138,116 @@ const structure = {
         },
         overallScore: { type: "number" },
         funnyHighlights: { type: "array", items: { type: "string" } },
-        careerStoryRoast: { type: "string" }
+        careerStoryRoast: { type: "string" },
+        review: { type: "string" }
       },
-      required: ["entries", "overallScore", "funnyHighlights", "careerStoryRoast"],
+      required: ["entries", "overallScore", "funnyHighlights", "careerStoryRoast", "review"],
     }
   },
-  required: ["skillsAnalysis", "educationCompleteness", "projectsAnalysis", "experienceAnalysis"],
+  required: ["projectsAnalysis", "experienceAnalysis"]
 };
 
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-1.5-flash",
   maxRetries: 2,
 });
+
+// Template for Skills and Education Analysis
+const skillsEducationTemplate = `
+You're a witty resume reviewer analyzing skills and education sections. Provide detailed analysis with both humor and actionable feedback.
+
+ANALYSIS REQUIREMENTS:
+
+Skills Section Analysis:
+1. Deep Skill Assessment:
+   - Match skills against job requirements
+   - Identify skill gaps and opportunities
+   - Evaluate skill presentation and organization
+2. Scoring Criteria (0-100):
+   - Relevance to job description (40%)
+   - Skill organization and presentation (30%)
+   - Technical depth and breadth (30%)
+3. Detailed Review Should Include:
+   - Skill categorization effectiveness
+   - Balance of technical and soft skills
+   - Suggestions for skill development
+   - Formatting and presentation advice
+
+Education Section Analysis:
+1. Comprehensive Evaluation:
+   - Degree relevance to career path
+   - Academic achievements presentation
+   - Educational timeline clarity
+2. Scoring Criteria (0-100):
+   - Relevance of qualifications (40%)
+   - Presentation and detail (30%)
+   - Academic achievements (30%)
+3. Detailed Review Should Include:
+   - Format and organization feedback
+   - Suggestions for highlighting achievements
+   - Tips for education section optimization
+
+HUMOR GUIDELINES:
+- Use industry-relevant jokes
+- Keep humor professional yet engaging
+- Include witty observations about common resume patterns
+- Make relatable comments about education and skill development
+
+Job Description: {jobDescription}
+Skills Section: {skills}
+Education Section: {education}
+
+Return analysis in strict JSON format as specified.
+`;
+
+// Template for Projects and Experience Analysis
+const projectsExperienceTemplate = `
+You're a perceptive resume reviewer analyzing projects and work experience sections. Provide comprehensive analysis with both humor and constructive feedback.
+
+ANALYSIS REQUIREMENTS:
+
+Projects Section Analysis:
+1. Detailed Project Evaluation:
+   - Technical complexity assessment
+   - Project relevance to target role
+   - Impact measurement and presentation
+2. Scoring Criteria (0-100):
+   - Project relevance and impact (40%)
+   - Technical complexity (30%)
+   - Presentation and detail (30%)
+3. Detailed Review Should Include:
+   - Project selection strategy
+   - Technical depth demonstration
+   - Improvement recommendations
+   - Impact presentation tips
+
+Experience Section Analysis:
+1. Career Progression Evaluation:
+   - Role relevance to target position
+   - Achievement quantification
+   - Professional growth demonstration
+2. Scoring Criteria (0-100):
+   - Role relevance and progression (40%)
+   - Achievement demonstration (30%)
+   - Experience presentation (30%)
+3. Detailed Review Should Include:
+   - Career narrative strength
+   - Achievement presentation
+   - Professional development path
+   - Experience section optimization
+
+HUMOR GUIDELINES:
+- Use industry-specific jokes
+- Keep humor professional but engaging
+- Include witty observations about project patterns
+- Make relatable comments about work experiences
+
+Job Description: {jobDescription}
+Projects Section: {projects}
+Experience Section: {experience}
+
+Return analysis in strict JSON format as specified.
+`;
 
 const extractDataTemplate = `
 You are a funny resume parser who loves making simple jokes while organizing data. Think of yourself as that friend who can't help but crack jokes, but keeps them light and easy to get.
@@ -162,108 +282,6 @@ STRICT REQUIREMENTS FOR JSON OUTPUT:
 *** RESUME DATA ENDS
 .`;
 
-const analyseTemplate = `
-You're a friendly resume reviewer who loves making simple, fun jokes while giving helpful advice. Think of yourself as a mix between a career coach and a stand-up comedian (but keep the jokes super easy to understand!).
-
-Return a JSON response with your analysis AND fun comments:
-
-\`\`\`json
-{{
-  "skillsAnalysis": {{
-    "matchingSkills": [], // Skills they actually have
-    "missingSkills": [], // Skills they wish they had
-    "suggestedEnhancements": [], // How to make their skills better
-    "sassyComments": [] // Funny takes on their skills (keep it simple!)
-  }},
-  "educationCompleteness": {{
-    "entries": [
-      {{
-        "hasDegreeName": true/false,
-        "hasInstitution": true/false,
-        "hasDates": true/false,
-        "hasCGPA": true/false,
-        "hasLocation": true/false,
-        "missingRequired": [], // What they forgot to add
-        "humorousNote": "" // A funny comment about their education
-      }}
-    ],
-    "overallRoast": "" // A funny summary of their school life
-  }},
-  "projectsAnalysis": {{
-    "entries": [
-      {{
-        "hasProjectName": true/false,
-        "hasTechnologies": true/false,
-        "hasDescription": true/false,
-        "hasOutcomes": true/false,
-        "relevanceScore": 0-100, // How useful this project is
-        "missingElements": [], // What's missing
-        "improvementSuggestions": [], // How to make it better
-        "wittyComment": "" // A funny take on this project
-      }}
-    ],
-    "overallSuggestions": [], // Helpful tips
-    "comedicSummary": "" // Funny take on all their projects
-  }},
-  "experienceAnalysis": {{
-    "entries": [
-      {{
-        "hasCompanyName": true/false,
-        "hasRole": true/false,
-        "hasDuration": true/false,
-        "hasResponsibilities": true/false,
-        "hasAchievements": true/false,
-        "relevanceScore": 0-100, // How relevant this job is
-        "missingElements": [], // What they forgot to mention
-        "buzzwordCount": 0, // Number of fancy words they used
-        "funnyTakeaway": "", // A joke about this job
-        "improvementTips": [] // How to make it sound better
-      }}
-    ],
-    "overallScore": 0-100,
-    "funnyHighlights": [], // Funny comments about their work history
-    "careerStoryRoast": "" // A funny summary of their career journey
-  }}
-}}
-\`\`\`
-
-ROASTING GUIDELINES:
-1. Skills Analysis:
-  - Make fun of obvious skill padding ("Oh, you're an expert in everything?")
-  - Joke about trendy tech buzzwords ("Another AI expert born last week!")
-  - Keep jokes simple and relatable
-
-2. Education Entries:
-  - Make light jokes about college life ("4 years of pretending to read textbooks")
-  - Tease about common student behaviors
-  - Keep it fun and relatable to anyone who's been to school
-
-3. Projects Analysis:
-  - Joke about common project names ("Todo app #5482")
-  - Tease about copy-pasted projects
-  - Make fun of overly fancy project descriptions
-
-4. Experience Analysis:
-  - Poke fun at job title inflation ("Chief Keyboard Explorer")
-  - Joke about typical office situations ("Professional meeting survivor")
-  - Tease about buzzword bingo in job descriptions
-  - Make relatable jokes about work life
-
-IMPORTANT RULES:
-- Keep jokes super simple - no fancy words!
-- Make fun of the content, not the person
-- Keep it friendly, like teasing a buddy
-- Mix jokes with actually helpful advice
-- Use examples everyone can understand
-- When in doubt, think "would a high school student get this joke?"
-
-Job Description: {jobDescription}
-Skills Section: {skills}
-Education: {education}
-Projects: {projects}
-Experience: {experience}
-`;
-
 export async function POST(req: NextRequest) {
   try {
     const { extractedText } = await req.json();
@@ -275,6 +293,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Extract data first
     const extractDataPrompt = PromptTemplate.fromTemplate(extractDataTemplate);
     const extractChain = extractDataPrompt.pipe(llm);
     const result = await extractChain.invoke({ resume: extractedText });
@@ -286,22 +305,35 @@ export async function POST(req: NextRequest) {
 
     const parsedData = JSON.parse(cleanResponse);
 
-    const analyzePrompt = PromptTemplate.fromTemplate(analyseTemplate);
-    const structuredLlm = llm.withStructuredOutput(structure);
-    const analysisChain = analyzePrompt.pipe(structuredLlm);
+    // Analyze Skills and Education
+    const skillsEducationPrompt = PromptTemplate.fromTemplate(skillsEducationTemplate);
+    const skillsEducationLlm = llm.withStructuredOutput(skillsEducationStructure);
+    const skillsEducationChain = skillsEducationPrompt.pipe(skillsEducationLlm);
 
-    const analysisResponse = await analysisChain.invoke({
+    const skillsEducationAnalysis = await skillsEducationChain.invoke({
       jobDescription: jobDescription,
       skills: JSON.stringify(parsedData.skills),
-      education: JSON.stringify(parsedData.education),
+      education: JSON.stringify(parsedData.education)
+    });
+
+    // Analyze Projects and Experience
+    const projectsExperiencePrompt = PromptTemplate.fromTemplate(projectsExperienceTemplate);
+    const projectsExperienceLlm = llm.withStructuredOutput(projectsExperienceStructure);
+    const projectsExperienceChain = projectsExperiencePrompt.pipe(projectsExperienceLlm);
+
+    const projectsExperienceAnalysis = await projectsExperienceChain.invoke({
+      jobDescription: jobDescription,
       projects: JSON.stringify(parsedData.projects),
-      experience: JSON.stringify(parsedData.experience),
+      experience: JSON.stringify(parsedData.experience)
     });
 
     return NextResponse.json(
       {
         parsedResume: parsedData,
-        analysis: analysisResponse,
+        analysis: {
+          ...skillsEducationAnalysis,
+          ...projectsExperienceAnalysis
+        }
       },
       { status: 200 }
     );

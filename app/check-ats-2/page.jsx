@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -7,8 +7,12 @@ import * as pdfjsLib from "pdfjs-dist";
 import Tesseract from "tesseract.js";
 import toast from "react-hot-toast";
 import axios from "axios";
+import base64 from "base64-encode-file";
+import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.js";
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.js";
 
 const AnalysisSection = ({ title, data, icon }) => (
   <div className="border rounded-lg p-4 mb-4">
@@ -16,14 +20,13 @@ const AnalysisSection = ({ title, data, icon }) => (
       {icon}
       <h3 className="text-lg font-semibold">{title}</h3>
     </div>
-    <div className="space-y-2">
-      {data}
-    </div>
+    <div className="space-y-2">{data}</div>
   </div>
 );
 
 const PDFExtractor = () => {
   const [extractedText, setExtractedText] = useState("");
+  const [pdfUrl, setPdfUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -93,6 +96,7 @@ const PDFExtractor = () => {
       const text = await convertToText(images);
 
       setExtractedText(text);
+      await uploadImage(file);
       await getStructured(text);
     } catch (error) {
       console.log(error);
@@ -100,6 +104,28 @@ const PDFExtractor = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const uploadImage = async (file) => {
+    let fileData = await base64(file);
+    const formData = new FormData();
+    formData.append("file", fileData);
+    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET);
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Upload failed");
+    }
+
+    const data = await response.json();
+    setPdfUrl(data.url);
+    console.log(data.url);
   };
 
   const handleDrop = async (e) => {
@@ -135,6 +161,7 @@ const PDFExtractor = () => {
         `http://localhost:3000/api/extract-resume-data`,
         { extractedText: text }
       );
+      console.log(response.data.analysis);
       setAnalysis(response.data.analysis);
     } catch (error) {
       console.log(error);
@@ -145,142 +172,180 @@ const PDFExtractor = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <Card className="w-full max-w-4xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-2xl">Resume Analyzer</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div
-            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-              isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
-            }`}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-          >
-            <div className="flex flex-col items-center space-y-4">
-              <Upload className="w-12 h-12 text-gray-400" />
-              <div className="text-lg">
-                Drag and drop your resume PDF here, or
-                <label className="ml-1 text-blue-500 hover:text-blue-600 cursor-pointer">
-                  browse
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept=".pdf"
-                    onChange={(e) => handleFile(e.target.files[0])}
-                  />
-                </label>
-              </div>
-              <p className="text-sm text-gray-500">Supports PDF files only</p>
-            </div>
-          </div>
+    <>
+    <Navbar />
+    <div className="bg-blue-500">
+      tisa dfkjl
+      </div>
 
-          {(isLoading || loading) && (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin" />
-              <span className="ml-2">Analyzing your resume...</span>
-            </div>
-          )}
-
-          {error && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-        </CardContent>
-      </Card>
-
-      {analysis && (
-        <Card className="w-full max-w-4xl mx-auto">
+      <div className="">
+        <Card >
           <CardHeader>
-            <CardTitle className="text-2xl">Analysis Results</CardTitle>
+            <CardTitle className="text-2xl">Resume Analyzer</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <AnalysisSection
-              title="Skills Analysis"
-              icon={<FileText className="w-5 h-5" />}
-              data={
-                <div>
-                  <div className="mb-3">
-                    <h4 className="font-medium mb-2">Matching Skills</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {analysis.skillsAnalysis.matchingSkills.map((skill, i) => (
-                        <span key={i} className="px-2 py-1 bg-green-100 text-green-800 rounded">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="mb-3">
-                    <h4 className="font-medium mb-2">Missing Skills</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {analysis.skillsAnalysis.missingSkills.map((skill, i) => (
-                        <span key={i} className="px-2 py-1 bg-red-100 text-red-800 rounded">
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-2">Funny Takes</h4>
-                    {analysis.skillsAnalysis.sassyComments.map((comment, i) => (
-                      <p key={i} className="text-gray-600 italic mb-1">"{comment}"</p>
-                    ))}
-                  </div>
+          <CardContent>
+            <div
+              className={`border-2 border-dashed  rounded-lg p-8 text-center transition-colors`}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+            >
+              <div className="flex flex-col items-center space-y-4">
+                <Upload className="w-12 h-12 text-gray-400" />
+                <div className="text-lg">
+                  Drag and drop your resume PDF here, or
+                  <label className="ml-1 text-blue-500 hover:text-blue-600 cursor-pointer">
+                    browse
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept=".pdf"
+                      onChange={(e) => handleFile(e.target.files[0])}
+                    />
+                  </label>
                 </div>
-              }
+                <p className="text-sm text-gray-500">Supports PDF files only</p>
+              </div>
+            </div>
+
+            <embed
+              src={pdfUrl}
+              alt="pdf"
+              type="application/pdf"
+              frameBorder="0"
+              width="800px"
+              height={"800px"}
             />
 
-            <AnalysisSection
-              title="Experience Analysis"
-              icon={<FileText className="w-5 h-5" />}
-              data={
-                <div>
-                  <div className="mb-4">
-                    <h4 className="font-medium mb-2">Career Story Roast</h4>
-                    <p className="text-gray-600 italic">"{analysis.experienceAnalysis.careerStoryRoast}"</p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-2">Funny Highlights</h4>
-                    {analysis.experienceAnalysis.funnyHighlights.map((highlight, i) => (
-                      <p key={i} className="text-gray-600 mb-1">• {highlight}</p>
-                    ))}
-                  </div>
-                </div>
-              }
-            />
+            {(isLoading || loading) && (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-8 h-8 animate-spin" />
+                <span className="ml-2">Analyzing your resume...</span>
+              </div>
+            )}
 
-            <AnalysisSection
-              title="Projects Analysis"
-              icon={<FileText className="w-5 h-5" />}
-              data={
-                <div>
-                  <div className="mb-4">
-                    <h4 className="font-medium mb-2">Comedy Summary</h4>
-                    <p className="text-gray-600 italic">"{analysis.projectsAnalysis.comedicSummary}"</p>
-                  </div>
-                  {analysis.projectsAnalysis.entries.map((project, i) => (
-                    <div key={i} className="mb-3 p-3 bg-gray-50 rounded">
-                      <div className="flex items-center gap-2">
-                        {project.relevanceScore > 70 ? (
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                        ) : (
-                          <XCircle className="w-4 h-4 text-red-500" />
-                        )}
-                        <p className="font-medium">Project {i + 1}</p>
-                      </div>
-                      <p className="text-gray-600 italic mt-1">"{project.wittyComment}"</p>
-                    </div>
-                  ))}
-                </div>
-              }
-            />
+            {error && (
+              <Alert variant="destructive" className="mt-4">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
           </CardContent>
         </Card>
-      )}
-    </div>
+
+        {analysis && (
+          <Card className="w-full max-w-4xl mx-auto">
+            <CardHeader>
+              <CardTitle className="text-2xl">Analysis Results</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <AnalysisSection
+                title="Skills Analysis"
+                icon={<FileText className="w-5 h-5" />}
+                data={
+                  <div>
+                    <div className="mb-3">
+                      <h4 className="font-medium mb-2">Matching Skills</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {analysis.skillsAnalysis.matchingSkills.map(
+                          (skill, i) => (
+                            <span
+                              key={i}
+                              className="px-2 py-1 bg-green-100 text-green-800 rounded"
+                            >
+                              {skill}
+                            </span>
+                          )
+                        )}
+                      </div>
+                    </div>
+                    <div className="mb-3">
+                      <h4 className="font-medium mb-2">Missing Skills</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {analysis.skillsAnalysis.missingSkills.map(
+                          (skill, i) => (
+                            <span
+                              key={i}
+                              className="px-2 py-1 bg-red-100 text-red-800 rounded"
+                            >
+                              {skill}
+                            </span>
+                          )
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">Funny Takes</h4>
+                      {analysis.skillsAnalysis.sassyComments.map(
+                        (comment, i) => (
+                          <p key={i} className="text-gray-600 italic mb-1">
+                            "{comment}"
+                          </p>
+                        )
+                      )}
+                    </div>
+                  </div>
+                }
+              />
+
+              <AnalysisSection
+                title="Experience Analysis"
+                icon={<FileText className="w-5 h-5" />}
+                data={
+                  <div>
+                    <div className="mb-4">
+                      <h4 className="font-medium mb-2">Career Story Roast</h4>
+                      <p className="text-gray-600 italic">
+                        "{analysis.experienceAnalysis.careerStoryRoast}"
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">Funny Highlights</h4>
+                      {analysis.experienceAnalysis.funnyHighlights.map(
+                        (highlight, i) => (
+                          <p key={i} className="text-gray-600 mb-1">
+                            • {highlight}
+                          </p>
+                        )
+                      )}
+                    </div>
+                  </div>
+                }
+              />
+
+              <AnalysisSection
+                title="Projects Analysis"
+                icon={<FileText className="w-5 h-5" />}
+                data={
+                  <div>
+                    <div className="mb-4">
+                      <h4 className="font-medium mb-2">Comedy Summary</h4>
+                      <p className="text-gray-600 italic">
+                        "{analysis.projectsAnalysis.comedicSummary}"
+                      </p>
+                    </div>
+                    {analysis.projectsAnalysis.entries.map((project, i) => (
+                      <div key={i} className="mb-3 p-3 bg-gray-50 rounded">
+                        <div className="flex items-center gap-2">
+                          {project.relevanceScore > 70 ? (
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-red-500" />
+                          )}
+                          <p className="font-medium">Project {i + 1}</p>
+                        </div>
+                        <p className="text-gray-600 italic mt-1">
+                          "{project.wittyComment}"
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                }
+              />
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </>
   );
 };
 
