@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
-function parseStringToArray(str: string) {
-  str = str.trim().slice(1, -1);
-  let items = str.split(/,\s*\n/);
-  items = items.map((item) => item.trim().replace(/^"|"$/g, ""));
-
-  return items;
-}
+import { parseStringToArray } from "@/lib/utils";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    const genAI = new GoogleGenerativeAI(process.env.API_KEY!);
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const { companyName, role,jobDescription } = await req.json();
+    const { companyName, role, jobDescription } = await req.json();
 
     let prompt = "";
 
@@ -45,7 +38,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const response = await result.response;
     let text = response.text();
 
-    
     const textArray = parseStringToArray(text);
 
     return NextResponse.json({ textArray }, { status: 200 });

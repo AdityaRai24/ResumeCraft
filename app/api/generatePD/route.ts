@@ -16,7 +16,7 @@ function parseStringToArray(str: string) {
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
-    const genAI = new GoogleGenerativeAI(process.env.API_KEY!);
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
