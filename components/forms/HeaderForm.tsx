@@ -215,7 +215,7 @@ const HeaderForm = ({
 
   return (
     <>
-      <motion.form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 md:p-8 rounded-lg shadow shadow-primary">
+      <motion.form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 md:p-8 rounded-lg shadow-sm shadow-primary">
         {hasPhoto && (
           <div className="flex items-center gapp-8 mb-6">
             <div className="relative">

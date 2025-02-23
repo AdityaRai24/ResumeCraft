@@ -108,7 +108,7 @@ const ProjectForm = ({
       {projects?.projects.map((item, index) => {
         return (
           <div key={index}>
-            <form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow-sm shadow-primary">
+            <form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow-xs shadow-primary">
               {index !== 0 && (
                 <XIcon
                   width={20}

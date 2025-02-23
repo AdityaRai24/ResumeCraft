@@ -93,13 +93,13 @@ const Template4 = ({ obj, size }: TemplateType) => {
                         <div className="flex flex-col gap-3">
                           {leftHeaderContent?.content?.phone && (
                             <div className="flex items-center text-sm gap-2">
-                              <PhoneCall size={16} className="flex-shrink-0" />
+                              <PhoneCall size={16} className="shrink-0" />
                               <p>{leftHeaderContent?.content?.phone}</p>
                             </div>
                           )}
                           {leftHeaderContent?.content?.email && (
                             <div className="flex items-center text-sm gap-2">
-                              <Mail size={16} className="flex-shrink-0" />
+                              <Mail size={16} className="shrink-0" />
                               <p className="break-all">
                                 {leftHeaderContent?.content?.email}
                               </p>

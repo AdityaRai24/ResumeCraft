@@ -154,7 +154,7 @@ const CustomForm = ({
       {sectionsContent.map((section, index) => (
         <div
           key={section.sectionNumber}
-          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow shadow-primary"
+          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow-sm shadow-primary"
         >
           <div className="flex items-center justify-between">
             <Label>Section Title</Label>

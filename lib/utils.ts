@@ -23,3 +23,5 @@ export const jobDescription = `Basic understanding of JavaScript, React.js, and 
     Collaboration with designers, backend developers,
  and participation in code reviews, technical discussions, and brainstorming sessions is expected.`;
 
+
+ 

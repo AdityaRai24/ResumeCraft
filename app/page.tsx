@@ -35,7 +35,7 @@ export default function Home() {
 
   const features = [
     {
-      icon: <Sparkles className="text-primary flex-shrink-0" size={32} />,
+      icon: <Sparkles className="text-primary shrink-0" size={32} />,
       msg: "ATS-optimized resumes",
     },
     {
@@ -43,7 +43,7 @@ export default function Home() {
         <Image
           alt="businessman"
           src={"/businessman.png"}
-          className="text-primary flex-shrink-0"
+          className="text-primary shrink-0"
           width={32}
           height={32}
         />
@@ -55,7 +55,7 @@ export default function Home() {
         <Image
           alt="pencil"
           src={"/pencil.png"}
-          className="text-primary flex-shrink-0"
+          className="text-primary shrink-0"
           width={32}
           height={32}
         />
@@ -67,7 +67,7 @@ export default function Home() {
         <Image
           alt="stopwatch"
           src={"/stopwatch.png"}
-          className="text-primary flex-shrink-0"
+          className="text-primary shrink-0"
           width={32}
           height={32}
         />
@@ -79,7 +79,7 @@ export default function Home() {
         <Image
           alt="subscriber"
           src={"/subscriber.png"}
-          className="text-primary flex-shrink-0"
+          className="text-primary shrink-0"
           width={32}
           height={32}
         />
@@ -164,7 +164,7 @@ export default function Home() {
             >
               <div className="w-full md:pr-8 mt-16 md:mt-0">
                 <motion.h1
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] text-center md:text-left !leading-[1.1] font-semibold mb-2"
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] text-center md:text-left leading-[1.1]! font-semibold mb-2"
                   variants={item}
                 >
                   Transform Your Experience into an Impactful Resume
@@ -184,7 +184,7 @@ export default function Home() {
 
                 <motion.ul
                   className={`flex flex-col gap-2 mb-6 ${
-                    isMobile ? 'pl-0' : 'hidden md:flex !pl-0'
+                    isMobile ? 'pl-0' : 'hidden md:flex pl-0!'
                   }`}
                   variants={featureListVariants}
                   initial="hidden"

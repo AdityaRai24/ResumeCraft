@@ -29,7 +29,7 @@ const ContineBtn = ({
         onClick={() => router.push(path)}
         className={cn(
           text === "Back" && "border-2 border-primary",
-          isMobile && "!rounded-md !px-6 !py-6 active:scale-[0.97] hover:scale-[1.03] transition-all duration-300 ease-out",
+          isMobile && "rounded-md! px-6! py-6! active:scale-[0.97] hover:scale-[1.03] transition-all duration-300 ease-out",
           "px-16 flex items-center gap-2 py-8 rounded-full w-full text-md mt-4",
         )}
       >

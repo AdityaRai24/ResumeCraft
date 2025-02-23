@@ -51,7 +51,7 @@ const SocialLinkField: React.FC<SocialLinkFieldProps> = ({ value, onChange, onRe
           </SelectContent>
         </Select>
       </div>
-      <div className="flex-[2]">
+      <div className="flex-2">
         <Label htmlFor="socialUrl">URL</Label>
         <div className="flex items-center">
           <Icon className="mr-2 h-4 w-4" />

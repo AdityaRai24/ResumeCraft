@@ -155,7 +155,7 @@ export default function PremiumPaymentPage() {
             </motion.div>
             <motion.h1
               variants={item}
-              className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 text-transparent bg-clip-text"
+              className="text-4xl md:text-5xl font-bold bg-linear-to-r from-primary to-primary/60 text-transparent bg-clip-text"
             >
               Upgrade to Premium
             </motion.h1>
@@ -181,7 +181,7 @@ export default function PremiumPaymentPage() {
                   <motion.div
                     key={index}
                     variants={item}
-                    className="flex gap-4 cursor-pointer bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                    className="flex gap-4 cursor-pointer bg-white p-6 rounded-xl shadow-xs hover:shadow-md transition-shadow"
                   >
                     <div className="bg-primary/10 p-3 rounded-lg h-fit">
                       {benefit.icon}

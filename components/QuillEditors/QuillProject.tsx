@@ -100,7 +100,7 @@ export default function QuillProjectEditor({
         </Button>
 
         <Dialog open={dialogIsOpen} onOpenChange={setDialogIsOpen}>
-          <DialogContent className="!max-w-lg">
+          <DialogContent className="max-w-lg!">
             <DialogHeader>
               <DialogTitle>
                 Write ATS friendly, project descriptions with our AI

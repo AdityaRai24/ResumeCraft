@@ -20,11 +20,11 @@ const MobilePreviewButton = ({ item }: { item: ResumeTemplate }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="block md:hidden z-[100001]"
+      className="block md:hidden z-100001"
     >
      {!preview.isOpen && <Button
         onClick={handlePreview}
-        className="rounded-md !px-4 flex items-center gap-2 bg-primary shadow-lg hover:shadow-xl transition-shadow"
+        className="rounded-md px-4! flex items-center gap-2 bg-primary shadow-lg hover:shadow-xl transition-shadow"
       >
         Preview <Eye className="h-6 w-6" />
       </Button>}

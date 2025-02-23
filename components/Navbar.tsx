@@ -132,7 +132,7 @@ const Navbar = () => {
                       router.push(`/get-premium`);
                     }}
                     variant={"outline"}
-                    className="flex gap-2 border-gray-800"
+                    className="flex gap-2 cursor-pointer border-gray-800"
                   >
                     <Crown /> Buy Premium
                   </Button>

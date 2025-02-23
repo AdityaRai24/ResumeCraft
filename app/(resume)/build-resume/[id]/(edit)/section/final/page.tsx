@@ -181,10 +181,10 @@ const Page = () => {
 
   const SectionItem = ({ item }: { item: any }) => (
     <div className="flex items-center gap-1 uppercase">
-      <div className="w-[35px] bg-[white] shadow-sm hover:cursor-move border flex items-center justify-center border-black/30 p-[10px] my-[4px]">
+      <div className="w-[35px] bg-[white] shadow-xs hover:cursor-move border flex items-center justify-center border-black/30 p-[10px] my-[4px]">
         {item?.orderNumber + 1}
       </div>
-      <div className="w-[80%] md:w-[80%] bg-white shadow-sm border hover:cursor-move border-black/30 px-[10px] py-[5px] my-[4px] flex justify-between items-center">
+      <div className="w-[80%] md:w-[80%] bg-white shadow-xs border hover:cursor-move border-black/30 px-[10px] py-[5px] my-[4px] flex justify-between items-center">
         <span>
           {item.type === "custom" ? item.content.sectionTitle : item.type}
         </span>

@@ -99,7 +99,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
                               <div className="flex items-center text-sm font-light gap-2">
                                 <PhoneCall
                                   size={20}
-                                  className="flex-shrink-0 mt-1"
+                                  className="shrink-0 mt-1"
                                 />
                                 <p className="break-all">
                                   {leftHeaderContent?.content?.phone}
@@ -110,7 +110,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
                               <div className="flex items-center text-sm font-light gap-2">
                                 <Mail
                                   size={20}
-                                  className="flex-shrink-0 mt-1"
+                                  className="shrink-0 mt-1"
                                 />
                                 <p className="break-all">
                                   {leftHeaderContent?.content?.email}
@@ -145,7 +145,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
                       </h2>
                       <div className="h-[2px] mb-2 bg-[#fff]"></div>
                       <p
-                        className="quill-content tracking-wider break-words text-left !text-[#fff] font-light text-sm "
+                        className="quill-content tracking-wider break-words text-left text-[#fff]! font-light text-sm "
                         dangerouslySetInnerHTML={{
                           __html: item?.content.description ?? "",
                         }}
@@ -312,7 +312,7 @@ const Template3 = ({ obj, size }: TemplateType) => {
                                     {edu.grade && `Grade : ${edu.grade}`}
                                   </h1>
                                 </div>
-                                <div className="flex-shrink-0 whitespace-nowrap">
+                                <div className="shrink-0 whitespace-nowrap">
                                   {edu?.startYear && edu?.endYear && (
                                     <span>
                                       {edu?.startMonth} {edu?.startYear} -

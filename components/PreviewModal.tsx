@@ -26,7 +26,7 @@ const PreviewModal = () => {
       <DialogContent className="p-0">
         <DialogHeader className="p-0">
           <DialogDescription className="p-0">
-            <div className="h-[473px] max-h-[550px] !m-6 md:h-auto md:max-h-[90vh] md:w-[218mm]  overflow-y-hidden md:overflow-y-scroll">
+            <div className="h-[473px] max-h-[550px] m-6! md:h-auto md:max-h-[90vh] md:w-[218mm]  overflow-y-hidden md:overflow-y-scroll">
               {TemplateComponent && preview.currentTemplate && (
                 <TemplateComponent
                   obj={preview.currentTemplate}

@@ -164,7 +164,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
   // Render
   return (
     <>
-      <div className="flex flex-shrink-0 !z-[100000] bg-primary w-full md:hidden">
+      <div className="flex shrink-0 z-100000! bg-primary w-full md:hidden">
         <VerticalTimeline />
       </div>
       <div className="relative pt-6 w-full px-4  flex md:hidden items-center justify-between">
@@ -179,13 +179,13 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
       </div>
       <div className="flex md:min-h-screen w-full">
         <div className="flex flex-1 overflow-hidden">
-          <div className="w-[150px] bg-primary hidden md:flex flex-shrink-0">
+          <div className="w-[150px] bg-primary hidden md:flex shrink-0">
             <VerticalTimeline />
           </div>
 
           <div
             className={cn(
-              "flex-grow overflow-x-hidden !z-[1] md:max-w-[80%] overflow-y-auto",
+              "grow overflow-x-hidden z-1! md:max-w-[80%] overflow-y-auto",
               geologicaFont.className
             )}
           >

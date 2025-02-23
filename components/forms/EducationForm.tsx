@@ -143,7 +143,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
       {education?.education?.map((item, index) => (
         <motion.form
           key={index}
-          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow shadow-primary"
+          className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow-sm shadow-primary"
         >
           {index !== 0 && (
             <XIcon

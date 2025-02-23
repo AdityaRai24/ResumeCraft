@@ -46,7 +46,7 @@ const Template2 = ({  obj, size }: TemplateType) => {
             ? "scale-[0.37]"
             : size === "md"
               ? "scale-[0.5]"
-              : "scale-[1]"
+              : "scale-1"
       )}
     >
       {children}
@@ -319,7 +319,7 @@ const Template2 = ({  obj, size }: TemplateType) => {
     <div
       id="resumeSection"
       className={cn(
-        "bg-[white] text-black !py-8 px-8 overflow-hidden overflow-x-clip w-[211mm] h-[297mm]  select-none cursor-pointer rounded-3xl print:rounded-none transition duration-300 ease-in shadow-2xl border print:border-0 border-primary"
+        "bg-[white] text-black py-8! px-8 overflow-hidden overflow-x-clip w-[211mm] h-[297mm]  select-none cursor-pointer rounded-3xl print:rounded-none transition duration-300 ease-in shadow-2xl border print:border-0 border-primary"
       )}
     >
       <div className="">
