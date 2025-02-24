@@ -21,6 +21,7 @@ import {
   robotoFont,
 } from "@/lib/font";
 import { templateComponents } from "@/templates/templateStructures";
+import toast from "react-hot-toast";
 
 const LiveResumePreview = () => {
   const params = useParams();
@@ -52,7 +53,7 @@ const LiveResumePreview = () => {
   const TemplateComponent = templateComponents[templateDetails.templateName];
 
   if (!TemplateComponent) {
-    console.error(
+    toast.error(
       `No component found for template: ${templateDetails.templateName}`
     );
     return <div>Error: Template not found</div>;

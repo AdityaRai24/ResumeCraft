@@ -83,7 +83,6 @@ Extract and enhance the key achievements with:
       .replace(/^```json\s*/, "")
       .replace(/```$/, "").trim();
 
-    console.log(text);
     // Ensure the response starts with [ and ends with ]
     if (!text.startsWith("[") || !text.endsWith("]")) {
       throw new Error("Invalid response format from API");

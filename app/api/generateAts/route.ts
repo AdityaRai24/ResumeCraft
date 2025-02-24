@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
+import toast from "react-hot-toast";
 
 const atsTemplate = `
 You are an ATS (Applicant Tracking System) expert with a sense of humor. Analyze this resume for ATS compatibility and keyword matching.
@@ -122,7 +123,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, atsAnalysis }, { status: 200 });
   } catch (error) {
-    console.error("ATS Analysis Error:", error);
+    toast.error("ATS Analysis Error");
     return NextResponse.json(
       { error: "Failed to process ATS analysis" },
       { status: 500 }

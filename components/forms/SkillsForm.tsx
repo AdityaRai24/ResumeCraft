@@ -161,7 +161,7 @@ const SkillsForm = ({
                   key={index}
                   className="bg-[#fff] relative hover:scale-[1.005] cursor-pointer transition duration-300 ease-in shadow-sm shadow-primary w-1/2 rounded-lg"
                 >
-                  <div className="w-full group h-full absolute rounded-lg bg-black inset-0 bg-opacity-0 transition hover:bg-opacity-40 duration-300 ease">
+                  <div className="w-full group h-full absolute rounded-lg inset-0 bg-opacity-0 transition hover:bg-black/40 duration-300 ease">
                     <div
                       onClick={() => handleSetDescription(item.allDescriptions)}
                       className="group-hover:flex items-center justify-center h-full hidden"
@@ -196,7 +196,7 @@ const SkillsForm = ({
                   key={index}
                   className="bg-[#fff] relative hover:scale-[1.005] cursor-pointer transition duration-300 ease-in shadow-sm shadow-primary w-full rounded-lg mb-5"
                 >
-                  <div className="w-full group h-full absolute rounded-lg bg-black inset-0 bg-opacity-0 transition hover:bg-opacity-40 duration-300 ease">
+                  <div className="w-full group h-full absolute rounded-lg  inset-0 bg-opacity-0 transition hover:bg-black/40 duration-300 ease">
                     <div
                       onClick={() => handleSetDescription(item.allDescriptions)}
                       className="group-hover:flex items-center justify-center h-full hidden"

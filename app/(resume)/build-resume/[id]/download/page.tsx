@@ -65,7 +65,7 @@ const LiveResumePreview = () => {
   const TemplateComponent = templateComponents[templateDetails.templateName];
 
   if (!TemplateComponent) {
-    console.error(
+    toast.error(
       `No component found for template: ${templateDetails.templateName}`
     );
     return (

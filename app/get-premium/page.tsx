@@ -90,7 +90,6 @@ export default function PremiumPaymentPage() {
         router.push("/build-resume/templates");
       }
     } catch (error: any) {
-      console.log(error);
       toast.error(error.data);
     }
   };
@@ -123,7 +122,7 @@ export default function PremiumPaymentPage() {
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
     } catch (error) {
-      console.log(error);
+      toast.error("Error while processing payment.");
     } finally {
       setIsProcessing(false);
     }

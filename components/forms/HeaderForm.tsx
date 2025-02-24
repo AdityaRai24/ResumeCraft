@@ -195,7 +195,6 @@ const HeaderForm = ({
         id: loadingToast,
       });
     } catch (error) {
-      console.error("Error uploading image:", error);
       // Error toast
       toast.error("Failed to upload image. Please try again.", {
         id: loadingToast,
@@ -286,13 +285,12 @@ const HeaderForm = ({
             placeholder="9876543210"
             type="tel"
           />
-          {header.role || header.role === '' && <InputField
+          {(header.role || header.role == '')  && <InputField
             label="Role"
             name="role"
             value={header.role}
             onChange={handleChange}
             placeholder="Software Developer"
-            type="text"
           />}
         </div>
 

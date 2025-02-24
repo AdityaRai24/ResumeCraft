@@ -104,7 +104,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
           templateComponents[item.templateName];
 
         if (!TemplateComponent) {
-          console.error(
+          toast.error(
             `No component found for template: ${item.templateName}`
           );
           return null;

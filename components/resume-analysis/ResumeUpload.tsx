@@ -276,7 +276,7 @@ const ResumeUpload: React.FC = ({
     }
 
     const data = await response.json();
-    setPdfUrl(data.url);
+    setPdfUrl(data.secure_url);
   };
 
   const handleFile = async (file: File): Promise<void> => {
@@ -297,7 +297,7 @@ const ResumeUpload: React.FC = ({
       await uploadImage(file);
       await getStructured(text);
     } catch (error) {
-      console.error(error);
+      toast.error("Error processing PDF");
       setError(
         `Error processing PDF: ${error instanceof Error ? error.message : "Unknown error"}`
       );

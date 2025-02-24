@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
+import toast from "react-hot-toast";
+
+export const runtime = 'edge'
 
 const llm = new ChatGoogleGenerativeAI({
   model: "gemini-2.0-flash",
@@ -513,7 +516,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(analysisResponse, { status: 200 });
   } catch (error: any) {
-    console.error("Error processing resume:", error);
+    toast.error("Error processing resume");
     return NextResponse.json(
       {
         error: "Failed to process resume",

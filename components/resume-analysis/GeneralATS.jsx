@@ -16,6 +16,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
 
 const GeneralATS = ({ parsedData, jobDescription,analysis }) => {
   const [ATSAnalysis, setATSAnalysis] = useState(null);
@@ -51,7 +52,6 @@ const GeneralATS = ({ parsedData, jobDescription,analysis }) => {
       const data = await response.json();
       setATSAnalysis(data.atsAnalysis);
     } catch (error) {
-      console.error("Error analyzing resume:", error);
       toast.error("Error analyzing resume. Please try again.");
     } finally {
       setLoading(false);

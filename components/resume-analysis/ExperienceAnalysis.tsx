@@ -37,17 +37,14 @@ const ExperienceAnalysis = ({ parsedData, analysis }: any) => {
       return;
     }
 
-    const role = parsedData[experienceIndex].title;
-    const company = parsedData[experienceIndex].company;
     const description = parsedData[experienceIndex].description;
-
 
     try {
       setLoadingStates((prev) => ({ ...prev, [experienceIndex]: true }));
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generateJD`,
-        {jobDescription : description }
+        { jobDescription: description }
       );
 
       setMagicPoints((prev) => ({
