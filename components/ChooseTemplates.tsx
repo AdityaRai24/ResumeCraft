@@ -16,7 +16,6 @@ import {
 import { ResumeTemplate } from "@/types/templateTypes";
 import { usePreview } from "@/lib/use-preview";
 import PreviewModal from "./PreviewModal";
-import { cn } from "@/lib/utils";
 import React from "react";
 import { useRouter } from "nextjs-toploader/app";
 import TemplateContainer from "./TemplateContainer";
@@ -124,7 +123,9 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
               />
             </div>
 
-            <div className="absolute inset-0 w-full h-full p-4 sm:p-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-5 rounded-md cursor-pointer justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
+            <div className="absolute inset-0 w-full h-full p-4 sm:p-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-5 rounded-md cursor-pointer justify-center opacity-0
+             group-hover:opacity-100 transition-opacity duration-300
+              bg-black/60">
               <Button
                 onClick={() => preview.onOpen(item as ResumeTemplate)}
                 className="w-[50%] md:w-full flex items-center justify-center gap-2"

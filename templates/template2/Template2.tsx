@@ -22,6 +22,7 @@ import {
 } from "./temp2Types";
 import { ResumeTemplate } from "@/types/templateTypes";
 import useMobile from "@/lib/useMobile";
+import TemplateWrapper from "@/providers/TemplateWrapper";
 
 interface TemplateType {
   obj: ResumeTemplate;
@@ -31,27 +32,6 @@ interface TemplateType {
 const Template2 = ({  obj, size }: TemplateType) => {
   const sectionArray = obj?.sections?.map((item) => item.type);
   const isMobile = useMobile();
-
-  const PreviewWrapper = ({ children }: { children: React.ReactNode }) => (
-    <div
-      className={cn(
-        "transform origin-top-left",
-        isMobile
-          ? size === "sm"
-            ? "scale-[0.2]"
-            : size === "md"
-              ? "scale-[0.5]"
-              : "scale-[0.42] print:scale-100"
-          : size === "sm"
-            ? "scale-[0.37]"
-            : size === "md"
-              ? "scale-[0.5]"
-              : "scale-1"
-      )}
-    >
-      {children}
-    </div>
-  );
 
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColorClass = obj?.globalStyles?.primaryColor || "black";
@@ -306,7 +286,6 @@ const Template2 = ({  obj, size }: TemplateType) => {
               }
               return null;
             });
-
           default:
             return null;
         }
@@ -330,7 +309,7 @@ const Template2 = ({  obj, size }: TemplateType) => {
     </div>
   );
 
-  return <PreviewWrapper>{content}</PreviewWrapper>;
+  return <TemplateWrapper size={size!}>{content}</TemplateWrapper>;
 };
 
 export default Template2;

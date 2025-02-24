@@ -23,7 +23,6 @@ const Navbar = () => {
     userId: user?.id ? user?.id : "randomuserid",
   });
 
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -85,7 +84,7 @@ const Navbar = () => {
           <div className=" hidden md:flex items-center justify-center gap-6">
             {isSignedIn && isLoaded && (
               <>
-                <p
+                {/* <p
                   onClick={() => {
                     router.push(`/policies`);
                     setIsMenuOpen(false);
@@ -93,7 +92,7 @@ const Navbar = () => {
                   className="text-gray-600 cursor-pointer"
                 >
                   Policies
-                </p>
+                </p> */}
                 <p
                   onClick={() => {
                     router.push(`/build-resume/templates`);
@@ -111,6 +110,15 @@ const Navbar = () => {
                   className="text-gray-600 cursor-pointer"
                 >
                   My Resumes
+                </p>{" "}
+                <p
+                  onClick={() => {
+                    router.push(`/resume-analysis`);
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-gray-600 cursor-pointer"
+                >
+                  Analyze Resume
                 </p>{" "}
                 {isPremiumMember === undefined && (
                   <Skeleton className="w-[160px] h-[40px] bg-slate-500/20" />
@@ -178,7 +186,7 @@ const Navbar = () => {
           <div className="w-[90%] mx-auto py-4 flex flex-col gap-4">
             {isSignedIn ? (
               <>
-                <p
+                {/* <p
                   onClick={() => {
                     router.push(`/policies`);
                     setIsMenuOpen(false);
@@ -186,7 +194,7 @@ const Navbar = () => {
                   className="text-gray-600 cursor-pointer"
                 >
                   Policies
-                </p>
+                </p> */}
                 <div className="flex items-center gap-2">
                   <UserButton />
                   <h1 className="text-lg font-semibold">{user?.firstName}</h1>
@@ -208,6 +216,15 @@ const Navbar = () => {
                   className="text-gray-600 cursor-pointer"
                 >
                   My Resumes
+                </p>{" "}
+                <p
+                  onClick={() => {
+                    router.push(`/resume-analysis`);
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-gray-600 cursor-pointer"
+                >
+                  Analyze Resume
                 </p>{" "}
                 {isPremiumMember ? (
                   <Button

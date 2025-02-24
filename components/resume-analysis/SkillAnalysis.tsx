@@ -16,8 +16,6 @@ import {
 
 const SkillsAnalysis = ({ analysis } : any) => {
 
-    console.log(analysis)
-
   return (
     <AccordionItem value="skills" className="border rounded-lg overflow-hidden">
       <AccordionTrigger className="bg-gray-50 p-4 cursor-pointer hover:no-underline">

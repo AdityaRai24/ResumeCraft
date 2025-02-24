@@ -2,68 +2,117 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 function parseStringToArray(str: string) {
-  // Remove leading and trailing brackets
-  str = str.trim().slice(1, -1);
+  // Find the actual array portion using regex
+  const arrayMatch = str.match(/\[([\s\S]*)\]/);
+  
+  if (!arrayMatch) {
+    throw new Error("No valid array found in response");
+  }
 
-  // Split the string by comma and newline
-  let items = str.split(/,\s*\n/);
+  // Extract just the array content
+  const arrayContent = arrayMatch[1];
 
-  // Clean each item and remove surrounding quotes
-  items = items.map((item) => item.trim().replace(/^"|"$/g, ""));
+  // Split by commas followed by newline (if any) and handle quoted strings
+  let items = arrayContent.split(/,\s*(?:\r\n|\n|$)/);
 
-  return items;
+  // Clean up each item
+  items = items.map(item => {
+    return item
+      .trim()
+      .replace(/^["']|["']$/g, '')  // Remove quotes at start/end
+      .replace(/\\"/g, '"')         // Handle escaped quotes
+      .trim();
+  });
+
+  // Filter out any empty items
+  return items.filter(item => item.length > 0);
+}
+
+function isArrayOfStrings(value: any): boolean {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
-
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
     const { projectTitle, projectDescription } = await req.json();
 
-    let prompt = "";
+
+    let basePrompt = `You are an expert ATS resume writer. Your task is to write or improve project descriptions that will score highly in ATS systems while remaining clear and impactful for human readers.
+
+Key requirements:
+- Each point must start with a strong action verb
+- Include specific metrics and quantifiable achievements (%, numbers, scales)
+- Highlight technical skills and tools used
+- Focus on impact and results, not just responsibilities
+- Keep each point between 1-2 lines
+- Use industry-standard terminology
+- Format response as a JSON-parseable array
+- Don't include any text before or after the array
+
+Example format:
+["Engineered a high-performance e-commerce platform using React and Node.js, resulting in 40% faster page loads and 25% increase in conversion rate",
+"Implemented automated testing suite covering 95% of codebase, reducing bug reports by 60% and deployment time by 45%",
+"Led a team of 5 developers to deliver 3 major features ahead of schedule, improving user engagement by 35%"]
+
+`;
+
+    let specificPrompt = "";
 
     if (projectTitle && !projectDescription) {
-      prompt = `The title of the project is ${projectTitle}...Write project description in 3 points ..each point 
-      must not exceed 1.5-2lines and should be
-       atleast 0.5 lines...Use metrics in the job description...
+      specificPrompt = `Based on the project title "${projectTitle}", generate 3 ATS-optimized bullet points that showcase the likely technical achievements, challenges overcome, and business impact of this project.`;
+    } else if (projectTitle && isArrayOfStrings(projectDescription)) {
+      specificPrompt = `Rewrite the following ${projectDescription.length} project points for "${projectTitle}" to be more ATS-optimized while preserving the core achievements:
 
-      make sure the response should be in the form of array of points so that i can use JSON.parse() on that response..Dont add any text before or after it...
-      write description as you are supposed to write it in a resume describing the project and not explaining it to someone
+Original points:
+${projectDescription.map((point: any, index: number) => `${index + 1}. ${point}`).join("\n")}
 
-      dont put a \n after [ and before ]
-
-       Example points : Built an Advanced Resume Builder using Next.js, Tailwind CSS, Shadcn UI, and TypeScript, allowing
-users to create high ATS (Applicant Tracking System) resumes from scratch with ease, increasing
-resume quality by 40%.,Integrated Convex DB for efficient database management, ensuring a 50% improvement in data
-retrieval speeds and a smooth user experience with real-time updates.,Implemented customizable templates and real-time preview, enabling users to see changes
-instantly and choose from various professional designs, boosting user engagement by 35%. `;
+Enhance each point with:
+- More specific metrics and numbers
+- Technical details and tools used
+- Clear business impact
+- Strong action verbs`;
     } else if (projectTitle && projectDescription) {
-      prompt = `The title of the project is ${projectTitle} and its description is ${projectDescription}...Improve this project description and write it in 3 points ..each point 
-        must not exceed 1.5-2lines and should be
-         atleast 0.5 lines...Use metrics in the job description this is very very important...if the description contains tech stack make sure to use it while you improve
-      write description as you are supposed to write it in a resume describing the project and not explaining it to someone
+      specificPrompt = `Transform this project description for "${projectTitle}" into 3 ATS-optimized bullet points:
 
-        make sure the response should be in the form of array of points so that i can use JSON.parse() on that response..Dont add any text before or after it...
-  
-        dont put a \n after [ and before ]
-  
-         Example points : Built an Advanced Resume Builder using Next.js, Tailwind CSS, Shadcn UI, and TypeScript, allowing
-  users to create high ATS (Applicant Tracking System) resumes from scratch with ease, increasing
-  resume quality by 40%.,Integrated Convex DB for efficient database management, ensuring a 50% improvement in data
-  retrieval speeds and a smooth user experience with real-time updates.,Implemented customizable templates and real-time preview, enabling users to see changes
-  instantly and choose from various professional designs, boosting user engagement by 35%. `;
+Original description:
+${projectDescription}
+
+Extract and enhance the key achievements with:
+- Specific metrics and numbers
+- Technical details and tools used
+- Clear business impact
+- Strong action verbs`;
     }
 
-    const result = await model.generateContent(prompt);
+    // Validate that we have a prompt to send
+    if (!specificPrompt) {
+      throw new Error("Invalid input parameters");
+    }
+
+    const result = await model.generateContent(basePrompt + specificPrompt);
     const response = await result.response;
     let text = response.text();
 
+    // Validate that the response contains an array
+    if (!text.includes('[') || !text.includes(']')) {
+      throw new Error("Invalid response format from API");
+    }
+
     const textArray = parseStringToArray(text);
+
+    // Validate the parsed array
+    if (!textArray || textArray.length === 0) {
+      throw new Error("Failed to parse response into array");
+    }
 
     return NextResponse.json({ textArray }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    console.error('Error in route handler:', error);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'An unexpected error occurred' },
+      { status: 500 }
+    );
   }
 }

@@ -1,23 +1,71 @@
-import React from 'react';
+import React, { useState } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { 
-  Briefcase, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Briefcase,
+  CheckCircle,
+  XCircle,
   Trophy,
   Target,
-  Star
+  Star,
+  Wand2,
+  Loader2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-const ExperienceAnalysis = ({ analysis } : any) => {
+const ExperienceAnalysis = ({ parsedData, analysis }: any) => {
+  const [magicPoints, setMagicPoints] = useState<{ [key: number]: string[] }>(
+    {}
+  );
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: number]: boolean;
+  }>({});
+
+  const toggleMagicPoints = async (experienceIndex: number) => {
+    if (magicPoints[experienceIndex]) {
+      setMagicPoints((prev) => {
+        const newState = { ...prev };
+        delete newState[experienceIndex];
+        return newState;
+      });
+      return;
+    }
+
+    const role = parsedData[experienceIndex].title;
+    const company = parsedData[experienceIndex].company;
+    const description = parsedData[experienceIndex].description;
+
+
+    try {
+      setLoadingStates((prev) => ({ ...prev, [experienceIndex]: true }));
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generateJD`,
+        {jobDescription : description }
+      );
+
+      setMagicPoints((prev) => ({
+        ...prev,
+        [experienceIndex]: response.data.textArray || [],
+      }));
+    } catch (error) {
+      toast.error("Failed to generate descriptions");
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [experienceIndex]: false }));
+    }
+  };
 
   return (
-    <AccordionItem value="experience" className="border rounded-lg overflow-hidden">
+    <AccordionItem
+      value="experience"
+      className="border rounded-lg overflow-hidden"
+    >
       <AccordionTrigger className="bg-gray-50 p-4 cursor-pointer hover:no-underline">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
@@ -31,11 +79,15 @@ const ExperienceAnalysis = ({ analysis } : any) => {
                 {Math.round(analysis.overallScore)}/100
               </div>
             </div>
-            <Trophy className={`w-6 h-6 ${
-              analysis.overallScore >= 80 ? 'text-yellow-500' :
-              analysis.overallScore >= 60 ? 'text-gray-500' :
-              'text-gray-400'
-            }`} />
+            <Trophy
+              className={`w-6 h-6 ${
+                analysis.overallScore >= 80
+                  ? "text-yellow-500"
+                  : analysis.overallScore >= 60
+                    ? "text-gray-500"
+                    : "text-gray-400"
+              }`}
+            />
           </div>
         </div>
       </AccordionTrigger>
@@ -58,13 +110,21 @@ const ExperienceAnalysis = ({ analysis } : any) => {
 
           {/* Score Breakdown */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {Object.entries(analysis.subscores).map(([key, value] : any) => (
-              <div key={key} className="bg-white p-4 rounded-lg border hover:border-blue-200 transition-colors">
+            {Object.entries(analysis.subscores).map(([key, value]: any) => (
+              <div
+                key={key}
+                className="bg-white p-4 rounded-lg border hover:border-blue-200 transition-colors"
+              >
                 <h4 className="text-sm text-gray-600 capitalize mb-1">
-                  {key.replace(/Score$/, '').split(/(?=[A-Z])/).join(' ')}
+                  {key
+                    .replace(/Score$/, "")
+                    .split(/(?=[A-Z])/)
+                    .join(" ")}
                 </h4>
                 <div className="flex items-end gap-1">
-                  <span className="text-2xl font-bold">{Math.round(value)}</span>
+                  <span className="text-2xl font-bold">
+                    {Math.round(value)}
+                  </span>
                   <span className="text-gray-500 mb-1">/100</span>
                 </div>
               </div>
@@ -73,25 +133,74 @@ const ExperienceAnalysis = ({ analysis } : any) => {
 
           {/* Individual Experiences */}
           <div className="space-y-4">
-            {analysis.entries.map((role : any, i : number) => (
-              <div key={i} className="border rounded-lg overflow-hidden bg-white hover:shadow-md transition-all">
+            {analysis.entries.map((role: any, i: number) => (
+              <div
+                key={i}
+                className="border rounded-lg overflow-hidden bg-white hover:shadow-md transition-all"
+              >
                 <div className="bg-gray-50 p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Star className="w-5 h-5 text-yellow-500" />
                     <div>
-                      <h3 className="font-medium text-gray-800">Experience Entry {i + 1}</h3>
-                      <p className="text-sm text-gray-600">{role.buzzwordCount} industry terms detected</p>
+                      <h3 className="font-medium text-gray-800">
+                        Experience Entry {i + 1}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {role.buzzwordCount} industry terms detected
+                      </p>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-sm text-gray-500">Relevance</span>
-                    <span className="font-medium text-gray-700">
-                      {Math.round(role.relevanceScore * 100)}%
-                    </span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-end">
+                      <span className="text-sm text-gray-500">Relevance</span>
+                      <span className="font-medium text-gray-700">
+                        {Math.round(role.relevanceScore)}%
+                      </span>
+                    </div>
+                    <Button
+                      onClick={() => toggleMagicPoints(i)}
+                      variant="default"
+                      className="flex items-center gap-2"
+                      disabled={loadingStates[i]}
+                    >
+                      {loadingStates[i] ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Wand2 className="w-4 h-4" />
+                      )}
+                      {magicPoints[i] ? "Hide Magic" : "Magic Write"}
+                    </Button>
                   </div>
                 </div>
 
                 <div className="p-4 space-y-4">
+                  {/* Magic Points */}
+                  {loadingStates[i] && (
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                      <div className="flex items-center gap-2 text-purple-700">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="text-sm">
+                          Generating descriptions...
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {magicPoints[i] && magicPoints[i].length > 0 && (
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-100 animate-fadeIn">
+                      <h4 className="text-sm font-medium text-purple-800 mb-3">
+                        ✨ Experience Descriptions
+                      </h4>
+                      <ul className="list-disc list-inside space-y-2">
+                        {magicPoints[i].map((point, idx) => (
+                          <li key={idx} className="text-purple-700 text-sm">
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {/* Component Checklist */}
                   <div>
                     <h4 className="text-sm font-medium text-gray-700 mb-3">
@@ -102,15 +211,18 @@ const ExperienceAnalysis = ({ analysis } : any) => {
                         { label: "Role", check: role.hasRole },
                         { label: "Company", check: role.hasCompanyName },
                         { label: "Duration", check: role.hasDuration },
-                        { label: "Responsibilities", check: role.hasResponsibilities },
-                        { label: "Achievements", check: role.hasAchievements }
+                        {
+                          label: "Responsibilities",
+                          check: role.hasResponsibilities,
+                        },
+                        { label: "Achievements", check: role.hasAchievements },
                       ].map((item, idx) => (
                         <div
                           key={idx}
                           className={`flex items-center gap-2 px-3 py-2 rounded-lg ${
-                            item.check 
-                              ? 'bg-green-50 text-green-700 border border-green-100' 
-                              : 'bg-gray-50 text-gray-500 border border-gray-200'
+                            item.check
+                              ? "bg-green-50 text-green-700 border border-green-100"
+                              : "bg-gray-50 text-gray-500 border border-gray-200"
                           }`}
                         >
                           {item.check ? (
@@ -118,7 +230,9 @@ const ExperienceAnalysis = ({ analysis } : any) => {
                           ) : (
                             <XCircle className="w-4 h-4" />
                           )}
-                          <span className="text-sm font-medium">{item.label}</span>
+                          <span className="text-sm font-medium">
+                            {item.label}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -131,14 +245,16 @@ const ExperienceAnalysis = ({ analysis } : any) => {
                         Missing Elements
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {role.missingElements.map((element : any, idx : number) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1.5 bg-yellow-100 text-yellow-800 rounded-lg text-sm font-medium"
-                          >
-                            {element}
-                          </span>
-                        ))}
+                        {role.missingElements.map(
+                          (element: any, idx: number) => (
+                            <span
+                              key={idx}
+                              className="px-3 py-1.5 bg-yellow-100 text-yellow-800 rounded-lg text-sm font-medium"
+                            >
+                              {element}
+                            </span>
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -150,7 +266,7 @@ const ExperienceAnalysis = ({ analysis } : any) => {
                         Improvement Tips
                       </h4>
                       <ul className="space-y-2">
-                        {role.improvementTips.map((tip : any, idx : number) => (
+                        {role.improvementTips.map((tip: any, idx: number) => (
                           <li
                             key={idx}
                             className="text-blue-700 text-sm flex items-start gap-2"
@@ -176,10 +292,15 @@ const ExperienceAnalysis = ({ analysis } : any) => {
 
           {/* Funny Highlights */}
           <div className="bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Notable Highlights</h4>
+            <h4 className="text-sm font-medium text-gray-700 mb-3">
+              Notable Highlights
+            </h4>
             <ul className="space-y-2">
-              {analysis.funnyHighlights.map((highlight : any, idx : number) => (
-                <li key={idx} className="text-gray-600 text-sm flex items-start gap-2">
+              {analysis.funnyHighlights.map((highlight: any, idx: number) => (
+                <li
+                  key={idx}
+                  className="text-gray-600 text-sm flex items-start gap-2"
+                >
                   <span>🎯</span>
                   {highlight}
                 </li>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -12,9 +12,55 @@ import {
   Trophy,
   Target,
   Star,
+  Wand2,
+  Loader2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-const ProjectAnalysis = ({ analysis }: any) => {
+const ProjectAnalysis = ({ parsedData, analysis }: any) => {
+  const [magicPoints, setMagicPoints] = useState<{ [key: number]: string[] }>(
+    {}
+  );
+  const [loadingStates, setLoadingStates] = useState<{
+    [key: number]: boolean;
+  }>({});
+
+  const toggleMagicPoints = async (projectIndex: number) => {
+    // If magic points already exist for this project, just hide them
+    if (magicPoints[projectIndex]) {
+      setMagicPoints((prev) => {
+        const newState = { ...prev };
+        delete newState[projectIndex];
+        return newState;
+      });
+      return;
+    }
+
+    const projectTitle = parsedData[projectIndex].title;
+    const projectDescription = parsedData[projectIndex].description;
+
+
+    try {
+      setLoadingStates((prev) => ({ ...prev, [projectIndex]: true }));
+
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/generatePD`,
+        { projectTitle, projectDescription }
+      );
+
+      setMagicPoints((prev) => ({
+        ...prev,
+        [projectIndex]: response.data.textArray || [],
+      }));
+    } catch (error) {
+      toast.error("Failed to generate magic insights");
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [projectIndex]: false }));
+    }
+  };
+
   return (
     <AccordionItem
       value="projects"
@@ -54,10 +100,6 @@ const ProjectAnalysis = ({ analysis }: any) => {
               <h4 className="font-medium text-lg text-gray-800">
                 Projects Overview
               </h4>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Target className="w-4 h-4" />
-                <span>{analysis.numberOfBulletPoints} bullet points</span>
-              </div>
             </div>
             <p className="text-gray-700 leading-relaxed">{analysis.review}</p>
           </div>
@@ -76,9 +118,7 @@ const ProjectAnalysis = ({ analysis }: any) => {
                     .join(" ")}
                 </h4>
                 <div className="flex items-end gap-1">
-                  <span className="text-2xl font-bold">
-                    {Math.round(value)}
-                  </span>
+                  <span className="text-2xl font-bold">{value}</span>
                   <span className="text-gray-500 mb-1">/100</span>
                 </div>
               </div>
@@ -104,15 +144,57 @@ const ProjectAnalysis = ({ analysis }: any) => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-sm text-gray-500">Relevance</span>
-                    <span className="font-medium text-gray-700">
-                      {project.relevanceScore * 100}%
-                    </span>
+                  <div className="flex items-center gap-4">
+                    <div className="flex flex-col items-end">
+                      <span className="text-sm text-gray-500">Relevance</span>
+                      <span className="font-medium text-gray-700">
+                        {project.relevanceScore}%
+                      </span>
+                    </div>
+                    <Button
+                      onClick={() => toggleMagicPoints(i)}
+                      variant="default"
+                      className="flex items-center gap-2"
+                      disabled={loadingStates[i]}
+                    >
+                      {loadingStates[i] ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Wand2 className="w-4 h-4" />
+                      )}
+                      {magicPoints[i] ? "Hide Magic" : "Magic Write"}
+                    </Button>
                   </div>
                 </div>
 
                 <div className="p-4 space-y-4">
+                  {/* Magic Points */}
+                  {loadingStates[i] && (
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                      <div className="flex items-center gap-2 text-purple-700">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span className="text-sm">
+                          Improving project descriptions...
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {magicPoints[i] && magicPoints[i].length > 0 && (
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-100 animate-fadeIn">
+                      <h4 className="text-sm font-medium text-purple-800 mb-3">
+                        ✨ Improved descriptions
+                      </h4>
+                      <ul className="list-disc list-inside space-y-2">
+                        {magicPoints[i].map((point, idx) => (
+                          <li key={idx} className="text-purple-700 text-sm">
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {/* Component Checklist */}
                   <div>
                     <h4 className="text-sm font-medium text-gray-700 mb-3">
@@ -155,14 +237,10 @@ const ProjectAnalysis = ({ analysis }: any) => {
 
                   {/* Project Review */}
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                    <h4 className="text-sm font-medium text-blue-800 mb-2">
-                      Project Insights
-                    </h4>
                     <p className="text-blue-700 text-sm">
                       {project.wittyComment}
                     </p>
                   </div>
-
                 </div>
               </div>
             ))}

@@ -12,15 +12,28 @@ import {
   ChevronUp,
   Loader2,
   Upload,
+  Plus,
+  Eye,
 } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+  DialogFooter,
+} from "../ui/dialog";
+import { Textarea } from "../ui/textarea";
 import Tesseract from "tesseract.js";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import base64 from "base64-encode-file";
 import axios from "axios";
 import * as pdfjsLib from "pdfjs-dist";
+import { cn } from "@/lib/utils";
 
 interface JobRequirement {
   id: number;
@@ -28,6 +41,7 @@ interface JobRequirement {
   company: string;
   description: string;
   requirements: string[];
+  isCustom?: boolean;
 }
 
 interface JobCardProps {
@@ -77,7 +91,7 @@ const jobDescriptions: JobRequirement[] = [
   },
   {
     id: 3,
-    title: "Web Developer",
+    title: "Full Stack Developer",
     company: "NextGen Web Solutions",
     description:
       "We are looking for a versatile Web Developer who is proficient in both frontend and backend development. The candidate should have experience working with HTML, CSS, JavaScript, and modern frameworks like React.js or Vue.js. Strong backend knowledge, including Node.js and Express.js, is preferred. Responsibilities include developing and maintaining interactive web applications, optimizing website performance, ensuring responsiveness across devices, and integrating third-party APIs. The ideal candidate should be comfortable with database management and have a good understanding of web security principles. Strong collaboration skills are essential, as the role requires working closely with designers, product managers, and backend developers to deliver seamless user experiences.",
@@ -100,14 +114,51 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 const ResumeUpload: React.FC = ({
   setPdfUrl,
   setAnalysis,
+  setParsedData,
+  selectedJob,
+  setSelectedJob,
 }: any) => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [selectedJob, setSelectedJob] = useState<JobRequirement | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [extractedText, setExtractedText] = useState<string>("");
+  const [customJobDescription, setCustomJobDescription] = useState<string>("");
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState<boolean>(false);
+  const [customJobs, setCustomJobs] = useState<JobRequirement[]>([]);
+  const [viewingJob, setViewingJob] = useState<JobRequirement | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState<boolean>(false);
   const router = useRouter();
+
+  // Combined job descriptions (predefined + custom)
+  const allJobs = [...jobDescriptions, ...customJobs];
+
+  const handleCustomJobSubmit = () => {
+    if (!customJobDescription.trim()) {
+      toast.error("Please enter a job description");
+      return;
+    }
+
+    const newCustomJob: JobRequirement = {
+      id: Date.now(), // Using timestamp as unique ID
+      title: "Custom Position",
+      company: "Custom Company",
+      description: customJobDescription,
+      requirements: [], // Empty requirements for custom jobs
+      isCustom: true,
+    };
+
+    setCustomJobs([...customJobs, newCustomJob]);
+    setSelectedJob(newCustomJob);
+    setIsAddDialogOpen(false);
+    setCustomJobDescription("");
+    toast.success("Custom job description added!");
+  };
+
+  const handleViewJob = (job: JobRequirement) => {
+    setViewingJob(job);
+    setIsViewDialogOpen(true);
+  };
 
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -148,17 +199,18 @@ const ResumeUpload: React.FC = ({
       return;
     }
 
+
     try {
       setLoading(true);
       const response = await axios.post(
-        `http://localhost:3000/api/extract-resume-data`,
+        `${process.env.NEXT_PUBLIC_WEBSITE_URL}/api/extract-resume-data`,
         { extractedText: text, jobDescription: selectedJob }
       );
-      console.log(response.data)
+      setParsedData(response.data.parsedResume);
       setAnalysis(response.data.analysis);
     } catch (error) {
-      router.push("/check-ats-2");
-      toast.error("Error analyzing resume. Please Try again.");
+      router.push("/resume-analysis");
+      toast.error("Model Overloaded. Please Try again.");
     } finally {
       setLoading(false);
     }
@@ -205,7 +257,7 @@ const ResumeUpload: React.FC = ({
 
   const uploadImage = async (file: File): Promise<void> => {
     let fileData = await base64(file);
-    const formData = new FormData();
+    const formData: any = new FormData();
     formData.append("file", fileData);
     formData.append(
       "upload_preset",
@@ -225,7 +277,6 @@ const ResumeUpload: React.FC = ({
 
     const data = await response.json();
     setPdfUrl(data.url);
-    console.log(data.url);
   };
 
   const handleFile = async (file: File): Promise<void> => {
@@ -256,7 +307,7 @@ const ResumeUpload: React.FC = ({
   };
 
   return (
-    <Card className="max-w-4xl bg-transparent mx-auto border-none shadow-none">
+    <Card className="max-w-[80%] bg-transparent mx-auto border-none shadow-none">
       <CardHeader>
         <CardTitle className="mt-12 mb-4">
           <h1 className="text-4xl text-center md:text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 text-transparent bg-clip-text">
@@ -270,15 +321,102 @@ const ResumeUpload: React.FC = ({
       </CardHeader>
 
       <CardContent className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {jobDescriptions.map((job) => (
-            <JobCard
-              key={job.id}
-              job={job}
-              isSelected={selectedJob?.id === job.id}
-              onSelect={() => setSelectedJob(job)}
-            />
-          ))}
+        <div className="relative">
+          <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
+          isLoading || loading ? "opacity-30 pointer-events-none" : "opacity-100"
+          )}>
+            {allJobs.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                isSelected={selectedJob?.id === job.id}
+                onSelect={() => setSelectedJob(job)}
+              />
+            ))}
+
+            {/* Add Custom Job Card */}
+            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <DialogTrigger asChild>
+                <Card className="flex flex-col items-center justify-center cursor-pointer hover:border-primary transition-colors p-6">
+                  <Plus className="h-12 w-12 text-gray-400" />
+                  <p className="mt-4 text-gray-600 font-medium">
+                    Add Custom Job
+                  </p>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Add Custom Job Description</DialogTitle>
+                  <DialogDescription>
+                    Paste the job description here for targeted resume analysis.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 mt-4">
+                  <Textarea
+                    placeholder="Paste the job description here..."
+                    value={customJobDescription}
+                    onChange={(e) => setCustomJobDescription(e.target.value)}
+                    className="min-h-[200px]"
+                  />
+                  <DialogFooter>
+                    <Button onClick={handleCustomJobSubmit} className="w-full">
+                      Add & Select Job Description
+                    </Button>
+                  </DialogFooter>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            {/* View Job Description Dialog */}
+            <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+              <DialogContent className="sm:max-w-lg  max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>{viewingJob?.title}</DialogTitle>
+                  <DialogDescription>
+                    {viewingJob?.isCustom && " (Custom Job Description)"}
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <h3 className="text-sm font-medium mb-2">
+                      Job Description
+                    </h3>
+                    <div className="bg-gray-50 p-4 rounded-md">
+                      <p className="text-sm whitespace-pre-line">
+                        {viewingJob?.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {viewingJob?.requirements &&
+                    viewingJob.requirements.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-medium mb-2">
+                          Requirements
+                        </h3>
+                        <div className="bg-gray-50 p-4 rounded-md">
+                          <ul className="list-disc pl-5 space-y-1">
+                            {viewingJob.requirements.map((req, index) => (
+                              <li key={index} className="text-sm">
+                                {req}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                </div>
+                <DialogFooter>
+                  <Button
+                    onClick={() => setIsViewDialogOpen(false)}
+                    className="w-full"
+                  >
+                    Close
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         {selectedJob && (
@@ -334,7 +472,7 @@ const ResumeUpload: React.FC = ({
 };
 
 const JobCard: React.FC<JobCardProps> = ({ job, isSelected, onSelect }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
 
   return (
     <Card
@@ -345,10 +483,10 @@ const JobCard: React.FC<JobCardProps> = ({ job, isSelected, onSelect }) => {
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <CardTitle className="text-lg font-semibold">{job.title}</CardTitle>
-            <CardDescription className="text-sm mt-1">
-              {job.company}
-            </CardDescription>
+            <CardTitle className="text-lg font-semibold">
+              {job.title}
+              {job.isCustom && " (Custom)"}
+            </CardTitle>
           </div>
           {isSelected && (
             <CheckCircle2 className="text-primary h-5 w-5 flex-shrink-0 ml-2" />
@@ -357,41 +495,58 @@ const JobCard: React.FC<JobCardProps> = ({ job, isSelected, onSelect }) => {
       </CardHeader>
       <CardContent className="pt-0">
         <div className="space-y-3">
-          <p
-            className={`text-sm text-gray-600 ${!isExpanded && "line-clamp-3"}`}
-          >
+          <p className="text-sm text-gray-600 line-clamp-3">
             {job.description}
           </p>
 
-          <div className={`space-y-2 ${!isExpanded && "hidden"}`}>
-            <h4 className="text-sm font-medium">Key Requirements:</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {job.requirements.map((req, index) => (
-                <span
-                  key={index}
-                  className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full truncate"
-                  title={req}
-                >
-                  {req}
-                </span>
-              ))}
-            </div>
-          </div>
-
           <div className="flex justify-between items-center gap-3 mt-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs cursor-pointer"
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              {isExpanded ? (
-                <ChevronUp className="h-4 w-4 mr-1" />
-              ) : (
-                <ChevronDown className="h-4 w-4 mr-1" />
-              )}
-              {isExpanded ? "Show Less" : "Show More"}
-            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs cursor-pointer"
+                >
+                  <Eye className="h-4 w-4 mr-1" />
+                  View Details
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>
+                    {job.title}
+                    {job.isCustom && " (Custom)"}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="mt-4 space-y-4">
+                  <div>
+                    <h3 className="text-sm font-medium mb-2">
+                      Job Description
+                    </h3>
+                    <div className="bg-gray-50 p-4 rounded-md">
+                      <p className="text-sm whitespace-pre-line">
+                        {job.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {job.requirements && job.requirements.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-medium mb-2">Requirements</h3>
+                      <div className="bg-gray-50 p-4 rounded-md">
+                        <ul className="list-disc pl-5 space-y-1">
+                          {job.requirements.map((req, index) => (
+                            <li key={index} className="text-sm">
+                              {req}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
             <Button
               size="sm"
               className="text-xs cursor-pointer"

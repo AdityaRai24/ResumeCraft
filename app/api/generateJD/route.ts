@@ -2,46 +2,111 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { parseStringToArray } from "@/lib/utils";
 
+function isArrayOfStrings(value: any): boolean {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
+}
+
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
-
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const { role, companyName, jobDescription } = await req.json();
 
-    const { companyName, role, jobDescription } = await req.json();
+    let basePrompt = `You are an expert ATS resume writer. Your task is to write or improve job experience descriptions that will score highly in ATS systems while remaining clear and impactful for human readers.
 
-    let prompt = "";
+Key requirements:
+- Each point must start with a strong action verb
+- Include specific metrics and quantifiable achievements (%, numbers, scales)
+- Highlight technical skills, tools, and methodologies used
+- Focus on impact and results, not just responsibilities
+- Keep each point between 1-2 lines
+- Use industry-standard terminology
+- Return ONLY a JSON array of strings with no other text
+- No text before or after the array
 
-    if (companyName && role && !jobDescription) {
-      prompt = `for a ${role} who has worked at ${companyName} write a job description in 3 points..each point 
-      must not exceed 1.5-2lines and should be
-       atleast 0.5 lines...Use metrics in the job description...
+Example response format:
+["Led cross-functional team of 8 engineers to deliver cloud migration project 2 months ahead of schedule, reducing infrastructure costs by 35%",
+"Implemented automated CI/CD pipeline using Jenkins and Docker, decreasing deployment time by 75% and eliminating manual errors",
+"Mentored 5 junior developers and established best practices documentation, improving team productivity by 40% over 6 months"]`;
 
-      make sure the response should be in the form of array of points so that i can use JSON.parse() on that response..Dont add any text before or after it...
+    let specificPrompt = "";
 
-      dont put a \n after [ and before ]
+    if (!jobDescription) {
+      // Handle case with no job description
+      specificPrompt = `Generate 3 ATS-optimized bullet points ${role ? `for the role "${role}"` : ""}${
+        role && companyName ? " at " : ""
+      }${companyName ? `"${companyName}"` : ""} that showcase impactful achievements and responsibilities. Return only the JSON array with no other text.
 
-       Example points : Designed and developed web applications used by the DJSI committee, ensuring a 99.5% uptime to support critical sustainability ratings.,Optimized code and implemented efficient database management strategies, resulting in a 25% reduction in application load times.,Successfully integrated third-party data feeds, improving the accuracy and comprehensiveness of DJSI data by 15% `;
+Consider:
+- Technical skills and industry-standard tools
+- Measurable impacts and KPIs
+- Project delivery and team collaboration
+- Leadership and process improvements`;
+    } else if (isArrayOfStrings(jobDescription)) {
+      // Handle array of bullet points
+      specificPrompt = `Rewrite the following ${jobDescription.length} experience points${role ? ` for "${role}"` : ""}${
+        role && companyName ? " at " : ""
+      }${companyName ? `"${companyName}"` : ""} to be more ATS-optimized while preserving the core achievements. Return only the JSON array with no other text.
+
+Original points:
+${jobDescription.map((point: any, index: number) => `${index + 1}. ${point}`).join("\n")}
+
+Enhance each point with:
+- More specific metrics and numbers
+- Technical details and tools used
+- Clear business impact
+- Strong action verbs`;
     } else {
-      prompt = `for a ${role} who has worked at ${companyName} this is the job descriptoin ${jobDescription}..write 3 bullet points..each point 
-      must not exceed 1.5-2lines and should be
-       atleast 0.5 lines...Use metrics in the job description to make it more ats friendly...
+      // Handle plain text job description
+      specificPrompt = `Transform this job description${role ? ` for "${role}"` : ""}${
+        role && companyName ? " at " : ""
+      }${companyName ? `"${companyName}"` : ""} into 3 ATS-optimized bullet points. Return only the JSON array with no other text.
 
-      make sure the response should be in the form of array of points so that i can use JSON.parse() on that response..Dont add any text before or after it...
+Original description:
+${jobDescription}
 
-      dont put a \n after [ and before ]
-
-       Example points : Designed and developed web applications used by the DJSI committee, ensuring a 99.5% uptime to support critical sustainability ratings.,Optimized code and implemented efficient database management strategies, resulting in a 25% reduction in application load times.,Successfully integrated third-party data feeds, improving the accuracy and comprehensiveness of DJSI data by 15% `;
+Extract and enhance the key achievements with:
+- Specific metrics and numbers
+- Technical skills and tools used
+- Clear business impact
+- Strong action verbs
+- Leadership and collaboration highlights`;
     }
 
-    const result = await model.generateContent(prompt);
+    const result = await model.generateContent(basePrompt + specificPrompt);
     const response = await result.response;
-    let text = response.text();
+    let text = response
+      .text()
+      .trim()
+      .replace(/^```json\s*/, "")
+      .replace(/```$/, "").trim();
+
+    console.log(text);
+    // Ensure the response starts with [ and ends with ]
+    if (!text.startsWith("[") || !text.endsWith("]")) {
+      throw new Error("Invalid response format from API");
+    }
 
     const textArray = parseStringToArray(text);
 
+    // Validate the parsed array
+    if (!textArray || textArray.length === 0) {
+      throw new Error("Failed to parse response into array");
+    }
+
     return NextResponse.json({ textArray }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    console.error("Error in route handler:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
+      },
+      { status: 500 }
+    );
   }
 }

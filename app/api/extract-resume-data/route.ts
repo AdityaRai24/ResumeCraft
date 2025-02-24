@@ -7,28 +7,6 @@ const llm = new ChatGoogleGenerativeAI({
   maxRetries: 2,
 });
 
-const SCORE_WEIGHTS = {
-  skills: {
-    matchingSkills: 40,
-    technicalDepth: 30,
-    presentation: 30,
-  },
-  education: {
-    completeness: 50,
-    relevance: 50,
-  },
-  projects: {
-    relevanceAndImpact: 40,
-    technicalComplexity: 30,
-    presentation: 30,
-  },
-  experience: {
-    roleRelevance: 40,
-    achievements: 30,
-    clarity: 30,
-  },
-};
-
 const skillsEducationStructure = {
   type: "object",
   properties: {
@@ -44,10 +22,7 @@ const skillsEducationStructure = {
             matchingSkillsScore: { type: "number" },
             technicalDepthScore: { type: "number" },
           },
-          required: [
-            "matchingSkillsScore",
-            "technicalDepthScore",
-          ],
+          required: ["matchingSkillsScore", "technicalDepthScore"],
         },
         review: { type: "string" },
         funnyTakeaway: { type: "string" },
@@ -232,46 +207,9 @@ const atsAnalysisStructure = {
   type: "object",
   properties: {
     atsScore: { type: "number" },
-    overallReview : { type: "string" },
-    subscores: {
-      type: "object",
-      properties: {
-        keywordScore: { type: "number" },
-        formatScore: { type: "number" },
-        organizationScore: { type: "number" },
-      },
-      required: ["keywordScore", "formatScore", "organizationScore"],
-    },
-    keywordMatch: {
-      type: "object",
-      properties: {
-        matched: { type: "array", items: { type: "string" } },
-        missing: { type: "array", items: { type: "string" } },
-        overallMatchRate: { type: "number" },
-      },
-      required: ["matched", "missing", "overallMatchRate"],
-    },
-    formatAnalysis: {
-      type: "object",
-      properties: {
-        hasProperStructure: { type: "boolean" },
-        hasCleanFormatting: { type: "boolean" },
-        issues: { type: "array", items: { type: "string" } },
-      },
-      required: ["hasProperStructure", "hasCleanFormatting", "issues"],
-    },
-    recommendations: { type: "array", items: { type: "string" } },
-    humorousVerdict: { type: "string" },
+    overallReview: { type: "string" },
   },
-  required: [
-    "atsScore",
-    "subscores",
-    "keywordMatch",
-    "overallReview",
-    "formatAnalysis",
-    "recommendations",
-    "humorousVerdict",
-  ],
+  required: ["atsScore", "overallReview"],
 };
 
 const extractDataTemplate = `
@@ -288,6 +226,9 @@ STRICT JSON OUTPUT REQUIREMENTS:
    - Any other sections should be renamed using underscores (e.g., "certifications" → "certifications")
 4. Group personal details under "personal_details" and set "profilePic": false
 5. Maintain a clean and readable JSON structure.
+6. Parse projects , experience or any other sections descriptions into array of points if it exists in bullet points.
+7. Sections with some what similar meaning should not be changed. For eg : Projects and Experience both should be extracted and stored under projects and experience keys respectively. Positions of Responsibility section is not the same as experience.
+8. While parsing projects and experience, project titles and job roles/experience role should be named as title only and descriptions to be named description only.
 
 *** RESUME DATA STARTS ***
 {resume}
@@ -339,7 +280,10 @@ Job Description: {jobDescription}
 Skills Section: {skills}
 Education Section: {education}
 
-Return a structured JSON response as specified in the schema.`;
+Return a structured JSON response as specified in the schema.
+
+All scores should be out of 100. If a section is empty score should be 0.
+`;
 
 const projectsExperienceTemplate = `
 You're an expert resume reviewer analyzing projects and work experience. Provide deep analysis, humor, and actionable insights.
@@ -387,17 +331,22 @@ Job Description: {jobDescription}
 Projects Section: {projects}
 Experience Section: {experience}
 
-Return structured JSON data as specified in the schema.`;
+Return structured JSON data as specified in the schema.
+All scores should be out of 100. If a section is empty score should be 0.
+
+`;
 
 const atsTemplate = `
 You are an ATS (Applicant Tracking System) expert with a sense of humor. Analyze this resume for ATS compatibility and keyword matching.
+
+Resume Review : {allReviews}
 
 ANALYSIS REQUIREMENTS:
 
 1. ATS Score Calculation (0-100):
    - Keyword matching (40%): Match rate with job description
-   - Format compatibility (30%): Clean, parseable structure
    - Section organization (30%): Standard section headers and layout
+   - Consistent date formats
 
 2. Keyword Analysis:
    - Extract key terms from job description
@@ -411,22 +360,13 @@ ANALYSIS REQUIREMENTS:
    - Identify potential parsing issues
    - List specific formatting concerns
 
-4. Recommendations:
-   - Provide 3-5 actionable improvements
-   - Focus on both content and format
-   - Include keyword optimization tips
+5. Overall review should be a 3-5 sentence summary of what is right and what is wrong with the resume in a humorous tone. Use the resume review and generate this overall review.
 
-5. Add a humorous verdict on ATS-friendliness that's:
-   - Relevant to ATS/recruitment
-   - Professional yet entertaining
-   - Includes tech-related wordplay when appropriate
 
-6. Overall review should be a 3-5 sentence summary of what is right and what is wrong with the resume in a humorous tone
+Return a structured JSON response as specified in the schema.
+All scores should be out of 100
 
-Resume Content: {resumeText}
-Job Description: {jobDescription}
-
-Return a structured JSON response as specified in the schema.`;
+`;
 
 function calculateOverallScore({
   skillsScore,
@@ -472,15 +412,6 @@ export async function POST(req: NextRequest) {
 
     const parsedData = JSON.parse(cleanResponse);
 
-    const atsPrompt = PromptTemplate.fromTemplate(atsTemplate);
-    const atsLlm = llm.withStructuredOutput(atsAnalysisStructure);
-    const atsChain = atsPrompt.pipe(atsLlm);
-
-    const atsAnalysis = await atsChain.invoke({
-      resumeText: extractedText,
-      jobDescription: jobDescription,
-    });
-
     const skillsEducationPrompt = PromptTemplate.fromTemplate(
       skillsEducationTemplate
     );
@@ -509,6 +440,28 @@ export async function POST(req: NextRequest) {
       jobDescription: JSON.stringify(jobDescription),
       projects: JSON.stringify(parsedData.projects || []),
       experience: JSON.stringify(parsedData.experience || []),
+    });
+
+    const atsPrompt = PromptTemplate.fromTemplate(atsTemplate);
+    const atsLlm = llm.withStructuredOutput(atsAnalysisStructure);
+    const atsChain = atsPrompt.pipe(atsLlm);
+
+    const allReviews = {
+      skillsScore: skillsEducationAnalysis.skillsAnalysis.overallScore,
+      educationScore: skillsEducationAnalysis.educationAnalysis.overallScore,
+      projectsScore: projectsExperienceAnalysis.projectsAnalysis.overallScore,
+      experienceScore:
+        projectsExperienceAnalysis.experienceAnalysis.overallScore,
+      skillsReview: skillsEducationAnalysis.skillsAnalysis.review,
+      educationReview: skillsEducationAnalysis.educationAnalysis.review,
+      projectsReview: projectsExperienceAnalysis.projectsAnalysis.review,
+      experienceReview: projectsExperienceAnalysis.experienceAnalysis.review,
+    };
+
+    const atsAnalysis = await atsChain.invoke({
+      resumeText: extractedText,
+      jobDescription: jobDescription,
+      allReviews: allReviews,
     });
 
     const overallScore = calculateOverallScore({
@@ -558,7 +511,6 @@ export async function POST(req: NextRequest) {
       },
     };
 
-
     return NextResponse.json(analysisResponse, { status: 200 });
   } catch (error: any) {
     console.error("Error processing resume:", error);
@@ -573,7 +525,3 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export const config = {
-  runtime: "edge",
-  regions: ["default"],
-};

@@ -63,7 +63,6 @@ export default function QuillExpEditor({
       setGeneratedContent(generatedHtml);
       setLoading(false);
     } catch (error) {
-      console.log(error);
       toast.error("Something went wrong Quill Experience");
     }
   };

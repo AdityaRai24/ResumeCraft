@@ -13,9 +13,8 @@ import useMobile from "@/lib/useMobile";
 import temp3obj from "@/templates/template3/temp3obj";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import Template1 from "@/templates/template1/Template1";
 
-// Dynamically import templates with no SSR
 const Template2 = dynamic(() => import("@/templates/template2/Template2"), {
   ssr: false,
 });
@@ -180,11 +179,10 @@ export default function Home() {
                   Our user-friendly builder offers customizable templates to
                   ensure your resume is job-ready.
                 </motion.p>
-                
 
                 <motion.ul
                   className={`flex flex-col gap-2 mb-6 ${
-                    isMobile ? 'pl-0' : 'hidden md:flex pl-0!'
+                    isMobile ? "pl-0" : "hidden md:flex pl-0!"
                   }`}
                   variants={featureListVariants}
                   initial="hidden"
@@ -195,7 +193,7 @@ export default function Home() {
                       key={index}
                       variants={featureItemVariants}
                       className={`flex items-center text-gray-600 gap-2 text-sm lg:text-base ${
-                        isMobile ? 'justify-start max-w-[90%] px-6' : ''
+                        isMobile ? "justify-start max-w-[90%] px-6" : ""
                       }`}
                     >
                       <motion.div
@@ -211,7 +209,7 @@ export default function Home() {
                 </motion.ul>
 
                 <motion.div
-                  className="flex justify-center md:justify-start"
+                  className="flex gap-4 justify-center md:justify-start"
                   variants={item}
                 >
                   <motion.div
@@ -230,6 +228,23 @@ export default function Home() {
                       />
                     </Button>
                   </motion.div>
+
+                  <motion.div
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                  >
+                    <Button
+                      variant="outline"
+                      className="px-8 shadow-md group shadow-primary/30 py-7"
+                      onClick={() => router.push("/resume-analysis")}
+                    >
+                      Analyze Resume
+                      <ArrowRight
+                        size={18}
+                        className="ml-2 group-hover:ml-4 transition-all mt-[2.5px]"
+                      />
+                    </Button>
+                  </motion.div>
                 </motion.div>
               </div>
             </motion.div>
@@ -238,12 +253,12 @@ export default function Home() {
               <>
                 <motion.div
                   className={`
-                  hidden
-                  md:block absolute 
-                  md:-top-60 
-                  md:-right-16 -rotate-3 hover:-rotate-6
-                  transition-all duration-300
-                  !scale-[0.46]`}
+            hidden
+            md:block absolute 
+            md:-top-60 
+            md:-right-16 -rotate-3 hover:-rotate-6
+            transition-all duration-300
+            !scale-[0.46]`}
                   variants={template2Variants}
                   initial="hidden"
                   animate="visible"
@@ -253,12 +268,12 @@ export default function Home() {
 
                 <motion.div
                   className={`
-                  hidden
-                  md:block absolute 
-                  md:-top-56 
-                  md:-right-48 rotate-3 hover:rotate-6
-                  transition-all duration-300
-                  !scale-[0.46]`}
+            hidden
+            md:block absolute 
+            md:-top-56 
+            md:-right-48 rotate-0 hover:rotate-6
+            transition-all duration-300
+            !scale-[0.46]`}
                   variants={template3Variants}
                   initial="hidden"
                   animate="visible"
