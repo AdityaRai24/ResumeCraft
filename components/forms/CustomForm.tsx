@@ -2,7 +2,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import QuillEditorComponent from "../QuillEditors/QuillEditor";
+import QuillCustomEditor from "../QuillEditors/QuillCustom";
 import { Button } from "../ui/button";
 import { debounce } from "lodash";
 import { useMutation, useQuery } from "convex/react";
@@ -173,10 +173,11 @@ const CustomForm = ({
             onChange={(e) => handleTitleChange(index, e.target.value)}
           />
           <div className="mt-4 w-full">
-            <QuillEditorComponent
+            <QuillCustomEditor
               value={section.sectionDescription}
               onChange={(value) => handleDescriptionChange(index, value)}
               label="Section Description"
+              sectionTitle={section.sectionTitle}
             />
           </div>
           {isTwoColumn && (
