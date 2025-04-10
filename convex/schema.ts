@@ -111,6 +111,28 @@ const sectionContentSchema = v.union(
   })
 );
 
+const optionSchema = v.object({
+  label: v.string(),
+  value: v.string(),
+});
+
+const chatMessageSchema = v.object({
+  sender: v.union(v.literal("user"), v.literal("bot")),
+  content: v.union(
+    v.object({
+      type: v.literal("text"),
+      message: v.string(),
+    }),
+    v.object({
+      type: v.literal("options"),
+      message: v.string(),
+      options: v.array(optionSchema),
+    })
+  ),
+  userId: v.optional(v.string()),
+  resumeId: v.optional(v.id("resumes")),
+});
+
 export default defineSchema({
   resumes: defineTable({
     isTemplate: v.boolean(),
@@ -128,4 +150,5 @@ export default defineSchema({
   premiumUsers: defineTable({
     userId: v.string(),
   }),
+  chatMessages: defineTable(chatMessageSchema),
 });

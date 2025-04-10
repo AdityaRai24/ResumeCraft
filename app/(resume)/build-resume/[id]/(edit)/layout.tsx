@@ -22,6 +22,7 @@ import PreviewModal from "@/components/PreviewModal";
 import { ResumeTemplate } from "@/types/templateTypes";
 import { Button } from "@/components/ui/button";
 import { premiumTemplates } from "@/templates/templateStructures";
+import Chatbot from "@/components/Chatbot";
 
 // Types
 type Section =
@@ -177,15 +178,16 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
         </Button>
         <MobilePreviewButton item={resume as ResumeTemplate} />
       </div>
-      <div className="flex md:min-h-screen w-full">
+      <div className="flex h-screen w-full">
         <div className="flex flex-1 overflow-hidden">
-          <div className="w-[150px] bg-primary hidden md:flex shrink-0">
-            <VerticalTimeline />
+          <div className="bg-white hidden md:flex shrink-0">
+            <Chatbot />
+            {/* <VerticalTimeline /> */}
           </div>
 
           <div
             className={cn(
-              "grow overflow-x-hidden z-1! md:max-w-[80%] overflow-y-auto",
+              "grow overflow-x-hidden z-1! md:max-w-[90%] no-scrollbar overflow-y-auto",
               geologicaFont.className
             )}
           >

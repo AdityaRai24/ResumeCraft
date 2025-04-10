@@ -6,15 +6,21 @@ import { tipsData } from "@/lib/tipsData";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { useParams, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { container, item } from "@/lib/motion";
 import TipsSkeleton from "@/components/TipsSkeleton";
 import { geologicaFont, poppinsFont } from "@/lib/font";
+import { useChatBotStore } from "@/store";
+import { useUser } from "@clerk/nextjs";
 
 const Page = () => {
   const searchParams = useSearchParams();
   const sec = searchParams.get("sec");
+  const { user } = useUser();
+
+  const { pushText } = useChatBotStore((state) => state);
+  const firstTimeRef = useRef(false);
 
   const params = useParams();
   const resumeId = params.id;
@@ -32,8 +38,17 @@ const Page = () => {
 
   let sectionArray: string[] = [];
   resume?.sections?.map((item) => sectionArray.push(item.type));
-
   const currentTips = tipsData.find((item) => item.sec === sec);
+
+  setTimeout(() => {
+    if (sec == "header" && !firstTimeRef.current) {
+      pushText(
+        `👋 Hi ${user?.firstName}! I'm CraftBot, your personal AI assistant. I'm here to guide you through building a job-winning resume – step by step.`,
+        "bot"
+      );
+      firstTimeRef.current = true;
+    }
+  }, 2000);
 
   return (
     <div className="flex items-center justify-start w-full md:max-w-[95%] px-4 md:px-16">
@@ -61,7 +76,6 @@ const Page = () => {
             </div>
           </motion.div>
         </div>
-
       </motion.div>
     </div>
   );

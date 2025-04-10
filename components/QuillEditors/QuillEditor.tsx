@@ -16,6 +16,7 @@ interface QuillEditorComponentProps {
   label: string;
   currentFormat?: string;
   placeholder?: string;
+  onFocus?: () => void;
 }
 
 export default function QuillEditorComponent({
@@ -23,6 +24,7 @@ export default function QuillEditorComponent({
   onChange,
   label,
   currentFormat,
+  onFocus,
   placeholder
 }: QuillEditorComponentProps) {
 
@@ -49,6 +51,7 @@ export default function QuillEditorComponent({
         onChange={onChange}
         modules={quillModules}
         formats={quillFormats}
+        onFocus={onFocus}
         className={`${poppinsFont.className} bg-white mt-2`}
         placeholder={placeholder}
       />

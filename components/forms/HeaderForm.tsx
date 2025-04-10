@@ -26,6 +26,8 @@ import {
   Upload,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { useChatBotStore } from "@/store";
+import { useUser } from "@clerk/nextjs";
 
 interface SocialLink {
   type: string;
@@ -67,9 +69,12 @@ const HeaderForm = ({
   const [header, setHeader] = useState<HeaderContent>(initialHeader);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { pushText, pushOptions } = useChatBotStore((state) => state);
 
   const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
+  const firstTimeRef = useRef(false);
   const hasPhoto = resume?.globalStyles.photo || false;
+  const { user } = useUser();
 
   const update = useMutation(api.resume.updateHeader);
   const pendingChangesRef = useRef(false);
@@ -212,6 +217,41 @@ const HeaderForm = ({
     { value: "other", label: "Other", icon: Link },
   ];
 
+  setTimeout(() => {
+    if (
+      header.email &&
+      header.firstName &&
+      header.lastName &&
+      header.phone &&
+      !firstTimeRef.current
+    ) {
+      pushText(
+        `Great job! You've got your basic info all set. Now, let's add some social links like Github and LinkedIn to make your profile pop!`,
+        "bot"
+      );
+      firstTimeRef.current = true;
+    }
+  }, 2000);
+
+  const summaryFocus = () => {
+    pushOptions(`Want help with your professional summary?`, [
+      {
+        label : "✍️ Write Summary For Me",
+        value : "write-summary",
+        onClick : () => {
+          pushText("Write something about yourself...", "bot");
+        }
+      },
+      {
+        label : "🛠 Improve My Summary",
+        value : "improve-summary",
+        onClick : () => {
+          pushText("Improve Summary", "bot");
+        }
+      }
+    ], "bot");
+  };
+
   return (
     <>
       <motion.form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 md:p-8 rounded-lg shadow-sm shadow-primary">
@@ -273,6 +313,12 @@ const HeaderForm = ({
             name="email"
             value={header.email}
             onChange={handleChange}
+            onFocus={() =>
+              pushText(
+                `Skip the funky emails from high school 😅 — go for something simple and clear!`,
+                "bot"
+              )
+            }
             placeholder="johndoe@gmail.com"
             type="email"
             required
@@ -285,13 +331,15 @@ const HeaderForm = ({
             placeholder="9876543210"
             type="tel"
           />
-          {(header.role || header.role == '')  && <InputField
-            label="Role"
-            name="role"
-            value={header.role}
-            onChange={handleChange}
-            placeholder="Software Developer"
-          />}
+          {(header.role || header.role == "") && (
+            <InputField
+              label="Role"
+              name="role"
+              value={header.role}
+              onChange={handleChange}
+              placeholder="Software Developer"
+            />
+          )}
         </div>
 
         <div className="mt-8">
@@ -299,7 +347,7 @@ const HeaderForm = ({
           {header?.socialLinks?.map((link, index) => (
             <div
               key={link.type}
-              className="mb-4 flex flex-col md:flex-row items-start justify-start md:items-center gap-6"
+              className="mb-4 flex flex-col md:flex-row flex-wrap items-start justify-start md:items-center gap-6"
             >
               <InputField
                 label={link.type}
@@ -352,6 +400,7 @@ const HeaderForm = ({
               label="Summary"
               placeholder="Write something about yourself..."
               value={header.summary}
+              onFocus={() => summaryFocus()}
               onChange={(content) => handleChange(content)}
             />
           </div>
@@ -369,6 +418,7 @@ interface InputFieldProps {
   placeholder: string;
   type?: string;
   required?: boolean;
+  onFocus?: () => void;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -379,6 +429,7 @@ const InputField: React.FC<InputFieldProps> = ({
   placeholder,
   type = "text",
   required,
+  onFocus,
 }) => (
   <motion.div
     initial={{ opacity: 0, scale: 0.8 }}
@@ -396,6 +447,7 @@ const InputField: React.FC<InputFieldProps> = ({
       id={name}
       value={value}
       onChange={onChange}
+      onFocus={onFocus}
       placeholder={placeholder}
       className="border border-muted-foreground"
     />
