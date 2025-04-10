@@ -13,6 +13,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as chatBot from "../chatBot.js";
 import type * as premiumUsers from "../premiumUsers.js";
 import type * as resume from "../resume.js";
 
@@ -25,6 +26,7 @@ import type * as resume from "../resume.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  chatBot: typeof chatBot;
   premiumUsers: typeof premiumUsers;
   resume: typeof resume;
 }>;

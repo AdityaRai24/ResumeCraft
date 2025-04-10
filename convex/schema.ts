@@ -117,18 +117,27 @@ const optionSchema = v.object({
 });
 
 const chatMessageSchema = v.object({
-  sender: v.union(v.literal("user"), v.literal("bot")),
-  content: v.union(
-    v.object({
-      type: v.literal("text"),
-      message: v.string(),
-    }),
-    v.object({
-      type: v.literal("options"),
-      message: v.string(),
-      options: v.array(optionSchema),
-    })
+  content: v.array(
+    v.union(
+      v.object({
+        content: v.object({
+        type: v.literal("text"),
+        message: v.string(),
+        }),
+        sender: v.union(v.literal("user"), v.literal("bot")),
+      }),
+      v.object({
+        content: v.object({
+        type: v.literal("options"),
+        message: v.string(),
+        options: v.array(optionSchema),
+        }),
+        sender: v.literal("bot"),
+      })
+    )
   ),
+  experienceLevel: v.optional(v.string()),
+  desiredRole: v.optional(v.string()),
   userId: v.optional(v.string()),
   resumeId: v.optional(v.id("resumes")),
 });

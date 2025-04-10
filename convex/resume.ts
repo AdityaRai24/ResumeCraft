@@ -106,6 +106,14 @@ export const createUserResume = mutation({
       sections: templateEmptyComponents[args.templateName].sections,
     });
 
+    await ctx.db.insert("chatMessages", {
+      userId: args.userId,
+      resumeId: newResume,
+      content: [],
+      experienceLevel: "",
+      desiredRole: "",
+    });
+
     return newResume;
   },
 });

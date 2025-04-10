@@ -21,8 +21,14 @@ type ChatMessage = {
   content: TextMessage | OptionMessage;
 };
 
+type OnboardingData = {
+  desiredRole: string;
+  experienceLevel: string;
+};
+
 type ChatBotState = {
   messages: ChatMessage[];
+  onboardingData: OnboardingData;
   pushText: (message: string, sender: "user" | "bot") => void;
   pushOptions: (
     message: string,
@@ -30,11 +36,17 @@ type ChatBotState = {
     sender?: "bot"
   ) => void;
   resetMessages: () => void;
+  fillMessages: (messages: ChatMessage[]) => void;
+  setOnBoardingData: (data: OnboardingData) => void;
 };
 
 
 export const useChatBotStore = create<ChatBotState>((set) => ({
   messages: [],
+  onboardingData: {
+    desiredRole: "",
+    experienceLevel: "",
+  },
   pushText: (message, sender) =>
     set((state) => ({
       messages: [
@@ -50,4 +62,6 @@ export const useChatBotStore = create<ChatBotState>((set) => ({
       ],
     })),
   resetMessages: () => set({ messages: [] }),
+  fillMessages: (messages) => set({ messages }),
+  setOnBoardingData: (data) => set({ onboardingData: data }),
 }));

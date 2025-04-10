@@ -4,10 +4,18 @@ import {
   ArrowRightToLine,
   Send,
   Sparkles,
+  User,
+  BriefcaseBusiness,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { OptionMessage, TextMessage, useChatBotStore } from "@/store";
 import { Button } from "./ui/button";
+import { useUser } from "@clerk/nextjs";
+import { useParams } from "next/navigation";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "react-hot-toast";
 
 interface ChatMessage {
   id: string;
@@ -16,17 +24,146 @@ interface ChatMessage {
   isTyping?: boolean;
 }
 
+interface OnboardingFormData {
+  desiredRole: string;
+  experienceLevel: string;
+}
+
 const Chatbot = () => {
   const [message, setMessage] = useState("");
-  const { messages: storeMessages, pushText } = useChatBotStore(
-    (state) => state
-  );
+  const {
+    messages: storeMessages,
+    pushText,
+    pushOptions,
+    resetMessages,
+    fillMessages,
+  } = useChatBotStore((state) => state);
   const [displayMessages, setDisplayMessages] = useState<ChatMessage[]>([]);
   const [isExpanded, setIsExpanded] = useState(true);
   const [lastProcessedMessageCount, setLastProcessedMessageCount] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [needsUserInfo, setNeedsUserInfo] = useState(false);
+
+  const {onboardingData, setOnBoardingData} = useChatBotStore((state) => state);
+
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { user } = useUser();
+  const params = useParams();
+  const resumeId = params.id;
+
+  const chatBotData = useQuery(api.chatBot.getChatbotData, {
+    userId: user?.id || "",
+    resumeId: resumeId as Id<"resumes">,
+  });
+
+  const pushMessage = useMutation(api.chatBot.pushMessage);
+  const updateUserProfile = useMutation(api.chatBot.updateUserProfile);
+
+  // This effect handles pushing new messages to the backend when they're added to the store
+  useEffect(() => {
+    if (user && resumeId && storeMessages.length > lastProcessedMessageCount) {
+      const newMessages = storeMessages.slice(lastProcessedMessageCount);
+
+      newMessages.forEach((msg) => {
+        let cleanMessage = msg;
+
+        if (msg.content.type === "options") {
+          cleanMessage = {
+            ...msg,
+            content: {
+              ...msg.content,
+              options: msg.content.options.map((option) => ({
+                label: option.label,
+                value: option.value,
+              })),
+            },
+          };
+        } else {
+          cleanMessage = {
+            ...msg,
+            content: {
+              ...msg.content,
+              message: msg.content.message,
+            },
+          };
+        }
+
+        pushMessage({
+          userId: user.id,
+          resumeId: resumeId as Id<"resumes">,
+          message: cleanMessage,
+        });
+      });
+    }
+  }, [storeMessages, user, resumeId, pushMessage]);
+
+  const handleRoleSelect = (role: string) => {
+    setOnBoardingData({ ...onboardingData, desiredRole: role });
+  };
+
+  const handleExperienceSelect = (level: string) => {
+    setOnBoardingData({ ...onboardingData, experienceLevel: level });
+  };
+
+  console.log(onboardingData)
+
+  const submitUserInfo = async () => {
+    if (chatBotData && resumeId && user) {
+      await updateUserProfile({
+        userId: user.id,
+        resumeId: resumeId as Id<"resumes">,
+        desiredRole: onboardingData.desiredRole,
+        experienceLevel: onboardingData.experienceLevel,
+      });
+
+      toast.success("Your profile has been updated successfully!");
+      setNeedsUserInfo(false);
+
+      // Add a welcome message after info is submitted
+      const welcomeMessage = `👋 Hi ${user?.firstName || "there"}! I'm CraftBot, your personal AI assistant.
+I'm here to guide you through building a job-winning resume – step by step.`;
+
+      pushText(welcomeMessage, "bot");
+
+      // No need to push message here since the useEffect will handle it
+    }
+  };
+
+  useEffect(() => {
+    if (chatBotData && !isInitialized) {
+      // Reset any existing messages first
+      resetMessages();
+
+      // Check if we need to ask for user information
+      if (
+        !chatBotData.desiredRole ||
+        chatBotData.desiredRole === "" ||
+        !chatBotData.experienceLevel ||
+        chatBotData.experienceLevel === ""
+      ) {
+        setNeedsUserInfo(true);
+      } else {
+        // If we have previous messages, fill the store with them
+        if (
+          chatBotData.content &&
+          Array.isArray(chatBotData.content) &&
+          chatBotData.content.length > 0
+        ) {
+          fillMessages(chatBotData.content);
+        } else {
+          // If no previous messages but we have user info, send a welcome message
+          const welcomeMessage = `👋 Hi ${user?.firstName || "there"}! I'm CraftBot, your personal AI assistant.
+          I'm here to guide you through building a job-winning resume – step by step.`;
+
+          pushText(welcomeMessage, "bot");
+        }
+      }
+
+      setIsInitialized(true);
+    }
+  }, [chatBotData, pushText, resetMessages, fillMessages, isInitialized]);
 
   useEffect(() => {
     if (storeMessages.length > lastProcessedMessageCount) {
@@ -48,7 +185,7 @@ const Chatbot = () => {
           // Add typing indicator
           setDisplayMessages((prev) => [...prev, typingMessage]);
 
-          // After 2s, replace with actual message and remove typing indicator
+          // After 1.5s, replace with actual message and remove typing indicator
           setTimeout(() => {
             setDisplayMessages((prev) => {
               // Convert the message from store to display format with ID
@@ -63,7 +200,7 @@ const Chatbot = () => {
                 actualMessage,
               ];
             });
-          }, 2000);
+          }, 1500);
         } else {
           // For user messages, add them immediately with no typing effect
           setDisplayMessages((prev) => [
@@ -80,8 +217,6 @@ const Chatbot = () => {
       setLastProcessedMessageCount(storeMessages.length);
     }
   }, [storeMessages, lastProcessedMessageCount]);
-
-  console.log(displayMessages);
 
   const handleSend = () => {
     if (message.trim() === "") return;
@@ -115,6 +250,11 @@ const Chatbot = () => {
   };
 
   const messageVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
+
+  const formVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
@@ -203,7 +343,7 @@ const Chatbot = () => {
               >
                 <Sparkles size={18} />
               </motion.div>
-              <h2 className="text-base font-medium">AI Assistant</h2>
+              <h2 className="text-base font-medium">AI Resume Assistant</h2>
             </div>
             <motion.div
               className="cursor-pointer"
@@ -221,11 +361,87 @@ const Chatbot = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            Ask me anything about your resume
+            Your personal resume coach
           </motion.p>
 
           {/* Message Container */}
           <div className="flex-1 w-full bg-white p-4 overflow-y-auto">
+            {/* User Onboarding Form */}
+            {needsUserInfo && (
+              <motion.div
+                variants={formVariants}
+                initial="hidden"
+                animate="visible"
+                className="bg-gray-50 p-4 rounded-lg shadow-md mb-4 border border-gray-200"
+              >
+                <h3 className="text-primary text-sm font-medium mb-3 flex items-center gap-2">
+                  <User size={16} />
+                  Please tell me about yourself
+                </h3>
+                <p className="text-xs">
+                  This will help me assist you better with your resume.
+                </p>
+
+                <div className="space-y-4 mt-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      What is your desired job role?
+                    </label>
+                    <select
+                      value={onboardingData.desiredRole}
+                      onChange={(e) => handleRoleSelect(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                      <option value="" disabled>
+                        Select a role
+                      </option>
+                      <option value="Software Engineer">
+                        Software Engineer
+                      </option>
+                      <option value="Product Manager">Product Manager</option>
+                      <option value="Data Scientist">Data Scientist</option>
+                      <option value="UX/UI Designer">UX/UI Designer</option>
+                      <option value="Marketing Specialist">
+                        Marketing Specialist
+                      </option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      What is your experience level?
+                    </label>
+                    <select
+                      value={onboardingData.experienceLevel}
+                      onChange={(e) => handleExperienceSelect(e.target.value)}
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                      <option value="" disabled>
+                        Select experience level
+                      </option>
+                      <option value="Entry Level">Entry Level</option>
+                      <option value="Mid Level">Mid Level</option>
+                      <option value="Senior Level">Senior Level</option>
+                      <option value="Executive">Executive</option>
+                    </select>
+                  </div>
+
+                  <Button
+                    onClick={submitUserInfo}
+                    disabled={
+                      !onboardingData.desiredRole ||
+                      !onboardingData.experienceLevel
+                    }
+                    className="w-full mt-2 flex items-center justify-center gap-2"
+                  >
+                    <BriefcaseBusiness size={16} />
+                    <span>Submit Profile</span>
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+
             <AnimatePresence>
               {displayMessages.map((msg) => {
                 return (
@@ -234,12 +450,12 @@ const Chatbot = () => {
                     variants={messageVariants}
                     initial="hidden"
                     animate="visible"
-                    className={`mb-4 max-w-[95%] ${
+                    className={`mb-4 max-w-[95%] text-wrap ${
                       msg.sender === "user" ? "ml-auto" : "mr-auto"
                     }`}
                   >
                     <div
-                      className={`p-4 rounded-lg text-sm shadow-md shadow-black/20 ${
+                      className={`p-4 rounded-lg text-sm shadow-sm ${
                         msg.sender === "user"
                           ? "bg-primary text-white"
                           : "bg-gray-100 text-gray-800"
@@ -259,9 +475,17 @@ const Chatbot = () => {
                             {msg.content.message}
                           </motion.div>
                           {msg.content.type === "options" && (
-                            <motion.div className="mt-3">
+                            <motion.div className="mt-3 text-wrap max-w-[95%]  flex flex-wrap gap-2">
                               {msg.content.options.map((option) => (
-                                <Button size={"sm"} variant={"outline"} onClick={option.onClick} className="mb-2  hover:bg-primary hover:text-white  text-xs text-black border border-primary p-2 rounded-lg" key={option.value}>{option.label}</Button>
+                                <Button
+                                  size={"sm"}
+                                  variant={"outline"}
+                                  onClick={option.onClick}
+                                  className="mb-1 hover:bg-primary hover:text-white text-xs text-black border border-primary p-2 rounded-lg"
+                                  key={option.value}
+                                >
+                                  {option.label}
+                                </Button>
                               ))}
                             </motion.div>
                           )}
@@ -299,7 +523,7 @@ const Chatbot = () => {
             />
             <motion.button
               onClick={handleSend}
-              disabled={message.trim() === ""}
+              disabled={message.trim() === "" || needsUserInfo}
               className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 flex items-center gap-1"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
