@@ -12,12 +12,16 @@ import React, {
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import QuillExpEditor from "../QuillEditors/QuillExp";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { XIcon } from "lucide-react";
 import { pushMessage } from "@/convex/chatBot";
 import { useChatBotStore } from "@/store";
+import ChatBotModal from "../ChatBotModal";
+import axios from "axios";
+import toast from "react-hot-toast";
+import ModifyModal from "../ModifyModal";
 
 interface ExperienceItem {
   companyName: string;
@@ -59,6 +63,12 @@ const ExperienceForm = ({
     experience: [],
   });
   const update = useMutation(api.resume.updateExperience);
+  const [showExperienceModal, setShowExperienceModal] = useState(false);
+  const [showModifyModal, setShowModifyModal] = useState(false);
+  const [isGeneratingExperience, setIsGeneratingExperience] = useState(false);
+  const [generatedExperiences, setGeneratedExperiences] = useState<any[]>([]);
+  const [targetIndex, setTargetIndex] = useState<number | null>(null);
+
   const { pushText, pushOptions } = useChatBotStore((state) => state);
 
   const firstTimeRef = useRef(false);
@@ -140,6 +150,64 @@ const ExperienceForm = ({
     (currentYear - i).toString()
   );
 
+  const closeModal = () => {
+    setShowExperienceModal(false);
+    setTargetIndex(null);
+  };
+
+  const closeModifyModal = () => {
+    setShowModifyModal(false);
+  };
+
+  const generateExperience = async (index: number) => {
+    setShowModifyModal(true);
+    setTargetIndex(index);
+  };
+
+  const handleGenerateFromRough = async (roughExperience: string) => {
+    if (!roughExperience.trim() || targetIndex === null) return;
+
+    setShowModifyModal(false);
+    setShowExperienceModal(true);
+    setIsGeneratingExperience(true);
+
+    try {
+      const response = await axios.post("/api/generateExperience", {
+        desiredRole: useChatBotStore.getState().onboardingData.desiredRole,
+        experienceLevel:
+          useChatBotStore.getState().onboardingData.experienceLevel,
+        role: experience.experience[targetIndex].role,
+        company: experience.experience[targetIndex].companyName,
+        roughExperience: roughExperience,
+      });
+      console.log(response.data.generatedExperiences);
+      setGeneratedExperiences(response.data.generatedExperiences);
+      setIsGeneratingExperience(false);
+    } catch (error) {
+      console.log(error);
+      setIsGeneratingExperience(false);
+      toast.error("Failed to generate experiences. Please try again.");
+    }
+  };
+
+  const selectExperience = (experienceText: string, title: string) => {
+    if (targetIndex !== null) {
+      handleChange(targetIndex)("jobDescription", experienceText);
+      closeModal();
+      pushText(
+        `✅ "${title}" experience has been added to your resume!`,
+        "bot"
+      );
+    }
+  };
+
+  const noReplies = [
+    "No problem. Writing it in your own words adds a personal touch. 😊",
+    "That's totally fine. You know your experience best!",
+    "Got it! Let me know if you need help polishing it later.",
+    "Fair enough! I'm here if you ever change your mind. 😉",
+  ];
+
   return (
     <>
       {experience.experience.map((exp, index) => {
@@ -158,12 +226,7 @@ const ExperienceForm = ({
                 label: "Yes, please!",
                 value: "yes",
                 onClick: () => {
-                  pushText(
-                    experienceText[
-                      Math.floor(Math.random() * experienceText.length)
-                    ],
-                    "bot"
-                  );
+                  generateExperience(index);
                 },
               },
               {
@@ -171,9 +234,7 @@ const ExperienceForm = ({
                 value: "no",
                 onClick: () => {
                   pushText(
-                    experienceText[
-                      Math.floor(Math.random() * experienceText.length)
-                    ],
+                    noReplies[Math.floor(Math.random() * noReplies.length)],
                     "bot"
                   );
                 },
@@ -267,7 +328,7 @@ const ExperienceForm = ({
               >
                 <Checkbox
                   id={`workingHere-${index}`}
-                  checked={item.workingHere}
+                  checked={exp.workingHere}
                   onCheckedChange={(checked) =>
                     handleChange(index)("workingHere", checked)
                   }
@@ -280,12 +341,13 @@ const ExperienceForm = ({
                 </Label>
               </motion.div>
             </div>
-            <div className="mt-8 w-full  md:w-[85%]">
+            <div className="mt-8 w-full md:w-[85%]">
               <QuillExpEditor
                 label="Job Description"
                 companyName={exp.companyName}
                 role={exp.role}
                 value={exp.jobDescription}
+                magicWrite={() => generateExperience(index)}
                 onChange={(content) =>
                   handleChange(index)("jobDescription", content)
                 }
@@ -307,6 +369,30 @@ const ExperienceForm = ({
           Add Another Experience
         </Button>
       </motion.div>
+
+      <AnimatePresence>
+        {showExperienceModal && (
+          <ChatBotModal
+            isGenerating={isGeneratingExperience}
+            generatedContent={generatedExperiences}
+            selectOption={selectExperience}
+            closeModal={closeModal}
+            title="Experience Options"
+            loadingText="Crafting experience options..."
+          />
+        )}
+        {showModifyModal && (
+          <ModifyModal
+            heading="Experience Generator"
+            text="Write a rough description of your experience, and we'll generate professional versions for you."
+            label="Write your experience roughly"
+            buttonText="Generate Professional Experience"
+            closeModal={closeModifyModal}
+            placeholder="E.g., I worked on building websites for 3 years, handling mostly frontend work with React"
+            onGenerate={handleGenerateFromRough}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

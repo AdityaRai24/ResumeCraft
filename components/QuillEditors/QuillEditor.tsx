@@ -7,6 +7,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { poppinsFont } from "@/lib/font";
 import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+import { WandSparkles } from "lucide-react";
 
 const QuillEditor = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -17,6 +19,7 @@ interface QuillEditorComponentProps {
   currentFormat?: string;
   placeholder?: string;
   onFocus?: () => void;
+  magicWrite?: () => void;
 }
 
 export default function QuillEditorComponent({
@@ -25,10 +28,9 @@ export default function QuillEditorComponent({
   label,
   currentFormat,
   onFocus,
-  placeholder
+  placeholder,
+  magicWrite,
 }: QuillEditorComponentProps) {
-
-
   const quillModules = {
     toolbar: [
       ["bold", "italic", "underline"],
@@ -36,8 +38,15 @@ export default function QuillEditorComponent({
       ["link"],
     ],
   };
-  
-  const quillFormats = ["bold", "italic", "underline", "list", "bullet","link"];
+
+  const quillFormats = [
+    "bold",
+    "italic",
+    "underline",
+    "list",
+    "bullet",
+    "link",
+  ];
 
   return (
     <motion.div
@@ -45,7 +54,15 @@ export default function QuillEditorComponent({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
     >
-      <Label className="text-base font-normal">{label}</Label>
+      <div className="flex items-center justify-between">
+        <Label className="text-md">{label}</Label>
+
+        <div className="flex gap-2">
+          <Button type="button" onClick={magicWrite}>
+            Magic Write <WandSparkles className="ml-2" size={14} />
+          </Button>
+        </div>
+      </div>
       <QuillEditor
         value={value}
         onChange={onChange}

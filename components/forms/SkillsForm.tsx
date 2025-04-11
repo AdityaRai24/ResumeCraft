@@ -12,7 +12,12 @@ import { api } from "@/convex/_generated/api";
 import QuillEditorComponent from "../QuillEditors/QuillEditor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "../ui/button";
-
+import { useChatBotStore } from "@/store";
+import { AnimatePresence } from "framer-motion";
+import ModifyModal from "../ModifyModal";
+import axios from "axios";
+import toast from "react-hot-toast";
+import ChatBotModal from "../ChatBotModal";
 const SkillsForm = ({
   item,
   resumeId,
@@ -26,6 +31,17 @@ const SkillsForm = ({
   const [currentFormat, setCurrentFormat] = useState("paragraph");
   const pendingChangesRef = useRef(false);
   const update = useMutation(api.resume.updateSkills);
+
+  const { pushText, pushOptions } = useChatBotStore((state) => state);
+  const { onboardingData } = useChatBotStore((state) => state);
+  const [showModifyModal, setShowModifyModal] = useState(false);
+  const [showSkillsModal, setShowSkillsModal] = useState(false);
+  const [isGeneratingSkills, setIsGeneratingSkills] = useState(false);
+  const [generatedSkills, setGeneratedSkills] = useState<string>("");
+
+  const firstTimeRef = useRef(false);
+
+  const onBoardData = useChatBotStore((state) => state.onboardingData);
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
@@ -135,12 +151,84 @@ const SkillsForm = ({
     setSkillDescription(combinedDescription.trim()); // Set the updated description
   };
 
+  const noSkillReplies = [
+    "All good! You probably already have a clear idea of your skills. 💪",
+    "Got it! Feel free to refer to the suggestions below if you need inspiration later.",
+    "Sounds good! Just make sure your top strengths shine through.",
+    "No worries! Your expertise speaks for itself. 😉",
+  ];
+
+  const generateSkills = () => {
+    setShowModifyModal(true);
+  };
+
+  const handleGenerateFromRough = async (roughSkills: string) => {
+    if (!roughSkills.trim()) return;
+
+    setShowModifyModal(false);
+    setShowSkillsModal(true);
+    setIsGeneratingSkills(true);
+
+    try {
+      const response = await axios.post("/api/generateSkills", {
+
+        desiredRole: onboardingData.desiredRole,
+        experienceLevel: onboardingData.experienceLevel,
+        roughSkills: roughSkills,
+      });
+      console.log(response.data.generatedSkills);
+      setGeneratedSkills(response.data.skillsContent);
+      setIsGeneratingSkills(false);
+    } catch (error) {
+      console.log(error);
+      setIsGeneratingSkills(false);
+      toast.error("Failed to generate skills. Please try again.");
+    }
+  };
+
+  useEffect(() => {
+    if (!firstTimeRef.current) {
+      pushOptions(
+        `💡 Skills are your secret weapon! Based on your role as a ${onboardingData.desiredRole} and your experience level as a ${onboardingData.experienceLevel}, would you like some skill suggestions to stand out?.`,
+        [
+          {
+            label: "Yes, please!",
+            value: "yes",
+            onClick: () => {
+              generateSkills();
+            },
+          },
+          {
+            label: "No, thanks",
+            value: "no",
+            onClick: () => {
+              pushText(
+                noSkillReplies[
+                  Math.floor(Math.random() * noSkillReplies.length)
+                ],
+                "bot"
+              );
+            },
+          },
+        ]
+      );
+      firstTimeRef.current = true;
+    }
+  }, []);
+
+  const selectSkills = (skill: string) => {
+    setSkillDescription(skill);
+    setShowSkillsModal(false);
+    pushText(`✅ Appropriate skills has been added to your resume!`, "bot");
+  };
+
   return (
     <>
       <div className="">
         <QuillEditorComponent
           value={skillDescription}
           onChange={handleChange}
+          magicWrite={()=>generateSkills()}
           currentFormat={currentFormat}
           label="Skills Description"
           placeholder="Write Something about your skills"
@@ -226,6 +314,30 @@ const SkillsForm = ({
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showModifyModal && (
+          <ModifyModal
+            heading="Skills Generator"
+            text="Write a rough description of your skills, and we'll generate professional versions for you."
+            label="Write your skills roughly"
+            buttonText="Generate Professional Skills"
+            placeholder="React JS, cloud engineering, and mobile app development"
+            closeModal={() => setShowModifyModal(false)}
+            onGenerate={handleGenerateFromRough}
+          />
+        )}
+        {showSkillsModal && (
+          <ChatBotModal
+            loadingText="Generating skills..."
+            title="Skills"
+            selectOption={selectSkills}
+            isGenerating={isGeneratingSkills}
+            generatedContent={generatedSkills}
+            closeModal={() => setShowSkillsModal(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };

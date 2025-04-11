@@ -13,10 +13,15 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { debounce } from "lodash";
 import { Button } from "../ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import QuillProjectEditor from "../QuillEditors/QuillProject";
 import { ProjectSection } from "@/types/templateTypes";
 import { XIcon } from "lucide-react";
+import { useChatBotStore } from "@/store";
+import axios from "axios";
+import toast from "react-hot-toast";
+import ChatBotModal from "../ChatBotModal";
+import ModifyModal from "../ModifyModal";
 
 interface ProjectType {
   name: string;
@@ -46,6 +51,13 @@ const ProjectForm = ({
   const [projects, setProjects] = useState<ProjectContent>({ projects: [] });
   const pendingChangesRef = useRef(false);
   const update = useMutation(api.resume.updateProjects);
+  const firstTimeRef = useRef(false);
+  const { pushOptions, pushText } = useChatBotStore();
+  const [showModifyModal, setShowModifyModal] = useState(false);
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [isGeneratingProject, setIsGeneratingProject] = useState(false);
+  const [generatedProjects, setGeneratedProjects] = useState<any[]>([]);
+  const [targetIndex, setTargetIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
@@ -103,9 +115,94 @@ const ProjectForm = ({
     [debouncedUpdate]
   );
 
+  const generateProject = (index: number) => {
+    setShowModifyModal(true);
+    setTargetIndex(index);
+  };
+
+  const closeModal = () => {
+    setShowProjectModal(false);
+    setTargetIndex(null);
+  };
+
+  const closeModifyModal = () => {
+    setShowModifyModal(false);
+  };
+
+  const handleGenerateFromRough = async (roughProject: string) => {
+    if (!roughProject.trim() || targetIndex === null) return;
+
+    setShowModifyModal(false);
+    setShowProjectModal(true);
+    setIsGeneratingProject(true);
+
+    try {
+      const response = await axios.post("/api/generateProject", {
+        desiredRole: useChatBotStore.getState().onboardingData.desiredRole,
+        experienceLevel: useChatBotStore.getState().onboardingData.experienceLevel,
+        projectName: projects.projects[targetIndex].name,
+        roughProject: roughProject,
+      });
+      setGeneratedProjects(response.data.generatedProjects);
+      setIsGeneratingProject(false);
+    } catch (error) {
+      console.log(error);
+      setIsGeneratingProject(false);
+      toast.error("Failed to generate project descriptions. Please try again.");
+    }
+  };
+
+  const selectProject = (projectText: string, title: string) => {
+    if (targetIndex !== null) {
+      handleChange(targetIndex)(projectText, "description");
+      closeModal();
+      pushText(`✅ "${title}" project description has been added to your resume!`, "bot");
+    }
+  };
+
+  const noReplies = [
+    "No problem. Writing it in your own words adds a personal touch. 😊",
+    "That's totally fine. You know your project best!",
+    "Got it! Let me know if you need help polishing it later.",
+    "Fair enough! I'm here if you ever change your mind. 😉",
+  ];
+
   return (
     <>
       {projects?.projects.map((item, index) => {
+        if (item.name && !firstTimeRef.current) {
+          const projectText = [
+            "Nice! Let's turn your project into something impressive on your resume. Want help writing the project description?",
+            `Got it — you've worked on ${item.name}! Want me to help generate a description for this project?`,
+            `Awesome! Ready to craft a powerful description for your ${item.name} project?`,
+            `Looks great so far. Want help turning your ${item.name} project into a standout description?`,
+          ];
+
+          pushOptions(
+            projectText[Math.floor(Math.random() * projectText.length)],
+            [
+              {
+                label: "Yes, please!",
+                value: "yes",
+                onClick: () => {
+                  generateProject(index);
+                },
+              },
+              {
+                label: "No, thanks",
+                value: "no",
+                onClick: () => {
+                  pushText(
+                    noReplies[Math.floor(Math.random() * noReplies.length)],
+                    "bot"
+                  );
+                },
+              },
+            ]
+          );
+          firstTimeRef.current = true;
+        }
+
         return (
           <div key={index}>
             <form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow-xs shadow-primary">
@@ -144,6 +241,7 @@ const ProjectForm = ({
                   label="Project Description"
                   value={item.description}
                   projectTitle={item.name}
+                  magicWrite={() => generateProject(index)}
                   onChange={(content) =>
                     handleChange(index)(content, "description")
                   }
@@ -166,6 +264,30 @@ const ProjectForm = ({
           </div>
         );
       })}
+
+      <AnimatePresence>
+        {showProjectModal && (
+          <ChatBotModal
+            isGenerating={isGeneratingProject}
+            generatedContent={generatedProjects}
+            selectOption={selectProject}
+            closeModal={closeModal}
+            title="Project Description Options"
+            loadingText="Crafting project description options..."
+          />
+        )}
+        {showModifyModal && (
+          <ModifyModal
+            heading="Project Description Generator"
+            text="Write a rough description of your project, and we'll generate professional versions for you."
+            label="Write your project description roughly"
+            buttonText="Generate Professional Description"
+            closeModal={closeModifyModal}
+            placeholder="E.g., I built a full-stack e-commerce website with React and Node.js"
+            onGenerate={handleGenerateFromRough}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };
