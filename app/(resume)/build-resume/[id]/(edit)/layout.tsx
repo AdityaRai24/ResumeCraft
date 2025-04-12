@@ -179,15 +179,18 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
         <MobilePreviewButton item={resume as ResumeTemplate} />
       </div>
       <div className="flex h-screen w-full">
-        <div className="flex flex-1 overflow-hidden">
-          <div className="bg-white hidden md:flex shrink-0">
-            <Chatbot />
-            {/* <VerticalTimeline /> */}
+        <div className="flex flex-1 h-screen overflow-hidden">
+          {/* Left sidebar - VerticalTimeline */}
+          <div className="bg-primary md:block w-20 flex items-center justify-center shrink-0 border-r border-gray-200">
+            <VerticalTimeline />
           </div>
-
+          <div className="bg-white hidden md:block shrink-0 border-l  border-gray-200">
+            <Chatbot />
+          </div>
+          {/* Main content area */}
           <div
             className={cn(
-              "grow overflow-x-hidden z-1! md:max-w-[90%] no-scrollbar overflow-y-auto",
+              "grow overflow-y-auto overflow-x-hidden no-scrollbar max-w-[80%] mx-auto",
               geologicaFont.className
             )}
           >
@@ -208,8 +211,9 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
               </motion.div>
             )}
           </div>
-        </div>
 
+          {/* Right sidebar - Chatbot */}
+        </div>
         <div className="hidden md:flex w-[30vw]">
           <LiveResumePreview />
         </div>

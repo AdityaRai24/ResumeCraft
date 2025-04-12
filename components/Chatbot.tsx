@@ -6,6 +6,8 @@ import {
   Sparkles,
   User,
   BriefcaseBusiness,
+  Bot,
+  MessageSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { OptionMessage, TextMessage, useChatBotStore } from "@/store";
@@ -44,8 +46,9 @@ const Chatbot = () => {
   const [isInitialized, setIsInitialized] = useState(false);
   const [needsUserInfo, setNeedsUserInfo] = useState(false);
 
-  const {onboardingData, setOnBoardingData} = useChatBotStore((state) => state);
-
+  const { onboardingData, setOnBoardingData } = useChatBotStore(
+    (state) => state
+  );
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -93,7 +96,7 @@ const Chatbot = () => {
         pushMessage({
           userId: user.id,
           resumeId: resumeId as Id<"resumes">,
-          message: cleanMessage,
+          message: cleanMessage as any,
         });
       });
     }
@@ -107,7 +110,7 @@ const Chatbot = () => {
     setOnBoardingData({ ...onboardingData, experienceLevel: level });
   };
 
-  console.log(onboardingData)
+  console.log(onboardingData);
 
   const submitUserInfo = async () => {
     if (chatBotData && resumeId && user) {
@@ -240,8 +243,8 @@ I'm here to guide you through building a job-winning resume – step by step.`;
   };
 
   const sidebarVariants = {
-    open: { width: "320px", opacity: 1, x: 0 },
-    closed: { width: 0, opacity: 0, x: "-100%" },
+    open: { width: "350px", opacity: 1, x: 0 },
+    closed: { width: 0, opacity: 0, x: "-0%" },
   };
 
   const toggleButtonVariants = {
@@ -312,7 +315,7 @@ I'm here to guide you through building a job-winning resume – step by step.`;
             animate="visible"
             exit="hidden"
             variants={toggleButtonVariants}
-            className="absolute top-4 left-4 z-10 bg-white p-2 rounded-full shadow-md cursor-pointer"
+            className="absolute top-4 left-4 z-10 bg-white p-3 rounded-full shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300"
             onClick={toggleSidebar}
           >
             <ArrowRightToLine className="text-primary" />
@@ -325,7 +328,7 @@ I'm here to guide you through building a job-winning resume – step by step.`;
         variants={sidebarVariants}
         initial="open"
         transition={{ type: "spring", stiffness: 350, damping: 30 }}
-        className="border-r border-gray-200 overflow-hidden"
+        className="border-r border-gray-200 overflow-hidden shadow-lg"
       >
         <div className="flex flex-col h-full">
           {/* Header */}
@@ -335,54 +338,57 @@ I'm here to guide you through building a job-winning resume – step by step.`;
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <motion.div
                 initial={{ rotate: -30, opacity: 0 }}
                 animate={{ rotate: 0, opacity: 1 }}
                 transition={{ delay: 0.4, type: "spring" }}
+                className="bg-white/20 p-2 rounded-full"
               >
-                <Sparkles size={18} />
+                <Bot size={18} />
               </motion.div>
-              <h2 className="text-base font-medium">AI Resume Assistant</h2>
+              <h2 className="text-base font-semibold">AI Resume Assistant</h2>
             </div>
             <motion.div
-              className="cursor-pointer"
+              className="cursor-pointer bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
               onClick={toggleSidebar}
             >
-              <ArrowLeftToLine />
+              <ArrowLeftToLine size={16} />
             </motion.div>
           </motion.div>
 
-          <motion.p
-            className="text-center w-full bg-white text-sm text-gray-500 py-2"
+          <motion.div
+            className="flex items-center justify-center w-full bg-gradient-to-r from-primary/5 to-primary/10 text-sm text-gray-600 py-2 font-medium"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
+            <Sparkles size={14} className="mr-2 text-primary" />
             Your personal resume coach
-          </motion.p>
+          </motion.div>
 
           {/* Message Container */}
-          <div className="flex-1 w-full bg-white p-4 overflow-y-auto">
+          <div className="flex-1 w-full bg-white p-4 overflow-y-auto bg-gradient-to-b from-gray-50 to-white">
             {/* User Onboarding Form */}
             {needsUserInfo && (
               <motion.div
                 variants={formVariants}
                 initial="hidden"
                 animate="visible"
-                className="bg-gray-50 p-4 rounded-lg shadow-md mb-4 border border-gray-200"
+                className="bg-white p-5 rounded-xl shadow-md mb-6 border border-gray-200"
               >
-                <h3 className="text-primary text-sm font-medium mb-3 flex items-center gap-2">
-                  <User size={16} />
+                <h3 className="text-primary text-sm font-semibold mb-3 flex items-center gap-2">
+                  <User size={16} className="text-primary" />
                   Please tell me about yourself
                 </h3>
-                <p className="text-xs">
-                  This will help me assist you better with your resume.
+                <p className="text-xs text-gray-600">
+                  This information will help me personalize your resume
+                  assistance.
                 </p>
 
-                <div className="space-y-4 mt-4">
+                <div className="space-y-4 mt-5">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       What is your desired job role?
@@ -390,7 +396,7 @@ I'm here to guide you through building a job-winning resume – step by step.`;
                     <select
                       value={onboardingData.desiredRole}
                       onChange={(e) => handleRoleSelect(e.target.value)}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm bg-white transition-all duration-200"
                     >
                       <option value="" disabled>
                         Select a role
@@ -415,7 +421,7 @@ I'm here to guide you through building a job-winning resume – step by step.`;
                     <select
                       value={onboardingData.experienceLevel}
                       onChange={(e) => handleExperienceSelect(e.target.value)}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm bg-white transition-all duration-200"
                     >
                       <option value="" disabled>
                         Select experience level
@@ -433,7 +439,7 @@ I'm here to guide you through building a job-winning resume – step by step.`;
                       !onboardingData.desiredRole ||
                       !onboardingData.experienceLevel
                     }
-                    className="w-full mt-2 flex items-center justify-center gap-2"
+                    className="w-full mt-3 flex items-center justify-center gap-2 py-2 shadow-sm hover:shadow-md transition-shadow duration-200"
                   >
                     <BriefcaseBusiness size={16} />
                     <span>Submit Profile</span>
@@ -455,10 +461,10 @@ I'm here to guide you through building a job-winning resume – step by step.`;
                     }`}
                   >
                     <div
-                      className={`p-4 rounded-lg text-sm shadow-sm ${
+                      className={`p-4 rounded-xl text-sm ${
                         msg.sender === "user"
-                          ? "bg-primary text-white"
-                          : "bg-gray-100 text-gray-800"
+                          ? "bg-primary text-white shadow-md"
+                          : "bg-gray-50 text-gray-800 border border-gray-100 shadow-sm"
                       }`}
                     >
                       {msg.isTyping ? (
@@ -475,13 +481,13 @@ I'm here to guide you through building a job-winning resume – step by step.`;
                             {msg.content.message}
                           </motion.div>
                           {msg.content.type === "options" && (
-                            <motion.div className="mt-3 text-wrap max-w-[95%]  flex flex-wrap gap-2">
+                            <motion.div className="mt-4 text-wrap max-w-[95%] flex flex-wrap gap-2">
                               {msg.content.options.map((option) => (
                                 <Button
                                   size={"sm"}
                                   variant={"outline"}
                                   onClick={option.onClick}
-                                  className="mb-1 hover:bg-primary hover:text-white text-xs text-black border border-primary p-2 rounded-lg"
+                                  className="mb-1 hover:bg-primary hover:text-white text-xs font-medium text-primary border border-primary p-2 rounded-lg transition-colors duration-200"
                                   key={option.value}
                                 >
                                   {option.label}
@@ -492,8 +498,18 @@ I'm here to guide you through building a job-winning resume – step by step.`;
                         </>
                       )}
                     </div>
-                    <div className="text-xs text-gray-500 mt-1 ml-1">
-                      {msg.sender === "bot" ? "AI Assistant" : "You"}
+                    <div className="text-xs text-gray-500 mt-1 ml-1 flex items-center gap-1">
+                      {msg.sender === "bot" ? (
+                        <>
+                          <Bot size={12} className="text-primary" />
+                          <span>AI Assistant</span>
+                        </>
+                      ) : (
+                        <>
+                          <User size={12} className="text-primary" />
+                          <span>You</span>
+                        </>
+                      )}
                     </div>
                   </motion.div>
                 );
@@ -504,29 +520,36 @@ I'm here to guide you through building a job-winning resume – step by step.`;
 
           {/* Input area */}
           <motion.div
-            className="p-4 border-t border-gray-200 flex gap-2 bg-white"
+            className="p-4 border-t border-gray-200 flex gap-2 bg-white shadow-md"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <motion.input
-              ref={inputRef}
-              type="text"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message here..."
-              className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-              whileFocus={{
-                boxShadow: "0 0 0 2px rgba(var(--color-primary), 0.3)",
-              }}
-            />
+            <motion.div className="flex-1 relative">
+              <motion.input
+                ref={inputRef}
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your message here..."
+                className="w-full px-4 py-3 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm transition-all duration-200"
+                whileFocus={{
+                  boxShadow: "0 0 0 2px rgba(var(--color-primary), 0.2)",
+                }}
+                disabled={needsUserInfo}
+              />
+              <MessageSquare
+                size={16}
+                className="absolute left-3 top-3.5 text-gray-400"
+              />
+            </motion.div>
             <motion.button
               onClick={handleSend}
               disabled={message.trim() === "" || needsUserInfo}
-              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 flex items-center gap-1"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-200"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <Send size={16} />

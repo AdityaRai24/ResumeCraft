@@ -84,7 +84,7 @@ const Timeline = () => {
     return (
       <div className={`relative ${isMobile ? "mx-6" : "mb-16"} `}>
         <div
-          className={`absolute ${isMobile ? "top-1/2 -translate-y-1/2" : "left-1/2 -translate-x-1/2 -translate-y-1/2"} w-9 h-9 rounded-full flex items-center justify-center`}
+          className={`absolute  ${isMobile ? "top-1/2 -translate-y-1/2" : "left-1/2 -translate-x-1/2 -translate-y-1/2"} w-9 h-9 rounded-full flex items-center justify-center`}
         >
           <TooltipProvider delayDuration={0}>
             <Tooltip>
@@ -109,11 +109,11 @@ const Timeline = () => {
                   </div>
                 </Link>
               </TooltipTrigger>
-              <TooltipContent 
-                side="top" 
+              <TooltipContent
+                side="top"
                 sideOffset={5}
                 className=" bg-white shadow-!z-[100000] lg border border-gray-200"
-                style={{ position: 'relative' }}
+                style={{ position: "relative" }}
               >
                 <p className="capitalize">{section}</p>
               </TooltipContent>
@@ -130,7 +130,7 @@ const Timeline = () => {
       className={`${
         isMobile
           ? "w-full h-full sticky top-0 bg-background"
-          : "h-full fixed pl-10"
+          : "h-full fixed pl-2"
       } flex flex-col items-center justify-center`}
       style={{ zIndex: 50 }}
     >

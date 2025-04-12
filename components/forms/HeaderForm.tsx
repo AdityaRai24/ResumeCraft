@@ -400,7 +400,7 @@ const HeaderForm = ({
           {header?.socialLinks?.map((link, index) => (
             <div
               key={link.type}
-              className="mb-4 flex flex-col md:flex-row flex-wrap items-start justify-start md:items-center gap-6"
+              className="mb-4 flex flex-col md:flex-row flex-wrap  items-start justify-start md:items-center gap-6"
             >
               <InputField
                 label={link.type}
@@ -431,7 +431,7 @@ const HeaderForm = ({
           ))}
         </div>
 
-        <div className="grid grid-cols-2 md:flex items-center justify-start gap-4">
+        <div className="grid grid-cols-2 md:flex flex-wrap items-center justify-start gap-4">
           {socialOptions.map((option) => (
             <span
               key={option.value}
@@ -453,6 +453,7 @@ const HeaderForm = ({
               label="Summary"
               placeholder="Write something about yourself..."
               value={header.summary}
+              magicWrite={() => generateSummary()}
               onFocus={() => summaryFocus()}
               onChange={(content) => handleChange(content)}
             />
