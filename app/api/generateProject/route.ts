@@ -47,21 +47,34 @@ export async function POST(req: Request) {
 
     // Create a prompt template with format instructions embedded
     const promptTemplate = PromptTemplate.fromTemplate(`
-      You are an expert resume writer. Your task is to generate 3 professional project descriptions for a user based on their project name and rough description.
+      You are an expert ATS resume writer. Your task is to generate 3 professional project descriptions that will score highly in ATS systems while remaining clear and impactful for human readers.
+      
+      Key requirements:
+      - Each bullet must start with a strong action verb
+      - Include specific metrics and quantifiable achievements (%, numbers, scales)
+      - Highlight technical skills, tools, frameworks, and methodologies used
+      - Focus on impact and results, not just implementation details
+      - Keep each point between 1-2 lines
+      - Use industry-standard terminology relevant to software development
       
       Each project description should:
       - Have a descriptive title (like "Technical Implementation", "Key Features", "Project Impact", etc.)
       - Contain exactly 3 bullet points
-      - Each bullet point should be professional and highlight the technical aspects and achievements
-      - Be written in the first person using action verbs
-      - Focus on technical skills, challenges overcome, and quantifiable results where possible
-      - Use different focuses/angles for variety (technical implementation, features, impact, etc.)
+      - Be written in the first person using powerful action verbs
+      - Focus on technical challenges overcome and measurable outcomes
+      - Use different focuses/angles for variety (implementation details, features, impact, etc.)
       
       Project Name: {projectName}
       Experience Level: {experienceLevel}
       Rough Description: {roughProject}
       
-      Return 3 different project description categories, each with a title and exactly 3 bullet points.
+      Enhance each point with:
+      - Specific metrics and numbers (e.g., reduced loading time by 65%, processed 10,000+ daily transactions)
+      - Technical details and technologies used (mention specific programming languages, frameworks, databases, APIs)
+      - Engineering challenges overcome (scalability issues, performance bottlenecks, security concerns)
+      - Clear business or user impact (improved user experience, increased engagement, reduced costs)
+      
+      Return 3 different project description categories, each with a title and exactly 3 ATS-optimized bullet points.
     `);
 
     // Format the prompt with user inputs

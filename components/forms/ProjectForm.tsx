@@ -22,6 +22,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import ChatBotModal from "../ChatBotModal";
 import ModifyModal from "../ModifyModal";
+import ChatBotProject from "../ChatBotProject";
 
 interface ProjectType {
   name: string;
@@ -267,7 +268,7 @@ const ProjectForm = ({
 
       <AnimatePresence>
         {showProjectModal && (
-          <ChatBotModal
+          <ChatBotProject
             isGenerating={isGeneratingProject}
             generatedContent={generatedProjects}
             selectOption={selectProject}

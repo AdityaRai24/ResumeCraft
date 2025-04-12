@@ -17,13 +17,14 @@ export async function POST(req: NextRequest, res: NextResponse) {
     let basePrompt = `You are an expert ATS resume writer. Your task is to write or improve job experience descriptions that will score highly in ATS systems while remaining clear and impactful for human readers.
 
 Key requirements:
+- Create exactly 3 separate bullet points
 - Each point must start with a strong action verb
 - Include specific metrics and quantifiable achievements (%, numbers, scales)
 - Highlight technical skills, tools, and methodologies used
 - Focus on impact and results, not just responsibilities
 - Keep each point between 1-2 lines
 - Use industry-standard terminology
-- Return ONLY a JSON array of strings with no other text
+- Return ONLY a JSON array with exactly 3 strings (one for each bullet point)
 - No text before or after the array
 
 Example response format:
@@ -35,9 +36,9 @@ Example response format:
 
     if (!jobDescription) {
       // Handle case with no job description
-      specificPrompt = `Generate 3 ATS-optimized bullet points ${role ? `for the role "${role}"` : ""}${
+      specificPrompt = `Generate exactly 3 ATS-optimized bullet points ${role ? `for the role "${role}"` : ""}${
         role && companyName ? " at " : ""
-      }${companyName ? `"${companyName}"` : ""} that showcase impactful achievements and responsibilities. Return only the JSON array with no other text.
+      }${companyName ? `"${companyName}"` : ""} that showcase impactful achievements and responsibilities. Return only a JSON array with exactly 3 strings.
 
 Consider:
 - Technical skills and industry-standard tools
@@ -48,7 +49,7 @@ Consider:
       // Handle array of bullet points
       specificPrompt = `Rewrite the following ${jobDescription.length} experience points${role ? ` for "${role}"` : ""}${
         role && companyName ? " at " : ""
-      }${companyName ? `"${companyName}"` : ""} to be more ATS-optimized while preserving the core achievements. Return only the JSON array with no other text.
+      }${companyName ? `"${companyName}"` : ""} to be more ATS-optimized while preserving the core achievements. Return only a JSON array with exactly 3 strings.
 
 Original points:
 ${jobDescription.map((point: any, index: number) => `${index + 1}. ${point}`).join("\n")}
@@ -62,7 +63,7 @@ Enhance each point with:
       // Handle plain text job description
       specificPrompt = `Transform this job description${role ? ` for "${role}"` : ""}${
         role && companyName ? " at " : ""
-      }${companyName ? `"${companyName}"` : ""} into 3 ATS-optimized bullet points. Return only the JSON array with no other text.
+      }${companyName ? `"${companyName}"` : ""} into exactly 3 ATS-optimized bullet points. Return only a JSON array with exactly 3 strings.
 
 Original description:
 ${jobDescription}
@@ -81,21 +82,43 @@ Extract and enhance the key achievements with:
       .text()
       .trim()
       .replace(/^```json\s*/, "")
-      .replace(/```$/, "").trim();
+      .replace(/```$/, "")
+      .trim();
 
     // Ensure the response starts with [ and ends with ]
     if (!text.startsWith("[") || !text.endsWith("]")) {
       throw new Error("Invalid response format from API");
     }
 
-    const textArray = parseStringToArray(text);
+    // Parse the result as a JSON array of strings
+    let textArray;
+    try {
+      textArray = JSON.parse(text);
+      // Validate the parsed array structure (should be array of strings with exactly 3 items)
+      if (
+        !Array.isArray(textArray) ||
+        textArray.length !== 3 ||
+        !textArray.every((item) => typeof item === "string")
+      ) {
+        throw new Error("Invalid array structure");
+      }
+    } catch (e) {
+      // Fall back to the existing parsing method
+      textArray = parseStringToArray(text);
 
-    // Validate the parsed array
-    if (!textArray || textArray.length === 0) {
-      throw new Error("Failed to parse response into array");
+      // Ensure we have exactly 3 items
+      if (!textArray || textArray.length < 3) {
+        throw new Error("Failed to parse response into valid array structure");
+      }
+
+      // Take exactly 3 items
+      textArray = textArray.slice(0, 3);
     }
 
-    return NextResponse.json({ textArray }, { status: 200 });
+    // Format each item as an HTML list item for dangerouslySetInnerHTML
+    const formattedArray = textArray.map((item) => `<li>${item}</li>`);
+
+    return NextResponse.json({ textArray: formattedArray }, { status: 200 });
   } catch (error) {
     console.error("Error in route handler:", error);
     return NextResponse.json(

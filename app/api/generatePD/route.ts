@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 function parseStringToArray(str: string) {
   // Find the actual array portion using regex
   const arrayMatch = str.match(/\[([\s\S]*)\]/);
-  
+
   if (!arrayMatch) {
     throw new Error("No valid array found in response");
   }
@@ -16,20 +16,22 @@ function parseStringToArray(str: string) {
   let items = arrayContent.split(/,\s*(?:\r\n|\n|$)/);
 
   // Clean up each item
-  items = items.map(item => {
+  items = items.map((item) => {
     return item
       .trim()
-      .replace(/^["']|["']$/g, '')  // Remove quotes at start/end
-      .replace(/\\"/g, '"')         // Handle escaped quotes
+      .replace(/^["']|["']$/g, "") // Remove quotes at start/end
+      .replace(/\\"/g, '"') // Handle escaped quotes
       .trim();
   });
 
   // Filter out any empty items
-  return items.filter(item => item.length > 0);
+  return items.filter((item) => item.length > 0);
 }
 
 function isArrayOfStrings(value: any): boolean {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -37,7 +39,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const { projectTitle, projectDescription } = await req.json();
-
 
     let basePrompt = `You are an expert ATS resume writer. Your task is to write or improve project descriptions that will score highly in ATS systems while remaining clear and impactful for human readers.
 
@@ -48,6 +49,7 @@ Key requirements:
 - Focus on impact and results, not just responsibilities
 - Keep each point between 1-2 lines
 - Use industry-standard terminology
+- Generate exactly 3 bullet points
 - Format response as a JSON-parseable array
 - Don't include any text before or after the array
 
@@ -61,9 +63,9 @@ Example format:
     let specificPrompt = "";
 
     if (projectTitle && !projectDescription) {
-      specificPrompt = `Based on the project title "${projectTitle}", generate 3 ATS-optimized bullet points that showcase the likely technical achievements, challenges overcome, and business impact of this project.`;
+      specificPrompt = `Based on the project title "${projectTitle}", generate exactly 3 ATS-optimized bullet points that showcase the likely technical achievements, challenges overcome, and business impact of this project.`;
     } else if (projectTitle && isArrayOfStrings(projectDescription)) {
-      specificPrompt = `Rewrite the following ${projectDescription.length} project points for "${projectTitle}" to be more ATS-optimized while preserving the core achievements:
+      specificPrompt = `Rewrite the following ${projectDescription.length} project points for "${projectTitle}" to be more ATS-optimized while preserving the core achievements. Return exactly 3 bullet points.
 
 Original points:
 ${projectDescription.map((point: any, index: number) => `${index + 1}. ${point}`).join("\n")}
@@ -74,7 +76,7 @@ Enhance each point with:
 - Clear business impact
 - Strong action verbs`;
     } else if (projectTitle && projectDescription) {
-      specificPrompt = `Transform this project description for "${projectTitle}" into 3 ATS-optimized bullet points:
+      specificPrompt = `Transform this project description for "${projectTitle}" into exactly 3 ATS-optimized bullet points:
 
 Original description:
 ${projectDescription}
@@ -96,22 +98,48 @@ Extract and enhance the key achievements with:
     let text = response.text();
 
     // Validate that the response contains an array
-    if (!text.includes('[') || !text.includes(']')) {
+    if (!text.includes("[") || !text.includes("]")) {
       throw new Error("Invalid response format from API");
     }
 
-    const textArray = parseStringToArray(text);
+    const parsedArray = parseStringToArray(text);
 
     // Validate the parsed array
-    if (!textArray || textArray.length === 0) {
+    if (!parsedArray || parsedArray.length === 0) {
       throw new Error("Failed to parse response into array");
     }
 
-    return NextResponse.json({ textArray }, { status: 200 });
-  } catch (error) {
-    console.error('Error in route handler:', error);
+    // Take exactly 3 items if there are more
+    const textArray = parsedArray.slice(0, 3);
+
+    // Ensure we have exactly 3 items by adding generic ones if needed
+    while (textArray.length < 3) {
+      textArray.push(
+        `Developed key features for "${projectTitle}" resulting in improved performance and user satisfaction`
+      );
+    }
+
+    // Create HTML-formatted description with bullet points
+    const formattedDescription = `<ul>
+  ${textArray.map((item) => `<li>${item}</li>`).join("\n  ")}
+</ul>`;
+
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'An unexpected error occurred' },
+      {
+        textArray,
+        formattedDescription,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error in route handler:", error);
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
+      },
       { status: 500 }
     );
   }

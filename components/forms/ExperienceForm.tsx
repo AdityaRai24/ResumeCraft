@@ -22,6 +22,7 @@ import ChatBotModal from "../ChatBotModal";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ModifyModal from "../ModifyModal";
+import { jobDescription } from "@/lib/utils";
 
 interface ExperienceItem {
   companyName: string;
@@ -172,16 +173,13 @@ const ExperienceForm = ({
     setIsGeneratingExperience(true);
 
     try {
-      const response = await axios.post("/api/generateExperience", {
-        desiredRole: useChatBotStore.getState().onboardingData.desiredRole,
-        experienceLevel:
-          useChatBotStore.getState().onboardingData.experienceLevel,
-        role: experience.experience[targetIndex].role,
-        company: experience.experience[targetIndex].companyName,
-        roughExperience: roughExperience,
+      const response = await axios.post("/api/generateJD", {
+        role: useChatBotStore.getState().onboardingData.desiredRole,
+        companyName: experience.experience[targetIndex].companyName,
+        jobDescription: roughExperience,
       });
-      console.log(response.data.generatedExperiences);
-      setGeneratedExperiences(response.data.generatedExperiences);
+      console.log(response.data);
+      setGeneratedExperiences(response.data.textArray);
       setIsGeneratingExperience(false);
     } catch (error) {
       console.log(error);
@@ -190,17 +188,18 @@ const ExperienceForm = ({
     }
   };
 
-  const selectExperience = (experienceText: string, title: string) => {
+  const selectExperience = (generatedContent: any) => {
     if (targetIndex !== null) {
-      handleChange(targetIndex)("jobDescription", experienceText);
+      // Since the content is already formatted as <li> elements, we just need to wrap it in a <ul>
+      const htmlContent = `<ul>${generatedContent.join("")}</ul>`;
+      handleChange(targetIndex)("jobDescription", htmlContent);
       closeModal();
       pushText(
-        `✅ "${title}" experience has been added to your resume!`,
+        `✅ Relevant experience points have been added to your resume!`,
         "bot"
       );
     }
   };
-
   const noReplies = [
     "No problem. Writing it in your own words adds a personal touch. 😊",
     "That's totally fine. You know your experience best!",
