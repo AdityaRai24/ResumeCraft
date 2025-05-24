@@ -100,7 +100,7 @@ const Chatbot = () => {
         });
       });
     }
-  }, [storeMessages, user, resumeId, pushMessage]);
+  }, [storeMessages, user, resumeId, pushMessage, lastProcessedMessageCount]);
 
   const handleRoleSelect = (role: string) => {
     setOnBoardingData({ ...onboardingData, desiredRole: role });
@@ -166,7 +166,7 @@ I'm here to guide you through building a job-winning resume – step by step.`;
 
       setIsInitialized(true);
     }
-  }, [chatBotData, pushText, resetMessages, fillMessages, isInitialized]);
+  }, [chatBotData, pushText, resetMessages, fillMessages, isInitialized,user?.firstName]);
 
   useEffect(() => {
     if (storeMessages.length > lastProcessedMessageCount) {

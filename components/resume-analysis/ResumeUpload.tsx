@@ -1,19 +1,14 @@
 import React, { useState } from "react";
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+  CardContent, CardHeader,
+  CardTitle
 } from "../ui/card";
 import {
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  Loader2,
+  CheckCircle2, Loader2,
   Upload,
   Plus,
-  Eye,
+  Eye
 } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
@@ -48,10 +43,6 @@ interface JobCardProps {
   job: JobRequirement;
   isSelected: boolean;
   onSelect: (job: JobRequirement) => void;
-}
-
-interface Analysis {
-  [key: string]: any;
 }
 
 const jobDescriptions: JobRequirement[] = [
@@ -130,7 +121,6 @@ const ResumeUpload: React.FC = ({
   const [isViewDialogOpen, setIsViewDialogOpen] = useState<boolean>(false);
   const router = useRouter();
 
-  // Combined job descriptions (predefined + custom)
   const allJobs = [...jobDescriptions, ...customJobs];
 
   const handleCustomJobSubmit = () => {
@@ -153,11 +143,6 @@ const ResumeUpload: React.FC = ({
     setIsAddDialogOpen(false);
     setCustomJobDescription("");
     toast.success("Custom job description added!");
-  };
-
-  const handleViewJob = (job: JobRequirement) => {
-    setViewingJob(job);
-    setIsViewDialogOpen(true);
   };
 
   const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {

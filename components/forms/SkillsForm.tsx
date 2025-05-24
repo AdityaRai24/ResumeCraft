@@ -214,10 +214,10 @@ const SkillsForm = ({
       );
       firstTimeRef.current = true;
     }
-  }, []);
+  }, [onboardingData.desiredRole, onboardingData.experienceLevel, pushOptions, pushText, noSkillReplies]);
 
-  const selectSkills = (skill: string) => {
-    setSkillDescription(skill);
+  const selectSkills = (option: { title: string; content: string }) => {
+    setSkillDescription(option.content);
     setShowSkillsModal(false);
     pushText(`✅ Appropriate skills has been added to your resume!`, "bot");
   };

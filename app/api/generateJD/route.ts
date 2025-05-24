@@ -116,7 +116,10 @@ Extract and enhance the key achievements with:
     }
 
     // Format each item as an HTML list item for dangerouslySetInnerHTML
-    const formattedArray = textArray.map((item) => `<li>${item}</li>`);
+    // const formattedArray = textArray.map((item) => `<li>${item}</li>`);
+
+    // Return an array of objects with a 'content' field
+    const formattedArray = textArray.map((item) => ({ content: item }));
 
     return NextResponse.json({ textArray: formattedArray }, { status: 200 });
   } catch (error) {

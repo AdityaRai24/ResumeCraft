@@ -86,7 +86,7 @@ const Page = () => {
         setInitialColor(resume.globalStyles.primaryColor);
       }
     }
-  }, [resume?.globalStyles]);
+  }, [resume?.globalStyles, initialTextColor, initialColor]);
 
   const toggleSectionVisibility = (sectionId: string, secondType: string) => {
     hideSection({

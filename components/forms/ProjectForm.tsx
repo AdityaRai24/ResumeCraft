@@ -117,6 +117,12 @@ const ProjectForm = ({
   );
 
   const generateProject = (index: number) => {
+    const project = projects.projects[index];
+    if (!project.name.trim()) {
+      toast.error("Project Title is required to generate a description.");
+      return;
+    }
+
     setShowModifyModal(true);
     setTargetIndex(index);
   };

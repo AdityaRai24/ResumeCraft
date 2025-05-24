@@ -23,7 +23,7 @@ export async function POST(req: Request) {
         .describe("Array of 4 professional resume summaries with titles"),
     });
 
-    const { desiredRole, experienceLevel } = await req.json();
+    const { desiredRole, experienceLevel, userPoints } = await req.json();
 
     const model = new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_API_KEY!,
@@ -34,23 +34,38 @@ export async function POST(req: Request) {
 
     // Create a prompt template with format instructions embedded
     const promptTemplate = PromptTemplate.fromTemplate(`
-      You are an expert resume writer. Your task is to generate 4 professional summary options for a user based on their role and experience level.
+      You are an expert resume writer. Your task is to generate 4 professional summary options for a user based on their role, experience level, and personal points.
+      
+      CRITICAL REQUIREMENTS:
+      - DO NOT use placeholders like [mention specific technologies], [specific achievement], [company name], etc.
+      - Use ACTUAL specific details from the desired role and user points provided
+      - Each summary MUST incorporate actual user points and achievements mentioned
+      - Be specific and concrete - no generic placeholders
+      - If user points mention specific technologies, companies, or achievements, use them directly
+      - Fill in specific details based on the desired role when user points are general
       
       Each summary should:
       - Have a descriptive title (like "Professional", "Technical", "Leadership", "Achievement-Focused", etc.)
       - Be 2-3 lines in length
       - Be professional and tailored for the given role
       - Be written in a way that highlights strengths and impact
-      - Use different focuses/angles for variety (technical skills, leadership, achievements, etc.)
+      - Use different focuses/angles for variety (technical skills, leadership, achievements, results-driven, etc.)
+      - Incorporate the userPoints directly
+      - Use specific technologies, skills, or achievements mentioned in user points
+      - Be ready-to-use without any need for placeholder replacement
       
       Role: {role}
       Experience Level: {experience}
+      User Points: {userPoints}
+      
+      Create 4 distinct summaries that each incorporate different aspects of the user's experience and the desired role. Make sure each summary feels personalized and includes real details from the user's background. Avoid any bracketed placeholders or generic statements.
     `);
 
     // Format the prompt with user inputs and parser instructions
     const prompt = await promptTemplate.format({
       role: desiredRole,
       experience: experienceLevel,
+      userPoints: userPoints.join("\n"),
     });
 
     // When using withStructuredOutput, the response is already parsed

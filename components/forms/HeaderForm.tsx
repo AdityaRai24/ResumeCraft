@@ -81,6 +81,8 @@ const HeaderForm = ({
   );
   const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [userPoints, setUserPoints] = useState<string[]>([]);
+  const [showPointsInput, setShowPointsInput] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { pushText, pushOptions } = useChatBotStore((state) => state);
@@ -234,36 +236,75 @@ const HeaderForm = ({
   ];
 
   const generateSummary = async () => {
-    try {
-      setIsGeneratingSummary(true);
-      setShowSummaryModal(true);
+    if (!onboardingData?.desiredRole || !onboardingData?.experienceLevel) {
+      toast.error("Please select your desired role and experience level from the chatbot first!");
+      pushText("To generate a professional summary, I'll need to know your desired role and experience level. Please use the chatbot to provide this information!", "bot");
+      return;
+    }
 
+    if (!showPointsInput) {
+      setShowPointsInput(true);
+      pushText("Please provide a few key points about your experience, skills, and achievements. This will help me create a more personalized summary for you!", "bot");
+      return;
+    }
+
+    if (userPoints.length === 0) {
+      toast.error("Please add at least one point about yourself!");
+      return;
+    }
+
+    // Hide points input modal and show summary generation modal
+    setShowPointsInput(false);
+    setShowSummaryModal(true);
+    setIsGeneratingSummary(true);
+
+    try {
       const response = await axios.post("/api/generateSummary", {
         desiredRole: onboardingData.desiredRole,
         experienceLevel: onboardingData.experienceLevel,
+        userPoints: userPoints,
       });
 
       setGeneratedSummaries(response.data.summaryOptions || []);
       setIsGeneratingSummary(false);
-      console.log(response.data.summaryOptions);
+      setUserPoints([]);
     } catch (error) {
       console.log(error);
       setIsGeneratingSummary(false);
+      setShowSummaryModal(false);
       toast.error("Failed to generate summaries. Please try again.");
     }
   };
 
-  const closeModal = () => {
-    setShowSummaryModal(false);
+  const handleAddPoint = () => {
+    const input = document.getElementById('userPoint') as HTMLInputElement;
+    if (input && input.value.trim()) {
+      setUserPoints([...userPoints, input.value.trim()]);
+      input.value = '';
+    }
   };
 
-  const selectSummary = (summary: string, title: string) => {
-    handleChange(summary);
+  const handleRemovePoint = (index: number) => {
+    setUserPoints(userPoints.filter((_, i) => i !== index));
+  };
+
+  const closeModal = () => {
+    setShowSummaryModal(false);
+    setUserPoints([]);
+  };
+
+  const selectSummary = (summary: SummaryOption) => {
+    handleChange(summary.content);
     closeModal();
     pushText(
-      `✅ "${title}" professional summary has been added to your resume!`,
+      `✅ "${summary.title}" professional summary has been added to your resume!`,
       "bot"
     );
+  };
+
+  const handleCancelPoints = () => {
+    setShowPointsInput(false);
+    setUserPoints([]);
   };
 
   setTimeout(() => {
@@ -460,6 +501,81 @@ const HeaderForm = ({
           </div>
         )}
       </motion.form>
+
+      {/* User Points Input Modal */}
+      <AnimatePresence>
+        {showPointsInput && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4"
+            >
+              <h3 className="text-xl font-semibold mb-4">Add Your Key Points</h3>
+              <p className="text-gray-600 mb-4">
+                Please add a few points about your experience, skills, and achievements. These will help create a more personalized summary.
+              </p>
+              
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <Input
+                    id="userPoint"
+                    placeholder="Add a point about yourself..."
+                    className="flex-1"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddPoint();
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={handleAddPoint}
+                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+                  >
+                    Add
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {userPoints.map((point, index) => (
+                    <div key={index} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
+                      <span className="flex-1">{point}</span>
+                      <button
+                        onClick={() => handleRemovePoint(index)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <XIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-4 mt-6">
+                <button
+                  onClick={handleCancelPoints}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={generateSummary}
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+                >
+                  Generate Summary
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Summary Options Modal */}
       <AnimatePresence>

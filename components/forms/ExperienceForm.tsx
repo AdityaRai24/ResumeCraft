@@ -188,18 +188,41 @@ const ExperienceForm = ({
     }
   };
 
-  const selectExperience = (generatedContent: any) => {
+  const selectExperience = (generatedContent: { content: string }) => {
     if (targetIndex !== null) {
-      // Since the content is already formatted as <li> elements, we just need to wrap it in a <ul>
-      const htmlContent = `<ul>${generatedContent.join("")}</ul>`;
-      handleChange(targetIndex)("jobDescription", htmlContent);
-      closeModal();
+      // Get the current job description HTML
+      const currentJobDescription = experience.experience[targetIndex].jobDescription || "";
+
+      // Append the selected point as an <li> element to the current job description
+      // We need to handle cases where the current content is empty or not a proper list
+      let newJobDescription;
+      if (currentJobDescription.includes('<li>') && currentJobDescription.includes('</li>')) {
+        // If it looks like an existing list, find the closing </ul> and insert before it
+        const closingUlIndex = currentJobDescription.lastIndexOf('</ul>');
+        if (closingUlIndex !== -1) {
+           newJobDescription = currentJobDescription.substring(0, closingUlIndex) + `<li>${generatedContent.content}</li></ul>`;
+        } else {
+           // Fallback if </ul> not found but <li> exists
+           newJobDescription = `${currentJobDescription}<li>${generatedContent.content}</li>`;
+        }
+      } else if (currentJobDescription.trim() !== '') {
+          // If there's existing text but not in list format, start a new list
+          newJobDescription = `<ul><li>${currentJobDescription}</li><li>${generatedContent.content}</li></ul>`;
+      }
+      else {
+        // If empty, start a new list with the selected point
+        newJobDescription = `<ul><li>${generatedContent.content}</li></ul>`;
+      }
+
+      handleChange(targetIndex)("jobDescription", newJobDescription);
+      // closeModal(); // Keep modal open to allow selecting multiple points
       pushText(
-        `✅ Relevant experience points have been added to your resume!`,
+        `✅ Relevant experience point added! Select another or close the modal.`,
         "bot"
       );
     }
   };
+
   const noReplies = [
     "No problem. Writing it in your own words adds a personal touch. 😊",
     "That's totally fine. You know your experience best!",
