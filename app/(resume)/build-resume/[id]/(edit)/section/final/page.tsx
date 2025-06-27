@@ -16,6 +16,7 @@ import SortableList, { SortableItem } from "react-easy-sort";
 import { arrayMoveImmutable } from "array-move";
 import { fontOptions } from "@/lib/font";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useChatBotStore } from "@/store";
 
 const Page = () => {
   const [primaryTextColor, setPrimaryTextColor] = useColor("#000");
@@ -56,65 +57,67 @@ const Page = () => {
     id: resumeId as Id<"resumes">,
   });
 
+  const { resume: zustandResume, setResume } = useChatBotStore((state) => state);
+
   const [currentFont, setCurrentFont] = useState(
-    resume?.globalStyles?.fontFamily || "Inter"
+    zustandResume?.globalStyles?.fontFamily || "Inter"
   );
   const [currentFontSize, setCurrentFontSize] = useState(
-    resume?.globalStyles?.textSize || "md"
+    zustandResume?.globalStyles?.textSize || "md"
   );
   const [currentMargin, setCurrentMargin] = useState(
-    resume?.globalStyles?.margin || "md"
+    zustandResume?.globalStyles?.margin || "md"
   );
 
   const headerObj =
-    resume?.sections?.filter((item) => item.type === "header") || [];
+    zustandResume?.sections?.filter((item: any) => item.type === "header") || [];
 
   useEffect(() => {
-    if (!resume) return;
+    if (!zustandResume) return;
 
-    if (resume?.globalStyles?.columns === 2) {
-      const tempLeftSections = resume?.sections?.filter((item) =>
+    if (zustandResume?.globalStyles?.columns === 2) {
+      const tempLeftSections = zustandResume?.sections?.filter((item: any) =>
         item.type === "custom"
           ? item?.content?.sectionDirection === "left"
           : item?.style?.sectionDirection === "left"
       );
-      const tempRightSections = resume?.sections?.filter((item) =>
+      const tempRightSections = zustandResume?.sections?.filter((item: any) =>
         item.type === "custom"
           ? item?.content?.sectionDirection === "right"
           : item?.style?.sectionDirection === "right"
       );
 
       setLeftSections(
-        tempLeftSections.map((section, index) => ({
+        tempLeftSections.map((section: any, index: any) => ({
           ...section,
           orderNumber: index,
         }))
       );
       setRightSections(
-        tempRightSections.map((section, index) => ({
+        tempRightSections.map((section: any, index: any) => ({
           ...section,
           orderNumber: index,
         }))
       );
     } else {
-      const sortedSections = resume?.sections.sort(
+      const sortedSections = zustandResume?.sections.sort(
         (a: any, b: any) => a.orderNumber - b.orderNumber
       );
       setSections(sortedSections);
     }
-  }, [resume]);
+  }, [zustandResume]);
 
   useEffect(() => {
-    if (resume?.globalStyles) {
+    if (zustandResume?.globalStyles) {
       if (!initialTextColor) {
-        setInitialTextColor(resume.globalStyles.primaryTextColor);
+        setInitialTextColor(zustandResume.globalStyles.primaryTextColor);
       }
       if (!initialColor) {
-        setInitialColor(resume.globalStyles.primaryColor);
+        setInitialColor(zustandResume.globalStyles.primaryColor);
       }
-      setCurrentFont(resume.globalStyles.fontFamily || "Inter");
+      setCurrentFont(zustandResume.globalStyles.fontFamily || "Inter");
     }
-  }, [resume?.globalStyles, initialTextColor, initialColor]);
+  }, [zustandResume?.globalStyles, initialTextColor, initialColor]);
 
   const toggleSectionVisibility = (sectionId: string, secondType: string) => {
     hideSection({
@@ -133,7 +136,9 @@ const Page = () => {
           orderNumber: index,
         })
       );
-
+      if (zustandResume) {
+        setResume({ ...zustandResume, sections: updatedSections });
+      }
       reorder({
         id: resumeId as Id<"resumes">,
         updatedSections: updatedSections,
@@ -151,7 +156,12 @@ const Page = () => {
           orderNumber: index,
         })
       );
-
+      if (zustandResume) {
+        setResume({
+          ...zustandResume,
+          sections: [...headerObj, ...updatedSections, ...rightSections],
+        });
+      }
       reorder({
         id: resumeId as Id<"resumes">,
         updatedSections: [...headerObj, ...updatedSections, ...rightSections],
@@ -169,7 +179,12 @@ const Page = () => {
           orderNumber: index,
         })
       );
-
+      if (zustandResume) {
+        setResume({
+          ...zustandResume,
+          sections: [...headerObj, ...leftSections, ...updatedSections],
+        });
+      }
       reorder({
         id: resumeId as Id<"resumes">,
         updatedSections: [...headerObj, ...leftSections, ...updatedSections],
@@ -181,39 +196,102 @@ const Page = () => {
   const handlePrimaryTextColorChange = useMemo(() => {
     return debounce((color: any) => {
       setPrimaryTextColor(color);
+      if (zustandResume) {
+        setResume({
+          ...zustandResume,
+          globalStyles: {
+            ...zustandResume.globalStyles,
+            primaryTextColor: color.hex,
+          },
+        });
+      }
       update({ id: resumeId as Id<"resumes">, color: color.hex });
     }, 400);
-  }, [update, setPrimaryTextColor, resumeId]);
+  }, [update, setPrimaryTextColor, resumeId, zustandResume, setResume]);
 
   const handlePrimaryColorChange = useMemo(() => {
     return debounce((color: any) => {
       setPrimaryColor(color);
+      if (zustandResume) {
+        setResume({
+          ...zustandResume,
+          globalStyles: {
+            ...zustandResume.globalStyles,
+            primaryColor: color.hex,
+          },
+        });
+      }
       updatePC({ id: resumeId as Id<"resumes">, color: color.hex });
     }, 400);
-  }, [setPrimaryColor, updatePC, resumeId]);
+  }, [setPrimaryColor, updatePC, resumeId, zustandResume, setResume]);
 
   const handleChosePrimaryColor = (color: string) => {
+    if (zustandResume) {
+      setResume({
+        ...zustandResume,
+        globalStyles: {
+          ...zustandResume.globalStyles,
+          primaryColor: color,
+        },
+      });
+    }
     updatePC({ id: resumeId as Id<"resumes">, color: color });
   };
 
   const handleChosePrimaryTextColor = (color: string) => {
+    if (zustandResume) {
+      setResume({
+        ...zustandResume,
+        globalStyles: {
+          ...zustandResume.globalStyles,
+          primaryTextColor: color,
+        },
+      });
+    }
     update({ id: resumeId as Id<"resumes">, color: color });
   };
 
   const handleFontChange = (font: string) => {
     setCurrentFont(font);
+    if (zustandResume) {
+      setResume({
+        ...zustandResume,
+        globalStyles: {
+          ...zustandResume.globalStyles,
+          fontFamily: font,
+        },
+      });
+    }
     updateFont({ id: resumeId as Id<"resumes">, font });
     setShowFontDropdown(false);
   };
 
   const handleFontSizeChange = (size: string) => {
     setCurrentFontSize(size);
+    if (zustandResume) {
+      setResume({
+        ...zustandResume,
+        globalStyles: {
+          ...zustandResume.globalStyles,
+          textSize: size,
+        },
+      });
+    }
     updateFontSize({ id: resumeId as Id<"resumes">, textSize: size });
     setShowFontSizeDropdown(false);
   };
 
   const handleMarginChange = (margin: string) => {
     setCurrentMargin(margin);
+    if (zustandResume) {
+      setResume({
+        ...zustandResume,
+        globalStyles: {
+          ...zustandResume.globalStyles,
+          margin: margin,
+        },
+      });
+    }
     updateMarginSize({ id: resumeId as Id<"resumes">, marginSize: margin });
     setShowMarginDropdown(false);
   };
@@ -270,7 +348,7 @@ const Page = () => {
             <p className="text-gray-600">Reorder the sections if you want...</p>
           </div>
 
-          {resume?.globalStyles?.columns === 2 ? (
+          {zustandResume?.globalStyles?.columns === 2 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-gray-50 rounded-xl p-6">
                 <h3 className="text-lg font-semibold mb-4 text-gray-800">
@@ -352,7 +430,7 @@ const Page = () => {
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   onClick={() => handleChosePrimaryTextColor(item)}
                   className={`w-10 h-10 relative ${
-                    resume?.globalStyles?.primaryTextColor === item &&
+                    zustandResume?.globalStyles?.primaryTextColor === item &&
                     "ring-2 ring-offset-2 ring-gray-800"
                   } rounded-full cursor-pointer shadow-sm hover:shadow-md transition-shadow`}
                   style={{ backgroundColor: item }}
@@ -372,7 +450,7 @@ const Page = () => {
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   onClick={() => handleChosePrimaryTextColor(initialTextColor)}
                   className={`w-10 h-10 relative ${
-                    resume?.globalStyles?.primaryTextColor ===
+                    zustandResume?.globalStyles?.primaryTextColor ===
                       initialTextColor && "ring-2 ring-offset-2 ring-gray-800"
                   } rounded-full cursor-pointer shadow-sm hover:shadow-md transition-shadow`}
                   style={{ backgroundColor: initialTextColor }}
@@ -441,7 +519,7 @@ const Page = () => {
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   onClick={() => handleChosePrimaryColor(item)}
                   className={`w-10 h-10 relative ${
-                    resume?.globalStyles?.primaryColor === item &&
+                    zustandResume?.globalStyles?.primaryColor === item &&
                     "ring-2 ring-offset-2 ring-gray-800"
                   } rounded-full cursor-pointer shadow-sm hover:shadow-md transition-shadow`}
                   style={{ backgroundColor: item }}
@@ -461,7 +539,7 @@ const Page = () => {
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   onClick={() => handleChosePrimaryColor(initialColor)}
                   className={`w-10 h-10 relative ${
-                    resume?.globalStyles?.primaryColor === initialColor &&
+                    zustandResume?.globalStyles?.primaryColor === initialColor &&
                     "ring-2 ring-offset-2 ring-gray-800"
                   } rounded-full cursor-pointer shadow-sm hover:shadow-md transition-shadow`}
                   style={{ backgroundColor: initialColor }}

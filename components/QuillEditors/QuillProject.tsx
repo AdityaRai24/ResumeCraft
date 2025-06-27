@@ -49,13 +49,13 @@ export default function QuillProjectEditor({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
     >
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <Label className="text-md">{label}</Label>
 
         <Button type="button" onClick={magicWrite}>
           Magic Write <WandSparkles className="ml-2" size={14} />
         </Button>
-      </div>
+      </div> */}
       <QuillEditor
         value={value}
         onChange={onChange}

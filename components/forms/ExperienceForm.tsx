@@ -63,14 +63,13 @@ const ExperienceForm = ({
   const [experience, setExperience] = useState<ExperienceContent>({
     experience: [],
   });
-  const update = useMutation(api.resume.updateExperience);
   const [showExperienceModal, setShowExperienceModal] = useState(false);
   const [showModifyModal, setShowModifyModal] = useState(false);
   const [isGeneratingExperience, setIsGeneratingExperience] = useState(false);
   const [generatedExperiences, setGeneratedExperiences] = useState<any[]>([]);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
 
-  const { pushText, pushOptions } = useChatBotStore((state) => state);
+  const { pushText, pushOptions, resume, setResume } = useChatBotStore((state) => state);
 
   const firstTimeRef = useRef(false);
 
@@ -82,10 +81,17 @@ const ExperienceForm = ({
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newExperience: ExperienceContent) => {
-      update({ id: resumeId, content: newExperience });
+      if (resume) {
+        const updatedSections = resume.sections.map((section: any) =>
+          section.type === "experience"
+            ? { ...section, content: newExperience }
+            : section
+        );
+        setResume({ ...resume, sections: updatedSections });
+      }
       pendingChangesRef.current = false;
     }, 400);
-  }, [update, resumeId]);
+  }, [resume, setResume]);
 
   const handleChange = useCallback(
     (index: number) =>

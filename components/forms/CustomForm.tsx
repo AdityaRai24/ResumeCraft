@@ -13,6 +13,7 @@ import {
   ArrowRightCircle,
   XCircle,
 } from "lucide-react";
+import { useChatBotStore } from "@/store";
 
 const CustomForm = ({
   resumeId,
@@ -34,8 +35,7 @@ const CustomForm = ({
   const [isChoosingDirection, setIsChoosingDirection] = useState(false);
   const pendingChangesRef = useRef(false);
 
-  const update = useMutation(api.resume.updateCustomSection);
-  const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
+  const { resume, setResume } = useChatBotStore((state) => state);
   const isTwoColumn = resume?.globalStyles.columns === 2;
   const removeSectionUpdate = useMutation(api.resume.removeCustomSection);
 
@@ -52,11 +52,19 @@ const CustomForm = ({
   };
 
   const debouncedUpdate = useMemo(() => {
-    return debounce((newSection: SectionItem[], index: number) => {
-      update({ id: resumeId, content: newSection[index] });
+    return debounce((newSections: SectionItem[], index: number) => {
+      if (resume) {
+        const updatedSections = resume.sections.map((section: any) => {
+          if (section.type === "custom") {
+            return { ...section, content: newSections };
+          }
+          return section;
+        });
+        setResume({ ...resume, sections: updatedSections });
+      }
       pendingChangesRef.current = false;
     }, 400);
-  }, [update, resumeId]);
+  }, [resume, setResume]);
 
   const handleTitleChange = (index: number, value: string) => {
     pendingChangesRef.current = true;

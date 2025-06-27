@@ -85,16 +85,14 @@ const HeaderForm = ({
   const [showPointsInput, setShowPointsInput] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { pushText, pushOptions } = useChatBotStore((state) => state);
+  const { pushText, pushOptions, resume, setResume } = useChatBotStore((state) => state);
 
-  const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
   const firstTimeRef = useRef(false);
-  const hasPhoto = resume?.globalStyles.photo || false;
+  const hasPhoto = resume?.globalStyles?.photo || false;
   const { user } = useUser();
 
   const { onboardingData } = useChatBotStore((state) => state);
 
-  const update = useMutation(api.resume.updateHeader);
   const pendingChangesRef = useRef(false);
 
   useEffect(() => {
@@ -105,10 +103,17 @@ const HeaderForm = ({
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newHeader: HeaderContent) => {
-      update({ id: resumeId, content: newHeader });
+      if (resume) {
+        const updatedSections = resume.sections.map((section: any) =>
+          section.type === "header"
+            ? { ...section, content: newHeader }
+            : section
+        );
+        setResume({ ...resume, sections: updatedSections });
+      }
       pendingChangesRef.current = false;
     }, 400);
-  }, [update, resumeId]);
+  }, [resume, setResume]);
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement> | string) => {

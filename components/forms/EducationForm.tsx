@@ -10,16 +10,14 @@ import React, {
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import debounce from "lodash/debounce";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { Button } from "../ui/button";
+import { useChatBotStore } from "@/store";
 import { motion } from "framer-motion";
 import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
 import { EducationSection } from "@/types/templateTypes";
 import { Checkbox } from "../ui/checkbox";
 import { XIcon } from "lucide-react";
+import { Button } from "../ui/button";
 
 interface EducationItem {
   courseName: string;
@@ -39,7 +37,7 @@ interface EducationContent {
 
 interface EducationFormProps {
   item: EducationSection;
-  resumeId: Id<"resumes">;
+  resumeId: string;
 }
 
 const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
@@ -59,7 +57,7 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
     education: [],
   });
   const pendingChangesRef = useRef(false);
-  const update = useMutation(api.resume.updateEducation);
+  const { resume, setResume } = useChatBotStore((state) => state);
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
@@ -69,10 +67,17 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newEducation: EducationContent) => {
-      update({ id: resumeId, content: newEducation });
+      if (resume) {
+        const updatedSections = resume.sections.map((section: any) =>
+          section.type === "education"
+            ? { ...section, content: newEducation }
+            : section
+        );
+        setResume({ ...resume, sections: updatedSections });
+      }
       pendingChangesRef.current = false;
     }, 400);
-  }, [update, resumeId]);
+  }, [resume, setResume]);
 
   const handleChange = useCallback(
     (index: number) => (name: keyof EducationItem, value: string | boolean) => {

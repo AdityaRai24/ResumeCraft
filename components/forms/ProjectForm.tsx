@@ -53,7 +53,7 @@ const ProjectForm = ({
   const pendingChangesRef = useRef(false);
   const update = useMutation(api.resume.updateProjects);
   const firstTimeRef = useRef(false);
-  const { pushOptions, pushText } = useChatBotStore();
+  const { pushOptions, pushText, resume, setResume } = useChatBotStore();
   const [showModifyModal, setShowModifyModal] = useState(false);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [isGeneratingProject, setIsGeneratingProject] = useState(false);
@@ -68,10 +68,17 @@ const ProjectForm = ({
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newProject: ProjectContent) => {
-      update({ id: resumeId, content: newProject });
+      if (resume) {
+        const updatedSections = resume.sections.map((section: any) =>
+          section.type === "projects"
+            ? { ...section, content: newProject }
+            : section
+        );
+        setResume({ ...resume, sections: updatedSections });
+      }
       pendingChangesRef.current = false;
     }, 400);
-  }, [update, resumeId]);
+  }, [resume, setResume]);
 
   const handleChange = useCallback(
     (index: number) =>
@@ -177,39 +184,6 @@ const ProjectForm = ({
   return (
     <>
       {projects?.projects.map((item, index) => {
-        if (item.name && !firstTimeRef.current) {
-          const projectText = [
-            "Nice! Let's turn your project into something impressive on your resume. Want help writing the project description?",
-            `Got it — you've worked on ${item.name}! Want me to help generate a description for this project?`,
-            `Awesome! Ready to craft a powerful description for your ${item.name} project?`,
-            `Looks great so far. Want help turning your ${item.name} project into a standout description?`,
-          ];
-
-          pushOptions(
-            projectText[Math.floor(Math.random() * projectText.length)],
-            [
-              {
-                label: "Yes, please!",
-                value: "yes",
-                onClick: () => {
-                  generateProject(index);
-                },
-              },
-              {
-                label: "No, thanks",
-                value: "no",
-                onClick: () => {
-                  pushText(
-                    noReplies[Math.floor(Math.random() * noReplies.length)],
-                    "bot"
-                  );
-                },
-              },
-            ]
-          );
-          firstTimeRef.current = true;
-        }
-
         return (
           <div key={index}>
             <form className="mt-8 relative bg-[radial-gradient(circle,_#fff_0%,_#ffe4e6_50%)] p-6 rounded-lg shadow-xs shadow-primary">

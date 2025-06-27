@@ -136,6 +136,7 @@ const chatMessageSchema = v.object({
       })
     )
   ),
+  chatInitialized : v.boolean(),
   experienceLevel: v.optional(v.string()),
   desiredRole: v.optional(v.string()),
   userId: v.optional(v.string()),

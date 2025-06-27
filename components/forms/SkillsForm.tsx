@@ -30,9 +30,8 @@ const SkillsForm = ({
   const [skillDescription, setSkillDescription] = useState<string>("");
   const [currentFormat, setCurrentFormat] = useState("paragraph");
   const pendingChangesRef = useRef(false);
-  const update = useMutation(api.resume.updateSkills);
 
-  const { pushText, pushOptions } = useChatBotStore((state) => state);
+  const { pushText, pushOptions, resume, setResume } = useChatBotStore((state) => state);
   const { onboardingData } = useChatBotStore((state) => state);
   const [showModifyModal, setShowModifyModal] = useState(false);
   const [showSkillsModal, setShowSkillsModal] = useState(false);
@@ -52,10 +51,17 @@ const SkillsForm = ({
   const debouncedUpdate = useMemo(
     () =>
       debounce((newSkills: string) => {
-        update({ id: resumeId, content: { description: newSkills } });
+        if (resume) {
+          const updatedSections = resume.sections.map((section: any) =>
+            section.type === "skills"
+              ? { ...section, content: { description: newSkills } }
+              : section
+          );
+          setResume({ ...resume, sections: updatedSections });
+        }
         pendingChangesRef.current = false;
       }, 400),
-    [update, resumeId]
+    [resume, setResume]
   );
 
   const handleChange = useCallback(

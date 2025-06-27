@@ -5,33 +5,43 @@ import {
   Send,
   Sparkles,
   User,
-  BriefcaseBusiness,
   Bot,
   MessageSquare,
+  HelpCircle,
+  CheckCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { OptionMessage, TextMessage, useChatBotStore } from "@/store";
 import { Button } from "./ui/button";
 import { useUser } from "@clerk/nextjs";
 import { useParams } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery, useMutation, useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { toast } from "react-hot-toast";
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "./ui/dialog";
+import axios from "axios";
 
-interface ChatMessage {
+type LocalChatMessage = {
   id: string;
-  content: TextMessage | OptionMessage;
   sender: "user" | "bot";
+  content: TextMessage | OptionMessage;
   isTyping?: boolean;
+  isProcessing?: boolean;
+};
+
+interface ChatbotProps {
+  isOnboardingModalOpen?: boolean;
 }
 
-interface OnboardingFormData {
-  desiredRole: string;
-  experienceLevel: string;
-}
-
-const Chatbot = () => {
+const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
   const [message, setMessage] = useState("");
   const {
     messages: storeMessages,
@@ -39,16 +49,20 @@ const Chatbot = () => {
     pushOptions,
     resetMessages,
     fillMessages,
+    resume: resumeFromStore,
+    desiredRole: desiredRoleFromStore,
+    experienceLevel: experienceLevelFromStore,
+    setResume,
   } = useChatBotStore((state) => state);
-  const [displayMessages, setDisplayMessages] = useState<ChatMessage[]>([]);
+  const [displayMessages, setDisplayMessages] = useState<LocalChatMessage[]>(
+    []
+  );
   const [isExpanded, setIsExpanded] = useState(true);
   const [lastProcessedMessageCount, setLastProcessedMessageCount] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [needsUserInfo, setNeedsUserInfo] = useState(false);
-
-  const { onboardingData, setOnBoardingData } = useChatBotStore(
-    (state) => state
-  );
+  const [mode, setMode] = useState<"ask" | "agent">("ask");
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [isBotLoading, setIsBotLoading] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,171 +76,150 @@ const Chatbot = () => {
   });
 
   const pushMessage = useMutation(api.chatBot.pushMessage);
-  const updateUserProfile = useMutation(api.chatBot.updateUserProfile);
-
-  // This effect handles pushing new messages to the backend when they're added to the store
-  useEffect(() => {
-    if (user && resumeId && storeMessages.length > lastProcessedMessageCount) {
-      const newMessages = storeMessages.slice(lastProcessedMessageCount);
-
-      newMessages.forEach((msg) => {
-        let cleanMessage = msg;
-
-        if (msg.content.type === "options") {
-          cleanMessage = {
-            ...msg,
-            content: {
-              ...msg.content,
-              options: msg.content.options.map((option) => ({
-                label: option.label,
-                value: option.value,
-              })),
-            },
-          };
-        } else {
-          cleanMessage = {
-            ...msg,
-            content: {
-              ...msg.content,
-              message: msg.content.message,
-            },
-          };
-        }
-
-        pushMessage({
-          userId: user.id,
-          resumeId: resumeId as Id<"resumes">,
-          message: cleanMessage as any,
-        });
-      });
-    }
-  }, [storeMessages, user, resumeId, pushMessage, lastProcessedMessageCount]);
-
-  const handleRoleSelect = (role: string) => {
-    setOnBoardingData({ ...onboardingData, desiredRole: role });
-  };
-
-  const handleExperienceSelect = (level: string) => {
-    setOnBoardingData({ ...onboardingData, experienceLevel: level });
-  };
-
-  console.log(onboardingData);
-
-  const submitUserInfo = async () => {
-    if (chatBotData && resumeId && user) {
-      await updateUserProfile({
-        userId: user.id,
-        resumeId: resumeId as Id<"resumes">,
-        desiredRole: onboardingData.desiredRole,
-        experienceLevel: onboardingData.experienceLevel,
-      });
-
-      toast.success("Your profile has been updated successfully!");
-      setNeedsUserInfo(false);
-
-      // Add a welcome message after info is submitted
-      const welcomeMessage = `👋 Hi ${user?.firstName || "there"}! I'm CraftBot, your personal AI assistant.
-I'm here to guide you through building a job-winning resume – step by step.`;
-
-      pushText(welcomeMessage, "bot");
-
-      // No need to push message here since the useEffect will handle it
-    }
-  };
+  const convex = useConvex();
 
   useEffect(() => {
-    if (chatBotData && !isInitialized) {
-      // Reset any existing messages first
-      resetMessages();
-
-      // Check if we need to ask for user information
-      if (
-        !chatBotData.desiredRole ||
-        chatBotData.desiredRole === "" ||
-        !chatBotData.experienceLevel ||
-        chatBotData.experienceLevel === ""
-      ) {
-        setNeedsUserInfo(true);
-      } else {
-        // If we have previous messages, fill the store with them
-        if (
-          chatBotData.content &&
-          Array.isArray(chatBotData.content) &&
-          chatBotData.content.length > 0
-        ) {
-          fillMessages(chatBotData.content);
-        } else {
-          // If no previous messages but we have user info, send a welcome message
-          const welcomeMessage = `👋 Hi ${user?.firstName || "there"}! I'm CraftBot, your personal AI assistant.
-          I'm here to guide you through building a job-winning resume – step by step.`;
-
-          pushText(welcomeMessage, "bot");
-        }
-      }
-
+    if (
+      chatBotData &&
+      chatBotData.chatInitialized &&
+      Array.isArray(chatBotData.content)
+    ) {
+      fillMessages(chatBotData.content);
       setIsInitialized(true);
     }
-  }, [chatBotData, pushText, resetMessages, fillMessages, isInitialized,user?.firstName]);
+  }, [chatBotData, fillMessages]);
 
-  useEffect(() => {
-    if (storeMessages.length > lastProcessedMessageCount) {
-      const newMessages = storeMessages.slice(lastProcessedMessageCount);
-
-      // Process each new message
-      newMessages.forEach((msg) => {
-        // Only show typing indicator for bot messages
-        if (msg.sender === "bot") {
-          // Create typing indicator
-          const typingMessageId = `typing-${Date.now()}-${Math.random()}`;
-          const typingMessage: ChatMessage = {
-            id: typingMessageId,
-            content: { type: "text", message: "" },
-            sender: "bot",
-            isTyping: true,
-          };
-
-          // Add typing indicator
-          setDisplayMessages((prev) => [...prev, typingMessage]);
-
-          // After 1.5s, replace with actual message and remove typing indicator
-          setTimeout(() => {
-            setDisplayMessages((prev) => {
-              // Convert the message from store to display format with ID
-              const actualMessage: ChatMessage = {
-                ...msg,
-                id: `msg-${Math.random().toString(36).substr(2, 9)}`,
-              };
-
-              // Replace typing indicator with actual message
-              return [
-                ...prev.filter((m) => m.id !== typingMessageId),
-                actualMessage,
-              ];
-            });
-          }, 1500);
-        } else {
-          // For user messages, add them immediately with no typing effect
-          setDisplayMessages((prev) => [
-            ...prev,
-            {
-              ...msg,
-              id: `msg-${Math.random().toString(36).substr(2, 9)}`,
-            },
-          ]);
-        }
-      });
-
-      // Update the counter of processed messages
-      setLastProcessedMessageCount(storeMessages.length);
-    }
-  }, [storeMessages, lastProcessedMessageCount]);
-
-  const handleSend = () => {
+  const handleSend = async () => {
+    if (!chatBotData?.chatInitialized) return;
+    if (!user || !user.id) return;
     if (message.trim() === "") return;
-    pushText(message, "user");
+
+    const userMessage = message;
     setMessage("");
     inputRef.current?.focus();
+
+    // 1. Push user's message immediately
+    await pushMessage({
+      userId: user.id,
+      resumeId: resumeId as Id<"resumes">,
+      message: {
+        sender: "user",
+        content: { type: "text", message: userMessage },
+      },
+      mode,
+    });
+
+    // 2. Show bot typing indicator locally with fun animation
+    const typingId = `typing-${Date.now()}-${Math.random()}`;
+    setDisplayMessages((prev) => [
+      ...prev.filter((msg) => !msg.isTyping && !msg.isProcessing), // Remove any existing typing indicators
+      {
+        id: `user-${Date.now()}`,
+        sender: "user",
+        content: { type: "text", message: userMessage },
+      },
+      {
+        id: typingId,
+        sender: "bot",
+        content: { type: "text", message: "I'm working on your request..." },
+        isTyping: true,
+      },
+    ]);
+    setIsBotLoading(true);
+
+    // 3. Call the API route for bot response
+    try {
+      const response = await axios.post(`http://localhost:3000/api/chatbot`, {
+        userId: user.id,
+        resumeId: resumeId as Id<"resumes">,
+        message: {
+          sender: "user",
+          content: { type: "text", message: userMessage },
+        },
+        mode,
+        resume: resumeFromStore,
+        desiredRole: desiredRoleFromStore,
+        experienceLevel: experienceLevelFromStore,
+      });
+
+      if (response.data && response.data.updatedResume) {
+        setResume(response.data.updatedResume);
+      }
+
+      // 4. Show processing completion message
+      setDisplayMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === typingId
+            ? {
+                ...msg,
+                content: {
+                  type: "text",
+                  message:
+                    "✨ Perfect! I've updated your resume based on your request. The changes have been applied successfully!",
+                },
+                isTyping: false,
+                isProcessing: true,
+              }
+            : msg
+        )
+      );
+
+      // 5. After a brief delay, fetch and show the actual updated messages
+      setTimeout(async () => {
+        const updatedChatBotData = await convex.query(
+          api.chatBot.getChatbotData,
+          {
+            userId: user.id,
+            resumeId: resumeId as Id<"resumes">,
+          }
+        );
+
+        if (updatedChatBotData && Array.isArray(updatedChatBotData.content)) {
+          // Update display messages with the latest from the server
+          setDisplayMessages(
+            updatedChatBotData.content.map((msg: any) => ({
+              ...msg,
+              id: `msg-${Math.random().toString(36).substr(2, 9)}`,
+            }))
+          );
+          fillMessages(updatedChatBotData.content);
+        }
+        setIsBotLoading(false);
+      }, 1500); // Show success message for 1.5 seconds
+    } catch (error) {
+      console.log(error);
+      // Handle error case
+      setDisplayMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === typingId
+            ? {
+                ...msg,
+                content: {
+                  type: "text",
+                  message:
+                    "I apologize, but I encountered an error while processing your request. Please try again.",
+                },
+                isTyping: false,
+              }
+            : msg
+        )
+      );
+      setIsBotLoading(false);
+    }
   };
+
+  useEffect(() => {
+    // Only update displayMessages if we're not currently processing a bot response
+    if (!isBotLoading) {
+      setDisplayMessages(
+        storeMessages.map((msg) => ({
+          ...msg,
+          id: `msg-${Math.random().toString(36).substr(2, 9)}`,
+        }))
+      );
+    }
+    setLastProcessedMessageCount(storeMessages.length);
+  }, [storeMessages, isBotLoading]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -257,54 +250,68 @@ I'm here to guide you through building a job-winning resume – step by step.`;
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
-  const formVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
-  };
-
-  const TypingIndicator = () => (
-    <div className="flex space-x-1 items-center p-1">
+  const FunTypingIndicator = () => (
+    <div className="flex items-center space-x-3 p-2">
+      <div className="flex space-x-1">
+        <motion.div
+          className="w-3 h-3 rounded-full bg-gradient-to-r from-primary to-primary/60"
+          animate={{
+            scale: [1, 1.4, 1],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 1.2,
+            ease: "easeInOut",
+            delay: 0,
+          }}
+        />
+        <motion.div
+          className="w-3 h-3 rounded-full bg-gradient-to-r from-primary to-primary/60"
+          animate={{
+            scale: [1, 1.4, 1],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 1.2,
+            ease: "easeInOut",
+            delay: 0.2,
+          }}
+        />
+        <motion.div
+          className="w-3 h-3 rounded-full bg-gradient-to-r from-primary to-primary/60"
+          animate={{
+            scale: [1, 1.4, 1],
+            opacity: [0.7, 1, 0.7],
+          }}
+          transition={{
+            repeat: Infinity,
+            duration: 1.2,
+            ease: "easeInOut",
+            delay: 0.4,
+          }}
+        />
+      </div>
       <motion.div
-        className="w-2 h-2 rounded-full bg-gray-600"
         animate={{
-          scale: [1, 1.2, 1],
+          rotate: [0, 360],
         }}
         transition={{
           repeat: Infinity,
-          duration: 1,
-          ease: "easeInOut",
-          times: [0, 0.5, 1],
-          delay: 0,
+          duration: 2,
+          ease: "linear",
         }}
-      />
-      <motion.div
-        className="w-2 h-2 rounded-full bg-gray-600"
-        animate={{
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 1,
-          ease: "easeInOut",
-          times: [0, 0.5, 1],
-          delay: 0.2,
-        }}
-      />
-      <motion.div
-        className="w-2 h-2 rounded-full bg-gray-600"
-        animate={{
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 1,
-          ease: "easeInOut",
-          times: [0, 0.5, 1],
-          delay: 0.4,
-        }}
-      />
+      >
+        <Sparkles size={16} className="text-primary" />
+      </motion.div>
     </div>
   );
+
+  // Only render UI if chat is initialized and modal is closed
+  if (!chatBotData?.chatInitialized || isOnboardingModalOpen) {
+    return null;
+  }
 
   return (
     <div className="flex h-screen relative">
@@ -349,15 +356,116 @@ I'm here to guide you through building a job-winning resume – step by step.`;
               </motion.div>
               <h2 className="text-base font-semibold">AI Resume Assistant</h2>
             </div>
-            <motion.div
-              className="cursor-pointer bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={toggleSidebar}
-            >
-              <ArrowLeftToLine size={16} />
-            </motion.div>
+            <div className="flex items-center gap-2">
+              <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+                <DialogTrigger asChild>
+                  <button
+                    className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
+                    onClick={() => setIsHelpOpen(true)}
+                  >
+                    <HelpCircle size={18} className="text-white" />
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>
+                      How to use the AI Resume Assistant
+                    </DialogTitle>
+                  </DialogHeader>
+                  <DialogDescription>
+                    <div className="space-y-4 text-gray-700">
+                      <p>
+                        <b>Welcome to your magical AI Resume Assistant!</b>
+                      </p>
+                      <p>
+                        This chatbot can help you craft, improve, and tailor
+                        your resume for your dream job. It works in two powerful
+                        modes:
+                      </p>
+                      <ul className="list-disc pl-6">
+                        <li>
+                          <b>Ask Mode:</b> Ask questions about your resume, get
+                          feedback, suggestions, and personalized advice.
+                          Example queries:
+                          <ul className="list-disc pl-6">
+                            <li>
+                              "How can I improve my summary for a Product
+                              Manager role?"
+                            </li>
+                            <li>
+                              "What skills am I missing for a Data Scientist
+                              position?"
+                            </li>
+                            <li>
+                              "Rewrite my experience section to better match a
+                              Software Engineer job."
+                            </li>
+                          </ul>
+                        </li>
+                        <li className="mt-2">
+                          <b>Agent Mode:</b> Let the assistant take actions for
+                          you! It can edit, add, or remove sections, rewrite
+                          content, and more. Example commands:
+                          <ul className="list-disc pl-6">
+                            <li>"Add a new project about machine learning."</li>
+                            <li>
+                              "Update my skills to include React and
+                              TypeScript."
+                            </li>
+                            <li>
+                              "Tailor my resume for the attached job
+                              description."
+                            </li>
+                          </ul>
+                        </li>
+                      </ul>
+                      <p>
+                        <b>Tips for best results:</b>
+                      </p>
+                      <ul className="list-disc pl-6">
+                        <li>
+                          Be specific about your target role and experience
+                          level.
+                        </li>
+                        <li>
+                          Switch to Agent Mode for direct changes, or User Mode
+                          for advice and feedback.
+                        </li>
+                        <li>
+                          Review suggestions and approve changes before applying
+                          them.
+                        </li>
+                      </ul>
+                      <p>
+                        Ready to make your resume stand out? Start chatting!
+                      </p>
+                    </div>
+                  </DialogDescription>
+                </DialogContent>
+              </Dialog>
+              <motion.div
+                className="cursor-pointer bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors duration-200"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={toggleSidebar}
+              >
+                <ArrowLeftToLine size={16} />
+              </motion.div>
+            </div>
           </motion.div>
+
+          {/* Mode Selector Tabs */}
+          <div className="w-full flex justify-center bg-white py-2 border-b border-gray-200">
+            <Tabs
+              value={mode}
+              onValueChange={(val) => setMode(val as "ask" | "agent")}
+            >
+              <TabsList>
+                <TabsTrigger value="ask">Ask Mode</TabsTrigger>
+                <TabsTrigger value="agent">Agent Mode</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
 
           <motion.div
             className="flex items-center justify-center w-full bg-gradient-to-r from-primary/5 to-primary/10 text-sm text-gray-600 py-2 font-medium"
@@ -371,83 +479,6 @@ I'm here to guide you through building a job-winning resume – step by step.`;
 
           {/* Message Container */}
           <div className="flex-1 w-full bg-white p-4 overflow-y-auto bg-gradient-to-b from-gray-50 to-white">
-            {/* User Onboarding Form */}
-            {needsUserInfo && (
-              <motion.div
-                variants={formVariants}
-                initial="hidden"
-                animate="visible"
-                className="bg-white p-5 rounded-xl shadow-md mb-6 border border-gray-200"
-              >
-                <h3 className="text-primary text-sm font-semibold mb-3 flex items-center gap-2">
-                  <User size={16} className="text-primary" />
-                  Please tell me about yourself
-                </h3>
-                <p className="text-xs text-gray-600">
-                  This information will help me personalize your resume
-                  assistance.
-                </p>
-
-                <div className="space-y-4 mt-5">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      What is your desired job role?
-                    </label>
-                    <select
-                      value={onboardingData.desiredRole}
-                      onChange={(e) => handleRoleSelect(e.target.value)}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm bg-white transition-all duration-200"
-                    >
-                      <option value="" disabled>
-                        Select a role
-                      </option>
-                      <option value="Software Engineer">
-                        Software Engineer
-                      </option>
-                      <option value="Product Manager">Product Manager</option>
-                      <option value="Data Scientist">Data Scientist</option>
-                      <option value="UX/UI Designer">UX/UI Designer</option>
-                      <option value="Marketing Specialist">
-                        Marketing Specialist
-                      </option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      What is your experience level?
-                    </label>
-                    <select
-                      value={onboardingData.experienceLevel}
-                      onChange={(e) => handleExperienceSelect(e.target.value)}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm bg-white transition-all duration-200"
-                    >
-                      <option value="" disabled>
-                        Select experience level
-                      </option>
-                      <option value="Entry Level">Entry Level</option>
-                      <option value="Mid Level">Mid Level</option>
-                      <option value="Senior Level">Senior Level</option>
-                      <option value="Executive">Executive</option>
-                    </select>
-                  </div>
-
-                  <Button
-                    onClick={submitUserInfo}
-                    disabled={
-                      !onboardingData.desiredRole ||
-                      !onboardingData.experienceLevel
-                    }
-                    className="w-full mt-3 flex items-center justify-center gap-2 py-2 shadow-sm hover:shadow-md transition-shadow duration-200"
-                  >
-                    <BriefcaseBusiness size={16} />
-                    <span>Submit Profile</span>
-                  </Button>
-                </div>
-              </motion.div>
-            )}
-
             <AnimatePresence>
               {displayMessages.map((msg) => {
                 return (
@@ -464,11 +495,18 @@ I'm here to guide you through building a job-winning resume – step by step.`;
                       className={`p-4 rounded-xl text-sm ${
                         msg.sender === "user"
                           ? "bg-primary text-white shadow-md"
-                          : "bg-gray-50 text-gray-800 border border-gray-100 shadow-sm"
+                          : msg.isProcessing
+                            ? "bg-gradient-to-r from-green-50 to-green-100 text-green-800 border border-green-200 shadow-sm"
+                            : "bg-gray-50 text-gray-800 border border-gray-100 shadow-sm"
                       }`}
                     >
                       {msg.isTyping ? (
-                        <TypingIndicator />
+                        <div className="flex items-center space-x-3">
+                          <FunTypingIndicator />
+                          <span className="text-gray-600 text-sm">
+                            {msg.content.message}
+                          </span>
+                        </div>
                       ) : (
                         <>
                           <motion.div
@@ -477,8 +515,15 @@ I'm here to guide you through building a job-winning resume – step by step.`;
                             transition={{
                               duration: msg.sender === "bot" ? 0.3 : 0,
                             }}
+                            className="flex items-start gap-2"
                           >
-                            {msg.content.message}
+                            {msg.isProcessing && (
+                              <CheckCircle
+                                size={16}
+                                className="text-green-600 mt-0.5 flex-shrink-0"
+                              />
+                            )}
+                            <span>{msg.content.message}</span>
                           </motion.div>
                           {msg.content.type === "options" && (
                             <motion.div className="mt-4 text-wrap max-w-[95%] flex flex-wrap gap-2">
@@ -537,7 +582,7 @@ I'm here to guide you through building a job-winning resume – step by step.`;
                 whileFocus={{
                   boxShadow: "0 0 0 2px rgba(var(--color-primary), 0.2)",
                 }}
-                disabled={needsUserInfo}
+                disabled={isBotLoading}
               />
               <MessageSquare
                 size={16}
@@ -546,14 +591,14 @@ I'm here to guide you through building a job-winning resume – step by step.`;
             </motion.div>
             <motion.button
               onClick={handleSend}
-              disabled={message.trim() === "" || needsUserInfo}
+              disabled={message.trim() === "" || isBotLoading}
               className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-200"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: message.trim() && !isBotLoading ? 1.03 : 1 }}
+              whileTap={{ scale: message.trim() && !isBotLoading ? 0.97 : 1 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
               <Send size={16} />
-              <span>Send</span>
+              <span>{isBotLoading ? "Processing..." : "Send"}</span>
             </motion.button>
           </motion.div>
         </div>

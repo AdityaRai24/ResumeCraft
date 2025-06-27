@@ -22,19 +22,18 @@ import {
 } from "@/lib/font";
 import { templateComponents } from "@/templates/templateStructures";
 import toast from "react-hot-toast";
+import { useChatBotStore } from "@/store";
 
 const LiveResumePreview = () => {
   const params = useParams();
-  const templateDetails = useQuery(api.resume.getTemplateDetails, {
-    id: params.id as Id<"resumes">,
-  });
+  const templateDetails = useChatBotStore((state) => state.resume);
   const pathname = usePathname();
   const sectionType = pathname.split("/section/")[1];
 
   let sectionArray: string[] = [];
-  templateDetails?.sections?.map((item) => sectionArray.push(item.type));
+  templateDetails?.sections?.map((item: any) => sectionArray.push(item.type));
   let currentIndex = sectionArray.findIndex((item) => item === sectionType);
-
+  console.log(templateDetails)
   if (templateDetails === null) {
     return <div>Template not found</div>;
   }

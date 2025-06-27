@@ -112,6 +112,7 @@ export const createUserResume = mutation({
       content: [],
       experienceLevel: "",
       desiredRole: "",
+      chatInitialized: false,
     });
 
     return newResume;
@@ -796,4 +797,12 @@ export const addDefaultSizesToResumes = mutation({
     console.log(`Finished migration. Updated ${updatedCount} resumes.`);
     return { success: true, updatedCount };
   },
+});
+
+export const updateResume = mutation({
+  args: { id: v.id("resumes"), data: v.any() },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.id, args.data);
+    return true;
+  }
 });

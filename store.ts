@@ -29,6 +29,9 @@ type OnboardingData = {
 type ChatBotState = {
   messages: ChatMessage[];
   onboardingData: OnboardingData;
+  resume?: any;
+  desiredRole?: string;
+  experienceLevel?: string;
   pushText: (message: string, sender: "user" | "bot") => void;
   pushOptions: (
     message: string,
@@ -38,6 +41,9 @@ type ChatBotState = {
   resetMessages: () => void;
   fillMessages: (messages: ChatMessage[]) => void;
   setOnBoardingData: (data: OnboardingData) => void;
+  setResume: (resume: any) => void;
+  setDesiredRole: (role: string) => void;
+  setExperienceLevel: (level: string) => void;
 };
 
 
@@ -47,6 +53,9 @@ export const useChatBotStore = create<ChatBotState>((set) => ({
     desiredRole: "",
     experienceLevel: "",
   },
+  resume: undefined,
+  desiredRole: undefined,
+  experienceLevel: undefined,
   pushText: (message, sender) =>
     set((state) => ({
       messages: [
@@ -64,4 +73,7 @@ export const useChatBotStore = create<ChatBotState>((set) => ({
   resetMessages: () => set({ messages: [] }),
   fillMessages: (messages) => set({ messages }),
   setOnBoardingData: (data) => set({ onboardingData: data }),
+  setResume: (resume) => set({ resume }),
+  setDesiredRole: (role) => set({ desiredRole: role }),
+  setExperienceLevel: (level) => set({ experienceLevel: level }),
 }));

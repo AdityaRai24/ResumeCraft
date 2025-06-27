@@ -39,6 +39,28 @@ export const updateUserProfile = mutation({
   },
 });
 
+export const initializeChat = mutation({
+  args: {
+    userId: v.string(),
+    resumeId: v.id("resumes"),
+  },
+  handler: async (ctx, args) => {
+    const chatBotData = await ctx.db
+      .query("chatMessages")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .filter((q) => q.eq(q.field("resumeId"), args.resumeId))
+      .collect();
+    const chatData = chatBotData[0];
+
+    if (chatData) {
+      await ctx.db.patch(chatData._id, {
+        chatInitialized: true,
+      });
+    }
+    return true;
+  },
+});
+
 const optionSchema = v.object({
   label: v.string(),
   value: v.string(),
@@ -65,6 +87,7 @@ export const pushMessage = mutation({
         sender: v.literal("bot"),
       })
     ),
+    mode : v.union(v.literal("ask"), v.literal("agent")),
   },
   handler: async (ctx, args) => {
     console.log(args);

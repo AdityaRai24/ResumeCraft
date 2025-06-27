@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
     const model = new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_API_KEY!,
-      modelName: "gemini-1.5-flash",
+      modelName: "gemini-2.0-flash",
     });
 
     const modelWithStructure = model.withStructuredOutput(parser);
