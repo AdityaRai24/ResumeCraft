@@ -30,6 +30,7 @@
     "axios": "^1.7.2",
     "base64-encode-file": "^1.0.7",
     "class-variance-authority": "^0.7.1",
+    "clear-npx-cache": "^1.1.2",
     "clsx": "^2.1.1",
     "convex": "^1.12.2",
     "framer-motion": "^11.2.12",

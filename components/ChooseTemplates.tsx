@@ -104,9 +104,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
           templateComponents[item.templateName];
 
         if (!TemplateComponent) {
-          toast.error(
-            `No component found for template: ${item.templateName}`
-          );
+          toast.error(`No component found for template: ${item.templateName}`);
           return null;
         }
 
@@ -119,13 +117,21 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
               <TemplateComponent
                 obj={item as ResumeTemplate}
                 size="sm"
+                marginSize={
+                  (item?.globalStyles?.margin || "md") as "sm" | "md" | "lg"
+                }
+                textSize={
+                  (item?.globalStyles?.textSize || "md") as "sm" | "md" | "lg"
+                }
                 isPreview={true}
               />
             </div>
 
-            <div className="absolute inset-0 w-full h-full p-4 sm:p-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-5 rounded-md cursor-pointer justify-center opacity-0
+            <div
+              className="absolute inset-0 w-full h-full p-4 sm:p-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-5 rounded-md cursor-pointer justify-center opacity-0
              group-hover:opacity-100 transition-opacity duration-300
-              bg-black/60">
+              bg-black/60"
+            >
               <Button
                 onClick={() => preview.onOpen(item as ResumeTemplate)}
                 className="w-[50%] md:w-full flex items-center justify-center gap-2"

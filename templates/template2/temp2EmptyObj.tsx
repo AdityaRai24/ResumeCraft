@@ -90,6 +90,8 @@ import { ResumeTemplate } from "@/types/templateTypes";
     photo: false,
     primaryColor: "#000",
     primaryTextColor: "#000",
+     textSize : "md",
+    margin : "md"
   },
 };
 export default temp2EmptyObj

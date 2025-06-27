@@ -91,6 +91,8 @@ const temp1EmptyObj: ResumeTemplate = {
     primaryColor: "#C026D3",
     photo: false,
     columns: 1,
+    textSize : "md",
+    margin : "md"
   },
 };
 

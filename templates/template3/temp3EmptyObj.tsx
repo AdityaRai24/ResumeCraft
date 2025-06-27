@@ -88,6 +88,8 @@ const temp3EmptyObj: ResumeTemplate = {
     primaryColor: "#C026D3",
     photo: true,
     columns: 2,
+     textSize : "md",
+    margin : "md"
   },
 };
 

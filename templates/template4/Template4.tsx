@@ -1,5 +1,5 @@
 "use client";
-import { cn } from "@/lib/utils";
+import { cn, marginSizes, textSizes } from "@/lib/utils";
 import { ResumeTemplate } from "@/types/templateTypes";
 import {
   Github,
@@ -18,9 +18,11 @@ import Image from "next/image";
 export interface TemplateType {
   obj: ResumeTemplate;
   size: "sm" | "md" | "lg";
+  textSize?: "sm" | "md" | "lg";
+  marginSize?: "sm" | "md" | "lg";
 }
 
-const Template4 = ({ obj, size }: TemplateType) => {
+const Template4 = ({ obj, size, textSize = size, marginSize = size }: TemplateType) => {
   const headerLogoMap: any = {
     github: <Github size={20} className="mt-[2px]" />,
     linkedin: <Linkedin size={20} className="mt-[2px]" />,
@@ -31,6 +33,8 @@ const Template4 = ({ obj, size }: TemplateType) => {
 
   const primaryTextColor = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColor = obj?.globalStyles?.primaryColor || "black";
+  const currentTextSize = textSizes[textSize];
+  const currentMarginSize = marginSizes[marginSize];
 
   const visitedCustoms: string[] = [];
 
@@ -65,12 +69,12 @@ const Template4 = ({ obj, size }: TemplateType) => {
       )}
     >
       <div className="max-w-[90%] mx-auto">
-        <div className="flex flex-col gap-2 mt-12 mb-8">
-          <h1 className="text-5xl text-center uppercase font-semibold">
+        <div className={cn("flex flex-col gap-2 mt-12 mb-8", currentMarginSize.section)}>
+          <h1 className={cn("text-center uppercase font-semibold", currentTextSize.name)}>
             {headerContent?.content?.firstName}{" "}
             {headerContent?.content?.lastName}
           </h1>
-          <p className="text-2xl text-center uppercase font-medium">
+          <p className={cn("text-center uppercase font-medium", currentTextSize.content)}>
             {headerContent?.content?.role}
           </p>
         </div>
@@ -84,21 +88,22 @@ const Template4 = ({ obj, size }: TemplateType) => {
               switch (item.type) {
                 case "header":
                   return (
-                    <div key={index} className="flex flex-col max-w-full break-words">
+                    <div key={index} className={cn("flex flex-col max-w-full break-words", currentMarginSize.section)}>
                       <div className="flex flex-col">
                         <LeftSectionHeader
                           primaryTextColor={primaryTextColor}
                           title="CONTACT"
+                          textSize={currentTextSize}
                         />
                         <div className="flex flex-col gap-3">
                           {leftHeaderContent?.content?.phone && (
-                            <div className="flex items-center text-sm gap-2">
+                            <div className={cn("flex items-center gap-2", currentTextSize.content)}>
                               <PhoneCall size={16} className="shrink-0" />
                               <p>{leftHeaderContent?.content?.phone}</p>
                             </div>
                           )}
                           {leftHeaderContent?.content?.email && (
-                            <div className="flex items-center text-sm gap-2">
+                            <div className={cn("flex items-center gap-2", currentTextSize.content)}>
                               <Mail size={16} className="shrink-0" />
                               <p className="break-all">
                                 {leftHeaderContent?.content?.email}
@@ -108,7 +113,7 @@ const Template4 = ({ obj, size }: TemplateType) => {
                           {leftHeaderContent?.content?.socialLinks.map(
                             (item, index) => {
                               return (
-                                <div className="flex items-center text-sm gap-2">
+                                <div className={cn("flex items-center gap-2", currentTextSize.content)}>
                                   {headerLogoMap[item.type]}
                                   <Link href={item.url} className="break-all">
                                     {item.name}
@@ -126,15 +131,16 @@ const Template4 = ({ obj, size }: TemplateType) => {
                   return (
                     <div
                       key={index}
-                      className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words flex flex-col`}
+                      className={cn(`${item.isVisible ? "block" : "hidden"} max-w-full break-words flex flex-col`, currentMarginSize.section)}
                     >
                       <LeftSectionHeader
                         primaryTextColor={primaryTextColor}
                         title="SKILLS"
+                        textSize={currentTextSize}
                       />
                       <div className="flex flex-col gap-3">
                         <div
-                          className="quill-content text-sm tracking-wider"
+                          className={cn("quill-content tracking-wider", currentTextSize.description)}
                           dangerouslySetInnerHTML={{
                             __html: item?.content.description ?? "",
                           }}
@@ -147,30 +153,31 @@ const Template4 = ({ obj, size }: TemplateType) => {
                   return (
                     <div
                       key={index}
-                      className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words`}
+                      className={cn(`${item.isVisible ? "block" : "hidden"} max-w-full break-words`, currentMarginSize.section)}
                     >
                       <LeftSectionHeader
                         primaryTextColor={primaryTextColor}
                         title="EDUCATION"
+                        textSize={currentTextSize}
                       />
                       <div className="flex flex-col gap-3">
                         {item?.content?.education.map((edu, idx) => (
                           <div key={idx} className="flex flex-col gap-1">
                             <div className="flex justify-between items-start">
-                              <h3 className="font-medium text-[15px]">
+                              <h3 className={cn("font-medium", currentTextSize.content)}>
                                 {edu.courseName}
                               </h3>
                             </div>
-                            <p className="text-sm text-gray-600">
+                            <p className={cn("text-gray-600", currentTextSize.description)}>
                               {edu.instituteName}
                               {edu.location && `, ${edu.location}`}
                             </p>
-                            <span className="text-sm text-gray-600">
+                            <span className={cn("text-gray-600", currentTextSize.description)}>
                               {edu?.startMonth} {edu?.startYear} -{" "}
                               {edu?.endMonth} {edu?.endYear}
                             </span>
                             {edu.grade && (
-                              <p className="text-sm text-gray-600">
+                              <p className={cn("text-gray-600", currentTextSize.description)}>
                                 Grade: {edu.grade}
                               </p>
                             )}
@@ -193,11 +200,12 @@ const Template4 = ({ obj, size }: TemplateType) => {
                   return (
                     <div
                       key={index}
-                      className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words flex flex-col`}
+                      className={cn(`${item.isVisible ? "block" : "hidden"} max-w-full break-words flex flex-col`, currentMarginSize.section)}
                     >
                       <LeftSectionHeader
                         primaryTextColor={primaryTextColor}
                         title={item.content.sectionTitle}
+                        textSize={currentTextSize}
                       />
                       <div
                         className="quill-content text-sm tracking-wider"
@@ -222,14 +230,15 @@ const Template4 = ({ obj, size }: TemplateType) => {
             switch (item.type) {
               case "header":
                 return (
-                  <div key={index} className="max-w-full break-words">
+                  <div key={index} className={cn("max-w-full break-words", currentMarginSize.section)}>
                     <RightSectionHeader
                       primaryTextColor={primaryTextColor}
                       title="PROFILE"
+                      textSize={currentTextSize}
                     />
                     {headerContent?.content?.summary && (
                       <p
-                        className="quill-content text-sm text-gray-600"
+                        className={cn("quill-content text-gray-600", currentTextSize.description)}
                         dangerouslySetInnerHTML={{
                           __html: headerContent?.content?.summary ?? "",
                         }}
@@ -242,29 +251,30 @@ const Template4 = ({ obj, size }: TemplateType) => {
                 return (
                   <div
                     key={index}
-                    className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words`}
+                    className={cn(`${item.isVisible ? "block" : "hidden"} max-w-full break-words`, currentMarginSize.section)}
                   >
                     <RightSectionHeader
                       primaryTextColor={primaryTextColor}
                       title="WORK EXPERIENCE"
+                      textSize={currentTextSize}
                     />
                     <div className="flex flex-col gap-6">
                       {item?.content?.experience.map((exp, idx) => (
                         <div key={idx} className="flex flex-col gap-1">
                           <div className="flex justify-between items-start">
-                            <h3 className="font-medium text-[15px]">
+                            <h3 className={cn("font-medium", currentTextSize.content)}>
                               {exp.role}
                             </h3>
-                            <span className="text-sm text-gray-600">
+                            <span className={cn("text-gray-600", currentTextSize.description)}>
                               {exp?.startMonth} {exp?.startYear} -{" "}
                               {exp?.endMonth} {exp?.endYear}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-600 mb-2">
+                          <p className={cn("text-gray-600 mb-2", currentTextSize.description)}>
                             {exp.companyName}
                           </p>
                           <div
-                            className="quill-content text-sm text-gray-600"
+                            className={cn("quill-content text-gray-600", currentTextSize.description)}
                             dangerouslySetInnerHTML={{
                               __html: exp?.jobDescription,
                             }}
@@ -279,24 +289,25 @@ const Template4 = ({ obj, size }: TemplateType) => {
                 return (
                   <div
                     key={index}
-                    className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words`}
+                    className={cn(`${item.isVisible ? "block" : "hidden"} max-w-full break-words`, currentMarginSize.section)}
                   >
                     <RightSectionHeader
                       primaryTextColor={primaryTextColor}
                       title="PROJECTS"
+                      textSize={currentTextSize}
                     />
                     <div className="flex flex-col gap-6">
                       {item?.content?.projects.map((project, idx) => (
                         <div key={idx} className="flex flex-col gap-1">
                           <div className="flex items-center justify-start gap-2">
-                            <h1 className="text-base  max-w-[80%] font-semibold">
+                            <h1 className={cn("max-w-[80%] font-semibold", currentTextSize.content)}>
                               {project?.name}
                             </h1>
                             {project?.githuburl && (
                               <Link href={project?.githuburl}>
                                 <Github
                                   size={16}
-                                  className={`cursor-pointer`}
+                                  className="cursor-pointer"
                                   style={{ color: primaryTextColor }}
                                 />
                               </Link>
@@ -306,7 +317,7 @@ const Template4 = ({ obj, size }: TemplateType) => {
                               <Link href={project?.liveurl}>
                                 <Globe
                                   size={16}
-                                  className={`cursor-pointer`}
+                                  className="cursor-pointer"
                                   style={{ color: primaryTextColor }}
                                 />
                               </Link>
@@ -314,7 +325,7 @@ const Template4 = ({ obj, size }: TemplateType) => {
                           </div>
 
                           <div
-                            className="quill-content text-sm text-gray-600"
+                            className={cn("quill-content text-gray-600", currentTextSize.description)}
                             dangerouslySetInnerHTML={{
                               __html: project?.description,
                             }}
@@ -338,14 +349,15 @@ const Template4 = ({ obj, size }: TemplateType) => {
                 return (
                   <div
                     key={index}
-                    className={`${item.isVisible ? "block" : "hidden"} max-w-full break-words`}
+                    className={cn(`${item.isVisible ? "block" : "hidden"} max-w-full break-words`, currentMarginSize.section)}
                   >
                     <RightSectionHeader
                       title={item.content.sectionTitle}
                       primaryTextColor={primaryTextColor}
+                      textSize={currentTextSize}
                     />
                     <div
-                      className="quill-content tracking-wider text-sm "
+                      className={cn("quill-content tracking-wider", currentTextSize.description)}
                       dangerouslySetInnerHTML={{
                         __html: item.content.sectionDescription,
                       }}
@@ -387,13 +399,15 @@ const RightHR = ({ primaryColor }: { primaryColor: string }) => {
 const LeftSectionHeader = ({
   title,
   primaryTextColor,
+  textSize,
 }: {
   title: string;
   primaryTextColor: string;
+  textSize: any;
 }) => {
   return (
     <h2
-      className="font-bold text-[16px] mb-2 tracking-[2px] uppercase"
+      className={cn("font-bold text-[16px] mb-2 tracking-[2px] uppercase", textSize.sectionHeader)}
       style={{ color: primaryTextColor }}
     >
       {title}
@@ -404,14 +418,16 @@ const LeftSectionHeader = ({
 const RightSectionHeader = ({
   title,
   primaryTextColor,
+  textSize,
 }: {
   title: string;
   primaryTextColor: string;
+  textSize: any;
 }) => {
   return (
     <div>
       <h1
-        className="text-2xl tracking-[2px] font-bold uppercase"
+        className={cn("text-2xl tracking-[2px] font-bold uppercase", textSize.name)}
         style={{ color: primaryTextColor }}
       >
         {title}

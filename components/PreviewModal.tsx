@@ -30,6 +30,8 @@ const PreviewModal = () => {
               {TemplateComponent && preview.currentTemplate && (
                 <TemplateComponent
                   obj={preview.currentTemplate}
+                  textSize={"md" as "sm" | "md" | "lg"}
+                  marginSize={"md" as "sm" | "md" | "lg"}
                   size="lg"
                   isPreview={true}
                 />

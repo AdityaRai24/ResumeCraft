@@ -27,11 +27,64 @@ import TemplateWrapper from "@/providers/TemplateWrapper";
 interface TemplateType {
   obj: ResumeTemplate;
   size: "sm" | "md" | "lg";
+  textSize?: "sm" | "md" | "lg";
+  marginSize?: "sm" | "md" | "lg";
 }
 
-const Template2 = ({ obj, size }: TemplateType) => {
+const textSizes = {
+  sm: {
+    name: "text-[33px]", // 30px
+    sectionHeader: "text-[16px]", // 16px
+    content: "text-[14px]", // 14px
+    description: "text-[12px]", // 12px
+  },
+  md: {
+    name: "text-[36px]", // 36px
+    sectionHeader: "text-[17px]", // 18px
+    content: "text-[15px]", // 16px
+    description: "text-[13px]", // 14px
+  },
+  lg: {
+    name: "text-[38px]", // 48px  
+    sectionHeader: "text-[18px]", // 20px
+    content: "text-[16px]", // 18px
+    description: "text-[14px]", // 16px
+  },
+} as const;
+
+const marginSizes = {
+  xs: {
+    section: "mt-0.5", // 4px between sections
+    content: "mt-1", // 8px for content blocks
+    headerContent: "mt-0.5", // 4px for header content
+  },
+  sm: {
+    section: "mt-1", // 4px between sections
+    content: "mt-2", // 8px for content blocks
+    headerContent: "mt-1", // 4px for header content
+  },
+  md: {
+    section: "mt-2", // 8px between sections
+    content: "mt-3", // 12px for content blocks
+    headerContent: "mt-2", // 8px for header content
+  },
+  lg: {
+    section: "mt-3", // 16px between sections
+    content: "mt-4", // 20px for content blocks
+    headerContent: "mt-3", // 12px for header content
+  },
+} as const;
+
+const Template2 = ({
+  obj,
+  size,
+  textSize = size,
+  marginSize = size,
+}: TemplateType) => {
   const primaryTextColorClass = obj?.globalStyles?.primaryTextColor || "black";
   const primaryColorClass = obj?.globalStyles?.primaryColor || "black";
+  const currentTextSize = textSizes[textSize];
+  const currentMarginSize = marginSizes[marginSize];
 
   const sortedSections = [...obj.sections].sort(
     (a, b) => a.orderNumber - b.orderNumber
@@ -45,23 +98,28 @@ const Template2 = ({ obj, size }: TemplateType) => {
     other: <Link2 size={18} className="mt-[2px]" />,
   };
 
-  const renderSection = (section : any, index : any) => {
+  const renderSection = (section: any, index: any) => {
     switch (section.type) {
       case "header":
         const headerContent = section.content as HeaderContent;
 
         return (
-          <div 
-            key={`header-section-${index}`} 
+          <div
+            key={`header-section-${index}`}
             className={section.isVisible ? "block" : "hidden"}
           >
             <h1
-              className="text-4xl text-center font-semibold"
+              className={cn(currentTextSize.name, "text-center font-semibold")}
               style={{ color: primaryTextColorClass }}
             >
               {headerContent.firstName} {headerContent.lastName}
             </h1>
-            <div className="flex items-center flex-wrap justify-center gap-4 mt-2">
+            <div
+              className={cn(
+                "flex items-center flex-wrap justify-center gap-4",
+                currentMarginSize.headerContent
+              )}
+            >
               {headerContent.phone && (
                 <div className="flex gap-1 items-center">
                   <Phone size={18} className="mt-[2px]" />
@@ -78,12 +136,12 @@ const Template2 = ({ obj, size }: TemplateType) => {
               )}
               {headerContent.socialLinks.map((item, i) => {
                 return (
-                  <div key={i} className="flex items-center justify-center gap-1">
+                  <div
+                    key={i}
+                    className="flex items-center justify-center gap-1"
+                  >
                     {headerLogoMap[item.type]}
-                    <a
-                      href={item.url}
-                      className="underline underline-offset-2"
-                    >
+                    <a href={item.url} className="underline underline-offset-2">
                       {item.name}
                     </a>
                   </div>
@@ -97,13 +155,16 @@ const Template2 = ({ obj, size }: TemplateType) => {
         const educationContent = section.content as EducationContent;
 
         return (
-          <div 
-            key={`education-section-${index}`} 
-            className={`mt-2 ${section.isVisible ? "block" : "hidden"}`}
+          <div
+            key={`education-section-${index}`}
+            className={cn(
+              currentMarginSize.section,
+              section.isVisible ? "block" : "hidden"
+            )}
           >
             <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
               <h1
-                className="text-lg"
+                className={currentTextSize.sectionHeader}
                 style={{ color: primaryTextColorClass }}
               >
                 EDUCATION
@@ -112,21 +173,30 @@ const Template2 = ({ obj, size }: TemplateType) => {
             {educationContent?.education?.map((edu, i) => (
               <div
                 key={i}
-                className="flex mt-2 items-center justify-between"
+                className={cn(
+                  "flex",
+                  currentMarginSize.section,
+                  "items-center justify-between"
+                )}
               >
                 <div>
-                  <h1 className="text-base font-semibold">
+                  <h1 className={cn(currentTextSize.content, "font-semibold")}>
                     {edu?.instituteName}
                   </h1>
-                  <p className="text-sm italic">
+                  <p className={cn(currentTextSize.description, "italic")}>
                     {edu?.courseName} {edu?.grade && "-"} {edu?.grade}
                   </p>
                 </div>
                 <div>
-                  <p className="text-base text-right">
+                  <p className={cn("text-right",currentTextSize.content)}>
                     {edu?.location && edu?.location}
                   </p>
-                  <p className="text-sm text-right italic">
+                  <p
+                    className={cn(
+                      currentTextSize.description,
+                      "text-right italic"
+                    )}
+                  >
                     {`${edu?.startMonth ? `${edu.startMonth} ` : ""}${edu?.startYear ? edu.startYear : ""}${!edu?.studyingHere && (edu?.endMonth || edu?.endYear) ? ` - ${edu.endMonth} ${edu.endYear}` : edu?.studyingHere ? " - Present" : ""}`}
                   </p>
                 </div>
@@ -137,30 +207,39 @@ const Template2 = ({ obj, size }: TemplateType) => {
 
       case "experience":
         const experienceContent = section.content as ExperienceContent;
-        
+
         return (
           <div
             key={`experience-section-${index}`}
-            className={`mt-2 ${section.isVisible ? "block" : "hidden"}`}
+            className={cn(
+              currentMarginSize.section,
+              section.isVisible ? "block" : "hidden"
+            )}
           >
             <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
               <h1
-                className="text-lg"
+                className={currentTextSize.sectionHeader}
                 style={{ color: primaryTextColorClass }}
               >
                 EXPERIENCE
               </h1>
             </div>
             {experienceContent?.experience?.map((exp, i) => (
-              <div key={i} className="mt-2">
+              <div key={i} className={currentMarginSize.section}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-base font-semibold">{exp?.role}</h1>
-                    <h1 className="text-sm italic">{exp?.companyName}</h1>
+                    <h1
+                      className={cn(currentTextSize.content, "font-semibold")}
+                    >
+                      {exp?.role}
+                    </h1>
+                    <h1 className={cn(currentTextSize.description, "italic")}>
+                      {exp?.companyName}
+                    </h1>
                   </div>
                   <div className="text-right">
                     {exp?.startYear && exp?.endYear && (
-                      <p className="text-base ">
+                      <p className={currentTextSize.content}>
                         {exp?.startMonth} {exp?.startYear}{" "}
                         {(exp?.startYear || exp?.startMonth) &&
                           (exp?.endYear || exp?.endMonth) &&
@@ -169,12 +248,14 @@ const Template2 = ({ obj, size }: TemplateType) => {
                       </p>
                     )}{" "}
                     {exp?.location && (
-                      <p className="text-sm italic">{exp?.location}</p>
+                      <p className={cn(currentTextSize.description, "italic")}>
+                        {exp?.location}
+                      </p>
                     )}
                   </div>
                 </div>
                 <div
-                  className="quill-content text-sm"
+                  className={cn("quill-content", currentTextSize.description)}
                   dangerouslySetInnerHTML={{ __html: exp?.jobDescription }}
                 />
               </div>
@@ -188,18 +269,25 @@ const Template2 = ({ obj, size }: TemplateType) => {
         return (
           <div
             key={`skills-section-${index}`}
-            className={`mt-2 ${section.isVisible ? "block" : "hidden"}`}
+            className={cn(
+              currentMarginSize.section,
+              section.isVisible ? "block" : "hidden"
+            )}
           >
             <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
               <h1
-                className="text-lg"
+                className={currentTextSize.sectionHeader}
                 style={{ color: primaryTextColorClass }}
               >
                 SKILLS
               </h1>
             </div>
             <div
-              className="quill-content text-sm mt-3"
+              className={cn(
+                "quill-content",
+                currentTextSize.description,
+                currentMarginSize.content
+              )}
               dangerouslySetInnerHTML={{
                 __html: skillsContent.content.description,
               }}
@@ -209,24 +297,27 @@ const Template2 = ({ obj, size }: TemplateType) => {
 
       case "projects":
         const projectContent = section.content as ProjectContent;
-        
+
         return (
           <div
             key={`projects-section-${index}`}
-            className={`mt-2 ${section.isVisible ? "block" : "hidden"}`}
+            className={cn(
+              currentMarginSize.section,
+              section.isVisible ? "block" : "hidden"
+            )}
           >
             <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
               <h1
-                className="text-lg"
+                className={currentTextSize.sectionHeader}
                 style={{ color: primaryTextColorClass }}
               >
                 PROJECTS
               </h1>
             </div>
             {projectContent?.projects?.map((project, i) => (
-              <div key={i} className="mt-2">
+              <div key={i} className={currentMarginSize.section}>
                 <div className="flex items-center justify-start gap-2">
-                  <h1 className="text-base font-semibold">
+                  <h1 className={cn(currentTextSize.content, "font-semibold")}>
                     {project?.name}
                   </h1>
                   {project?.githuburl && (
@@ -250,7 +341,7 @@ const Template2 = ({ obj, size }: TemplateType) => {
                   )}
                 </div>
                 <div
-                  className="quill-content text-sm"
+                  className={cn("quill-content", currentTextSize.description)}
                   dangerouslySetInnerHTML={{ __html: project?.description }}
                 />
               </div>
@@ -262,18 +353,25 @@ const Template2 = ({ obj, size }: TemplateType) => {
         return (
           <div
             key={`custom-section-${index}-${section.content.sectionTitle}`}
-            className={`mt-2 ${section.isVisible ? "block" : "hidden"}`}
+            className={cn(
+              currentMarginSize.section,
+              section.isVisible ? "block" : "hidden"
+            )}
           >
             <div style={{ borderBottom: `1px solid ${primaryColorClass}` }}>
               <h1
-                className="text-lg"
+                className={currentTextSize.sectionHeader}
                 style={{ color: primaryTextColorClass }}
               >
                 {section.content.sectionTitle.toUpperCase()}
               </h1>
             </div>
             <div
-              className="quill-content text-sm mt-2"
+              className={cn(
+                "quill-content",
+                currentTextSize.description,
+                currentMarginSize.section
+              )}
               dangerouslySetInnerHTML={{
                 __html: section.content.sectionDescription,
               }}

@@ -114,8 +114,9 @@ const LiveResumePreview = () => {
                 <p className="text-sm sm:text-base">
                   When downloading, select &quot;
                   <span className="font-bold">Save as PDF</span>&quot; and Paper
-                  Size &quot;<span className="font-bold">ISO A4</span>&quot; to ensure the resume text
-                  remains selectable, allowing easy copy-pasting by recruiters.
+                  Size &quot;<span className="font-bold">ISO A4</span>&quot; to
+                  ensure the resume text remains selectable, allowing easy
+                  copy-pasting by recruiters.
                 </p>
               </div>
 
@@ -193,7 +194,13 @@ const LiveResumePreview = () => {
             id="pdf"
           >
             {templateDetails && (
-              <TemplateComponent isPreview obj={templateDetails} size="lg" />
+              <TemplateComponent
+              textSize={(templateDetails?.globalStyles?.textSize || "md") as "sm" | "md" | "lg"}
+              marginSize={(templateDetails?.globalStyles?.margin || "md") as "sm" | "md" | "lg"}
+              isPreview
+                obj={templateDetails}
+                size="lg"
+              />
             )}
           </div>
         </div>

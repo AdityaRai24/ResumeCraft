@@ -133,5 +133,7 @@ export interface ResumeTemplate {
     primaryColor: string;
     photo: boolean;
     columns: number;
+    textSize: string;
+    margin : string;
   };
 }

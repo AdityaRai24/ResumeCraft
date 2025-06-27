@@ -86,6 +86,8 @@ const LiveResumePreview = () => {
           <TemplateComponent
             obj={templateDetails as ResumeTemplate}
             size="md"
+            textSize={(templateDetails?.globalStyles?.textSize || "md") as "sm" | "md" | "lg"}
+            marginSize={(templateDetails?.globalStyles?.margin || "md") as "sm" | "md" | "lg"}
             isPreview
           />
         </motion.div>

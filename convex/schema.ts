@@ -154,6 +154,8 @@ export default defineSchema({
       primaryColor: v.string(),
       photo: v.boolean(),
       columns: v.number(),
+      textSize: v.optional(v.string()),
+      margin : v.optional(v.string())
     }),
   }),
   premiumUsers: defineTable({

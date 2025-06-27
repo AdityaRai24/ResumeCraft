@@ -520,6 +520,68 @@ export const updateFont = mutation({
   },
 });
 
+export const updateFontSize = mutation({
+  args: {
+    id: v.id("resumes"),
+    textSize: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
+    }
+
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if (identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const updatedResume = await ctx.db.patch(args.id, {
+      globalStyles: {
+        ...resume.globalStyles,
+        textSize: args.textSize,
+      },
+    });
+
+    return updatedResume;
+  },
+});
+
+export const updateMarginSize = mutation({
+  args: {
+    id: v.id("resumes"),
+    marginSize: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Something went wrong");
+    }
+
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if (identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const updatedResume = await ctx.db.patch(args.id, {
+      globalStyles: {
+        ...resume.globalStyles,
+        margin: args.marginSize,
+      },
+    });
+
+    return updatedResume;
+  },
+});
+
 export const getUserResumes = query({
   args: {
     userId: v.string(),
@@ -704,5 +766,34 @@ export const hideSection = mutation({
     });
 
     return updatedResume;
+  },
+});
+
+export const addDefaultSizesToResumes = mutation({
+  args: {}, // No arguments needed for this migration
+  handler: async (ctx) => {
+    console.log("Starting migration to add default font and margin sizes to resumes.");
+
+    const resumes = await ctx.db.query("resumes").collect();
+
+    let updatedCount = 0;
+    for (const resume of resumes) {
+      // Check if globalStyles or its properties are missing
+      if (!resume.globalStyles || typeof resume.globalStyles.textSize === 'undefined' || typeof resume.globalStyles.margin === 'undefined') {
+        const newGlobalStyles = {
+          ...resume.globalStyles, // Keep existing global styles
+          textSize: resume.globalStyles?.textSize || "md", // Add textSize if missing
+          margin: resume.globalStyles?.margin || "md",     // Add margin if missing
+        };
+
+        await ctx.db.patch(resume._id, {
+          globalStyles: newGlobalStyles,
+        });
+        updatedCount++;
+      }
+    }
+
+    console.log(`Finished migration. Updated ${updatedCount} resumes.`);
+    return { success: true, updatedCount };
   },
 });

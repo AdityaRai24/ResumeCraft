@@ -263,7 +263,7 @@ export default function Home() {
                   initial="hidden"
                   animate="visible"
                 >
-                  <Template2 size="lg" obj={temp2Obj} />
+                  <Template2 size="lg" textSize="sm" obj={temp2Obj} />
                 </motion.div>
 
                 <motion.div

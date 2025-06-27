@@ -13,6 +13,8 @@ export type TemplateComponentType = React.ComponentType<{
   obj: ResumeTemplate;
   isPreview: boolean;
   size: "sm" | "md" | "lg";
+  textSize?: "sm" | "md" | "lg";
+  marginSize?: "sm" | "md" | "lg";
 }>;
 
 export const templateComponents: Record<string, TemplateComponentType> = {
