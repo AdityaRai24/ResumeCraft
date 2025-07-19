@@ -9,6 +9,9 @@ import {
   MessageSquare,
   HelpCircle,
   CheckCircle,
+  Loader2,
+  XIcon,
+  History,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { OptionMessage, TextMessage, useChatBotStore } from "@/store";
@@ -18,7 +21,6 @@ import { useParams } from "next/navigation";
 import { useQuery, useMutation, useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 import {
   Dialog,
   DialogTrigger,
@@ -28,14 +30,7 @@ import {
   DialogDescription,
 } from "./ui/dialog";
 import axios from "axios";
-
-type LocalChatMessage = {
-  id: string;
-  sender: "user" | "bot";
-  content: TextMessage | OptionMessage;
-  isTyping?: boolean;
-  isProcessing?: boolean;
-};
+import ActionConfirmationModal from "./ActionConfirmationModal";
 
 interface ChatbotProps {
   isOnboardingModalOpen?: boolean;
@@ -43,40 +38,46 @@ interface ChatbotProps {
 
 const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
   const [message, setMessage] = useState("");
+  const params = useParams();
+
   const {
     messages: storeMessages,
-    pushText,
-    pushOptions,
-    resetMessages,
     fillMessages,
-    resume: resumeFromStore,
+    getResume,
+    setResume,
     desiredRole: desiredRoleFromStore,
     experienceLevel: experienceLevelFromStore,
-    setResume,
+    pushTyping,
+    removeTyping,
+    pushText,
   } = useChatBotStore((state) => state);
-  const [displayMessages, setDisplayMessages] = useState<LocalChatMessage[]>(
-    []
-  );
+  const resumeFromStore = getResume(params.id as string);
   const [isExpanded, setIsExpanded] = useState(true);
-  const [lastProcessedMessageCount, setLastProcessedMessageCount] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [mode, setMode] = useState<"ask" | "agent">("ask");
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isBotLoading, setIsBotLoading] = useState(false);
-
+  const [isActionModalOpen, setIsActionModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({
+    heading: "",
+    description: "",
+    buttonText: "",
+    onConfirm: async () => {},
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const { user } = useUser();
-  const params = useParams();
   const resumeId = params.id;
+  const prevOnboardingRef = useRef(isOnboardingModalOpen);
+  const [isJDModalOpen, setIsJDModalOpen] = useState(false);
+  const [jobDescription, setJobDescription] = useState("");
+  const [isJDLoading, setIsJDLoading] = useState(false);
+  const [jdError, setJDError] = useState("");
 
   const chatBotData = useQuery(api.chatBot.getChatbotData, {
     userId: user?.id || "",
     resumeId: resumeId as Id<"resumes">,
   });
-
-  const pushMessage = useMutation(api.chatBot.pushMessage);
-  const convex = useConvex();
+  const updateResumeMutation = useMutation(api.resume.updateResumeSections);
 
   useEffect(() => {
     if (
@@ -89,6 +90,22 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
     }
   }, [chatBotData, fillMessages]);
 
+  useEffect(() => {
+    // Detect onboarding modal close (from open to closed)
+    if (prevOnboardingRef.current && !isOnboardingModalOpen) {
+      // Wait 1.5s, show typing, then after 1.5s show welcome message
+      setTimeout(() => {
+        pushTyping("Setting up your personalized AI assistant...");
+        setTimeout(() => {
+          removeTyping();
+          const welcomeMessage = `👋 Hi ${user?.firstName || "there"}! I'm CraftBot, your personal AI assistant.\nI'm here to guide you through building a job-winning resume – step by step.`;
+          pushText(welcomeMessage, "bot", { messageType: "info" });
+        }, 1500);
+      }, 1500);
+    }
+    prevOnboardingRef.current = isOnboardingModalOpen;
+  }, [isOnboardingModalOpen, pushTyping, removeTyping, pushText, user]);
+
   const handleSend = async () => {
     if (!chatBotData?.chatInitialized) return;
     if (!user || !user.id) return;
@@ -98,37 +115,23 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
     setMessage("");
     inputRef.current?.focus();
 
-    // 1. Push user's message immediately
-    await pushMessage({
-      userId: user.id,
-      resumeId: resumeId as Id<"resumes">,
-      message: {
-        sender: "user",
-        content: { type: "text", message: userMessage },
-      },
-      mode,
-    });
+    pushText(userMessage, "user", { messageType: "info" });
 
-    // 2. Show bot typing indicator locally with fun animation
-    const typingId = `typing-${Date.now()}-${Math.random()}`;
-    setDisplayMessages((prev) => [
-      ...prev.filter((msg) => !msg.isTyping && !msg.isProcessing), // Remove any existing typing indicators
-      {
-        id: `user-${Date.now()}`,
-        sender: "user",
-        content: { type: "text", message: userMessage },
-      },
-      {
-        id: typingId,
-        sender: "bot",
-        content: { type: "text", message: "I'm working on your request..." },
-        isTyping: true,
-      },
-    ]);
+    pushTyping("I'm working on your request...");
     setIsBotLoading(true);
 
-    // 3. Call the API route for bot response
+    // Get last 3 non-typing messages for history
+    const last5 = storeMessages
+      .filter(m => !m.isTyping)
+      .slice(-5)
+      .map(m => ({
+        sender: m.sender,
+        content: m.content.message,
+        type: m.content.type,
+      }));
+
     try {
+      console.log(resumeFromStore)
       const response = await axios.post(`http://localhost:3000/api/chatbot`, {
         userId: user.id,
         resumeId: resumeId as Id<"resumes">,
@@ -136,100 +139,196 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
           sender: "user",
           content: { type: "text", message: userMessage },
         },
-        mode,
         resume: resumeFromStore,
         desiredRole: desiredRoleFromStore,
         experienceLevel: experienceLevelFromStore,
+        history: last5,
       });
 
-      if (response.data && response.data.updatedResume) {
-        setResume(response.data.updatedResume);
+      // Handle out-of-scope response
+      if (response.data && response.data.outOfScope) {
+        setIsBotLoading(false);
+        removeTyping();
+        pushText(
+          response.data.message ||
+            "Sorry, I can only help with resume changes or questions about your resume.",
+          "bot",
+          { messageType: "error" }
+        );
+        return;
       }
 
-      // 4. Show processing completion message
-      setDisplayMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === typingId
-            ? {
-                ...msg,
-                content: {
-                  type: "text",
-                  message:
-                    "✨ Perfect! I've updated your resume based on your request. The changes have been applied successfully!",
-                },
-                isTyping: false,
-                isProcessing: true,
-              }
-            : msg
-        )
-      );
-
-      // 5. After a brief delay, fetch and show the actual updated messages
-      setTimeout(async () => {
-        const updatedChatBotData = await convex.query(
-          api.chatBot.getChatbotData,
-          {
-            userId: user.id,
-            resumeId: resumeId as Id<"resumes">,
-          }
-        );
-
-        if (updatedChatBotData && Array.isArray(updatedChatBotData.content)) {
-          // Update display messages with the latest from the server
-          setDisplayMessages(
-            updatedChatBotData.content.map((msg: any) => ({
-              ...msg,
-              id: `msg-${Math.random().toString(36).substr(2, 9)}`,
-            }))
-          );
-          fillMessages(updatedChatBotData.content);
-        }
+      // Handle advice response
+      if (response.data && response.data.advice) {
         setIsBotLoading(false);
-      }, 1500); // Show success message for 1.5 seconds
+        removeTyping();
+        pushText(response.data.advice, "bot", { messageType: "info" });
+        return;
+      }
+
+      if (response.data && response.data.updatedResume) {
+        setIsBotLoading(false);
+        setResume(params.id as string, response.data.updatedResume);
+        removeTyping();
+        const botMsg = response.data.confirmationMsg ||
+          "✨ Perfect! I've updated your resume based on your request. The changes have been applied successfully!";
+        pushText(botMsg, "bot", { messageType: "info" });
+        return;
+      }
     } catch (error) {
-      console.log(error);
-      // Handle error case
-      setDisplayMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === typingId
-            ? {
-                ...msg,
-                content: {
-                  type: "text",
-                  message:
-                    "I apologize, but I encountered an error while processing your request. Please try again.",
-                },
-                isTyping: false,
-              }
-            : msg
-        )
-      );
       setIsBotLoading(false);
+      removeTyping();
+      const errorMsg =
+        "I apologize, but I encountered an error while processing your request. Please try again.";
+      pushText(errorMsg, "bot", { messageType: "error" });
     }
   };
 
-  useEffect(() => {
-    // Only update displayMessages if we're not currently processing a bot response
-    if (!isBotLoading) {
-      setDisplayMessages(
-        storeMessages.map((msg) => ({
-          ...msg,
-          id: `msg-${Math.random().toString(36).substr(2, 9)}`,
-        }))
-      );
-    }
-    setLastProcessedMessageCount(storeMessages.length);
-  }, [storeMessages, isBotLoading]);
+  const confirmAction = async (actionType: string) => {
+    setIsBotLoading(true);
+    // Note: The modal will be closed by the calling function.
+    // We start the bot loading process here.
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleSend();
+    pushTyping(
+      `I'm on it! Running the ${actionType.toUpperCase()} analysis...`
+    );
+
+    console.log(resumeFromStore);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/api/action-${actionType}`,
+        {
+          resume: resumeFromStore.sections,
+          desiredRole: desiredRoleFromStore,
+          experienceLevel: experienceLevelFromStore,
+        }
+      );
+      console.log(response.data);
+      const updatedResumeSections = response.data.updatedResume;
+
+      if (resumeFromStore && updatedResumeSections) {
+        const updatedResume = {
+          ...resumeFromStore,
+          sections: updatedResumeSections,
+        };
+
+        setResume(params.id as string, updatedResume);
+
+        await updateResumeMutation({
+          id: resumeId as Id<"resumes">,
+          sections: updatedResumeSections,
+        });
+      }
+
+      removeTyping();
+      const botMsg = `✨ Done! The ${actionType.toUpperCase()} scan is complete. I've analyzed your resume and the results are ready for your review.`;
+      pushText(botMsg, "bot", { messageType: "success" });
+      setIsBotLoading(false);
+      setIsActionModalOpen(false); // Ensure modal is closed
+    } catch (error) {
+      removeTyping();
+      const errorMsg = `I'm sorry, I encountered an error during the ${actionType.toUpperCase()} scan. Please try again.`;
+      pushText(errorMsg, "bot", { messageType: "error" });
+      setIsBotLoading(false);
+      setIsActionModalOpen(false); // Ensure modal is closed
     }
+  };
+
+  const handleOneClickATS = () => {
+    setModalContent({
+      heading: "One-Click ATS Check",
+      description: `This action will perform a comprehensive analysis of your resume against common Applicant Tracking System (ATS) standards.
+      \nHere's what it does:
+      - Scans for keywords relevant to your desired role.
+      - Checks for proper formatting and structure.
+      - Ensures dates, contact information, and section headings are parsable.
+      - Provides a summary of potential issues and suggestions for improvement.
+      \nThis will help increase your resume's chances of passing the initial automated screening.`,
+      buttonText: "Run ATS Check",
+      onConfirm: () => confirmAction("ats"),
+    });
+    setIsActionModalOpen(true);
+  };
+
+  const handleMatchJD = () => {
+    setJobDescription("");
+    setJDError("");
+    setIsJDModalOpen(true);
+  };
+
+  const handleJDSubmit = async () => {
+    if (!jobDescription.trim()) {
+      setJDError("Please enter a job description.");
+      return;
+    }
+    setIsJDLoading(true);
+    setJDError("");
+    pushTyping("Analyzing your resume against the job description...");
+    try {
+      const response = await axios.post(`http://localhost:3000/api/action-jd`, {
+        resume: resumeFromStore.sections,
+        desiredRole: desiredRoleFromStore,
+        experienceLevel: experienceLevelFromStore,
+        jobDescription,
+      });
+      const updatedResumeSections = response.data.updatedResume;
+      if (resumeFromStore && updatedResumeSections) {
+        const updatedResume = {
+          ...resumeFromStore,
+          sections: updatedResumeSections,
+        };
+        setResume(params.id as string, updatedResume);
+        await updateResumeMutation({
+          id: resumeId as Id<"resumes">,
+          sections: updatedResumeSections,
+        });
+      }
+      removeTyping();
+      const botMsg =
+        "✨ Done! Your resume has been analyzed and tailored to the job description. Review the changes for best results.";
+      pushText(botMsg, "bot", { messageType: "success" });
+      setIsJDModalOpen(false);
+      setIsJDLoading(false);
+    } catch (error) {
+      removeTyping();
+      setJDError(
+        "Sorry, there was an error matching your resume to the job description. Please try again."
+      );
+      pushText(
+        "Sorry, there was an error matching your resume to the job description. Please try again.",
+        "bot",
+        { messageType: "error" }
+      );
+      setIsJDLoading(false);
+    }
+  };
+
+  const handleFixInconsistencies = () => {
+    setModalContent({
+      heading: "Fix Resume Inconsistencies",
+      description: `This action will automatically scan your entire resume for common errors and inconsistencies.
+      \nThe assistant will look for:
+      - Inconsistent date formats (e.g., "May 2023" vs. "05/2023").
+      - Mismatched company names or job titles across sections.
+      - Grammatical errors and typos.
+      - Verb tense consistency in your bullet points.
+      \nApplying these fixes will make your resume look more professional and polished.`,
+      buttonText: "Find and Fix",
+      onConfirm: () => confirmAction("inconsistencies"),
+    });
+    setIsActionModalOpen(true);
   };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [displayMessages]);
+  }, [storeMessages]);
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  };
 
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
@@ -250,61 +349,76 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
-  const FunTypingIndicator = () => (
+  const FunTypingIndicator = ({
+    message = "I'm working on your request...",
+  }: {
+    message?: string;
+  }) => (
     <div className="flex items-center space-x-3 p-2">
-      <div className="flex space-x-1">
+      {/* Bot avatar/icon */}
+      <div className="flex-shrink-0">
         <motion.div
-          className="w-3 h-3 rounded-full bg-gradient-to-r from-primary to-primary/60"
-          animate={{
-            scale: [1, 1.4, 1],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 1.2,
-            ease: "easeInOut",
-            delay: 0,
-          }}
-        />
-        <motion.div
-          className="w-3 h-3 rounded-full bg-gradient-to-r from-primary to-primary/60"
-          animate={{
-            scale: [1, 1.4, 1],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 1.2,
-            ease: "easeInOut",
-            delay: 0.2,
-          }}
-        />
-        <motion.div
-          className="w-3 h-3 rounded-full bg-gradient-to-r from-primary to-primary/60"
-          animate={{
-            scale: [1, 1.4, 1],
-            opacity: [0.7, 1, 0.7],
-          }}
-          transition={{
-            repeat: Infinity,
-            duration: 1.2,
-            ease: "easeInOut",
-            delay: 0.4,
-          }}
-        />
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          className="bg-primary/90 p-2 rounded-full shadow-md border-2 border-white"
+        >
+          <Bot size={18} className="text-white" />
+        </motion.div>
       </div>
-      <motion.div
-        animate={{
-          rotate: [0, 360],
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 2,
-          ease: "linear",
-        }}
-      >
-        <Sparkles size={16} className="text-primary" />
-      </motion.div>
+      {/* Chat bubble with animated dots and message stacked vertically */}
+      <div className="relative">
+        <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl px-5 py-3 shadow-sm flex flex-col items-center min-w-[120px] max-w-xs">
+          {/* Animated dots */}
+          <div className="flex space-x-1 mb-2">
+            <motion.span
+              className="block w-2.5 h-2.5 rounded-full bg-primary/70"
+              animate={{ y: [0, -6, 0] }}
+              transition={{
+                repeat: Infinity,
+                duration: 1,
+                ease: "easeInOut",
+                delay: 0,
+              }}
+            />
+            <motion.span
+              className="block w-2.5 h-2.5 rounded-full bg-primary/60"
+              animate={{ y: [0, -6, 0] }}
+              transition={{
+                repeat: Infinity,
+                duration: 1,
+                ease: "easeInOut",
+                delay: 0.2,
+              }}
+            />
+            <motion.span
+              className="block w-2.5 h-2.5 rounded-full bg-primary/50"
+              animate={{ y: [0, -6, 0] }}
+              transition={{
+                repeat: Infinity,
+                duration: 1,
+                ease: "easeInOut",
+                delay: 0.4,
+              }}
+            />
+          </div>
+          {/* Typing message */}
+          <div className="text-xs text-primary font-medium text-center whitespace-pre-line">
+            {message}
+          </div>
+          {/* Optional shimmer effect */}
+          <motion.div
+            className="absolute left-0 top-0 w-full h-full rounded-2xl pointer-events-none"
+            initial={{ opacity: 0.2 }}
+            animate={{ opacity: [0.2, 0.4, 0.2] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 100%)",
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 
@@ -316,6 +430,91 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
   return (
     <div className="flex h-screen relative">
       <AnimatePresence>
+        {isActionModalOpen && !isJDModalOpen && (
+          <ActionConfirmationModal
+            closeModal={() => setIsActionModalOpen(false)}
+            heading={modalContent.heading}
+            description={modalContent.description}
+            buttonText={modalContent.buttonText}
+            onConfirm={modalContent.onConfirm}
+            isProcessing={isBotLoading}
+          />
+        )}
+        {isJDModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center z-50 p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+              className="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden"
+            >
+              <div className="bg-gradient-to-r from-primary/80 to-primary p-4 flex justify-between items-center">
+                <h2 className="text-xl font-bold text-white">
+                  Match with Job Description
+                </h2>
+                <button
+                  onClick={() => setIsJDModalOpen(false)}
+                  className="text-white/80 hover:text-white transition-colors"
+                  disabled={isJDLoading}
+                >
+                  <XIcon className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-6">
+                <div className="mb-4">
+                  <p className="text-gray-600 whitespace-pre-line mb-2">
+                    Paste the job description below. The AI will analyze your
+                    resume and suggest tailored improvements to maximize your
+                    match.
+                  </p>
+                  <textarea
+                    className="w-full min-h-[120px] border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                    placeholder="Paste the job description here..."
+                    value={jobDescription}
+                    onChange={(e) => setJobDescription(e.target.value)}
+                    disabled={isJDLoading}
+                  />
+                  {jdError && (
+                    <div className="text-red-500 text-xs mt-2">{jdError}</div>
+                  )}
+                </div>
+                <div className="flex justify-end gap-4">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsJDModalOpen(false)}
+                    disabled={isJDLoading}
+                    className="px-4 py-2 rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 font-medium"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleJDSubmit}
+                    disabled={isJDLoading}
+                    className={`px-4 py-2 rounded-md text-white font-medium flex items-center gap-2 ${
+                      isJDLoading
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-primary hover:bg-primary/90 cursor-pointer"
+                    }`}
+                  >
+                    {isJDLoading && (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    )}
+                    Analyze and Match
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
         {!isExpanded && (
           <motion.div
             initial="hidden"
@@ -454,58 +653,38 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
             </div>
           </motion.div>
 
-          {/* Mode Selector Tabs */}
-          <div className="w-full flex justify-center bg-white py-2 border-b border-gray-200">
-            <Tabs
-              value={mode}
-              onValueChange={(val) => setMode(val as "ask" | "agent")}
-            >
-              <TabsList>
-                <TabsTrigger value="ask">Ask Mode</TabsTrigger>
-                <TabsTrigger value="agent">Agent Mode</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-
-          <motion.div
-            className="flex items-center justify-center w-full bg-gradient-to-r from-primary/5 to-primary/10 text-sm text-gray-600 py-2 font-medium"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Sparkles size={14} className="mr-2 text-primary" />
-            Your personal resume coach
-          </motion.div>
-
           {/* Message Container */}
           <div className="flex-1 w-full bg-white p-4 overflow-y-auto bg-gradient-to-b from-gray-50 to-white">
             <AnimatePresence>
-              {displayMessages.map((msg) => {
+              {storeMessages.map((msg, idx) => {
+                const { messageType } = msg;
                 return (
                   <motion.div
-                    key={msg.id}
+                    key={idx}
                     variants={messageVariants}
                     initial="hidden"
                     animate="visible"
-                    className={`mb-4 max-w-[95%] text-wrap ${
+                    className={`mb-4 max-w-[95%] text-wrap relative ${
                       msg.sender === "user" ? "ml-auto" : "mr-auto"
                     }`}
                   >
                     <div
-                      className={`p-4 rounded-xl text-sm ${
+                      className={`px-4 pt-4 pb-2 rounded-xl text-sm relative group transition-shadow duration-200 ${
                         msg.sender === "user"
                           ? "bg-primary text-white shadow-md"
-                          : msg.isProcessing
+                          : msg.messageType === "success"
                             ? "bg-gradient-to-r from-green-50 to-green-100 text-green-800 border border-green-200 shadow-sm"
-                            : "bg-gray-50 text-gray-800 border border-gray-100 shadow-sm"
+                            : msg.messageType === "info" ||
+                                msg.messageType === "option"
+                              ? "bg-gradient-to-r from-blue-50 to-blue-100 text-blue-800 border border-blue-200 shadow-sm"
+                              : msg.isProcessing
+                                ? "bg-gradient-to-r from-green-50 to-green-100 text-green-800 border border-green-200 shadow-sm"
+                                : "bg-gray-50 text-gray-800 border border-gray-100 shadow-sm"
                       }`}
                     >
                       {msg.isTyping ? (
                         <div className="flex items-center space-x-3">
-                          <FunTypingIndicator />
-                          <span className="text-gray-600 text-sm">
-                            {msg.content.message}
-                          </span>
+                          <FunTypingIndicator message={msg.content.message} />
                         </div>
                       ) : (
                         <>
@@ -523,22 +702,51 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
                                 className="text-green-600 mt-0.5 flex-shrink-0"
                               />
                             )}
-                            <span>{msg.content.message}</span>
+                            {msg.sender === "bot" &&
+                            messageType === "info" &&
+                            /<\w+.*?>/.test(msg.content.message) ? (
+                              <div
+                                dangerouslySetInnerHTML={{
+                                  __html: msg.content.message,
+                                }}
+                              />
+                            ) : (
+                              <span>{msg.content.message}</span>
+                            )}
                           </motion.div>
                           {msg.content.type === "options" && (
-                            <motion.div className="mt-4 text-wrap max-w-[95%] flex flex-wrap gap-2">
+                            <motion.div className="mt-4 text-wrap  max-w-[95%] flex flex-wrap gap-2">
                               {msg.content.options.map((option) => (
                                 <Button
                                   size={"sm"}
                                   variant={"outline"}
                                   onClick={option.onClick}
-                                  className="mb-1 hover:bg-primary hover:text-white text-xs font-medium text-primary border border-primary p-2 rounded-lg transition-colors duration-200"
+                                  className="mb-1 hover:bg-primary w-full hover:text-white text-xs font-medium text-primary border border-primary p-2 rounded-lg transition-colors duration-200"
                                   key={option.value}
                                 >
                                   {option.label}
                                 </Button>
                               ))}
                             </motion.div>
+                          )}
+                          {/* Restore checkpoint icon for user messages */}
+                          {msg.sender === "user" && (
+                            <div className="w-full block ml-auto">
+                              <button
+                                className="bg-amber-900/80 mt-2 cursor-pointer text-white px-2 py-1 rounded-full shadow block ml-auto gap-1 text-xs font-medium"
+                                title="Restore to this checkpoint"
+                                onClick={() => {
+                                  /* Placeholder for restore action */
+                                }}
+                                type="button"
+                                style={{ zIndex: 2 }}
+                              >
+                                <div className="flex items-center gap-1">
+                                <History size={14} className="text-white" />
+                                Restore checkpoint
+                                </div>
+                              </button>
+                            </div>
                           )}
                         </>
                       )}
@@ -565,41 +773,64 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
 
           {/* Input area */}
           <motion.div
-            className="p-4 border-t border-gray-200 flex gap-2 bg-white shadow-md"
+            className="p-4 border-t border-gray-200 bg-white shadow-md"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <motion.div className="flex-1 relative">
-              <motion.input
-                ref={inputRef}
-                type="text"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Type your message here..."
-                className="w-full px-4 py-3 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm transition-all duration-200"
-                whileFocus={{
-                  boxShadow: "0 0 0 2px rgba(var(--color-primary), 0.2)",
+            <div className="flex gap-2">
+              <motion.div className="flex-1 relative">
+                <motion.textarea
+                  ref={inputRef}
+                  value={message}
+                  rows={3}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type your message here..."
+                  className="w-full px-4 py-3 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm transition-all duration-200"
+                  whileFocus={{
+                    boxShadow: "0 0 0 2px rgba(var(--color-primary), 0.2)",
+                  }}
+                  disabled={isBotLoading}
+                />
+                <MessageSquare
+                  size={16}
+                  className="absolute left-3 top-3.5 text-gray-400"
+                />
+              </motion.div>
+              <motion.button
+                onClick={handleSend}
+                disabled={message.trim() === "" || isBotLoading}
+                className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-200"
+                whileHover={{
+                  scale: message.trim() && !isBotLoading ? 1.03 : 1,
                 }}
+                whileTap={{ scale: message.trim() && !isBotLoading ? 0.97 : 1 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Send size={16} />
+              </motion.button>
+            </div>
+            <div className="mt-2 grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleOneClickATS}
                 disabled={isBotLoading}
-              />
-              <MessageSquare
-                size={16}
-                className="absolute left-3 top-3.5 text-gray-400"
-              />
-            </motion.div>
-            <motion.button
-              onClick={handleSend}
-              disabled={message.trim() === "" || isBotLoading}
-              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-200"
-              whileHover={{ scale: message.trim() && !isBotLoading ? 1.03 : 1 }}
-              whileTap={{ scale: message.trim() && !isBotLoading ? 0.97 : 1 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            >
-              <Send size={16} />
-              <span>{isBotLoading ? "Processing..." : "Send"}</span>
-            </motion.button>
+                className="text-xs"
+              >
+                One Click ATS
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleMatchJD}
+                disabled={isBotLoading}
+                className="text-xs"
+              >
+                Match Job Description
+              </Button>
+            </div>
           </motion.div>
         </div>
       </motion.div>

@@ -104,6 +104,7 @@ const sectionContentSchema = v.union(
       sectionDescription: v.optional(v.string()),
       sectionNumber: v.optional(v.number()),
       sectionDirection: v.optional(v.string()),
+      sectionType: v.optional(v.string()),
     }),
     isVisible: v.boolean(),
     orderNumber: v.optional(v.number()),
@@ -121,22 +122,36 @@ const chatMessageSchema = v.object({
     v.union(
       v.object({
         content: v.object({
-        type: v.literal("text"),
-        message: v.string(),
+          type: v.literal("text"),
+          message: v.string(),
+          messageType: v.union(
+            v.literal("success"),
+            v.literal("info"),
+            v.literal("option"),
+            v.literal("error")
+          ),
         }),
         sender: v.union(v.literal("user"), v.literal("bot")),
       }),
       v.object({
         content: v.object({
-        type: v.literal("options"),
-        message: v.string(),
-        options: v.array(optionSchema),
+          type: v.literal("options"),
+          message: v.string(),
+          options: v.array(optionSchema),
+          messageType: v.optional(
+            v.union(
+              v.literal("success"),
+              v.literal("info"),
+              v.literal("option"),
+              v.literal("error")
+            )
+          ),
         }),
         sender: v.literal("bot"),
       })
     )
   ),
-  chatInitialized : v.boolean(),
+  chatInitialized: v.boolean(),
   experienceLevel: v.optional(v.string()),
   desiredRole: v.optional(v.string()),
   userId: v.optional(v.string()),
@@ -156,7 +171,7 @@ export default defineSchema({
       photo: v.boolean(),
       columns: v.number(),
       textSize: v.optional(v.string()),
-      margin : v.optional(v.string())
+      margin: v.optional(v.string()),
     }),
   }),
   premiumUsers: defineTable({

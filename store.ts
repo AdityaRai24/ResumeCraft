@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type TextMessage = {
   type: "text";
@@ -15,65 +16,112 @@ export type OptionMessage = {
   }[];
 };
 
-
 type ChatMessage = {
+  id?: string;
   sender: "user" | "bot";
   content: TextMessage | OptionMessage;
+  messageType?: "success" | "info" | "option" | "error";
+  isTyping?: boolean;
+  isProcessing?: boolean;
 };
 
-type OnboardingData = {
-  desiredRole: string;
-  experienceLevel: string;
+type PushTextOptions = {
+  messageType?: "success" | "info" | "option" | "error";
+  isProcessing?: boolean;
+  id?: string;
 };
 
 type ChatBotState = {
   messages: ChatMessage[];
-  onboardingData: OnboardingData;
-  resume?: any;
+  resumes: { [id: string]: any };
   desiredRole?: string;
   experienceLevel?: string;
-  pushText: (message: string, sender: "user" | "bot") => void;
+  pushText: (
+    message: string,
+    sender: "user" | "bot",
+    options?: PushTextOptions
+  ) => void;
   pushOptions: (
     message: string,
     options: OptionMessage["options"],
-    sender?: "bot"
+    sender?: "bot",
+    messageType?: "success" | "info" | "option" | "error",
+    id?: string
   ) => void;
   resetMessages: () => void;
   fillMessages: (messages: ChatMessage[]) => void;
-  setOnBoardingData: (data: OnboardingData) => void;
-  setResume: (resume: any) => void;
+  setResume: (id: string, resume: any) => void;
+  getResume: (id: string) => any;
   setDesiredRole: (role: string) => void;
   setExperienceLevel: (level: string) => void;
+  pushTyping: (message?: string, sender?: "bot") => void;
+  removeTyping: () => void;
+  removeMessageById: (id: string) => void;
 };
 
-
-export const useChatBotStore = create<ChatBotState>((set) => ({
-  messages: [],
-  onboardingData: {
-    desiredRole: "",
-    experienceLevel: "",
-  },
-  resume: undefined,
-  desiredRole: undefined,
-  experienceLevel: undefined,
-  pushText: (message, sender) =>
-    set((state) => ({
-      messages: [
-        ...state.messages,
-        { sender, content: { type: "text", message } },
-      ],
-    })),
-  pushOptions: (message, options, sender = "bot") =>
-    set((state) => ({
-      messages: [
-        ...state.messages,
-        { sender, content: { type: "options", message, options } },
-      ],
-    })),
-  resetMessages: () => set({ messages: [] }),
-  fillMessages: (messages) => set({ messages }),
-  setOnBoardingData: (data) => set({ onboardingData: data }),
-  setResume: (resume) => set({ resume }),
-  setDesiredRole: (role) => set({ desiredRole: role }),
-  setExperienceLevel: (level) => set({ experienceLevel: level }),
-}));
+export const useChatBotStore = create<ChatBotState>()(
+  persist(
+    (set, get) => ({
+      messages: [],
+      resumes: {},
+      desiredRole: undefined,
+      experienceLevel: undefined,
+      pushText: (message, sender, options = {}) =>
+        set((state) => ({
+          messages: [
+            ...state.messages,
+            {
+              sender,
+              content: { type: "text", message },
+              ...options,
+            },
+          ],
+        })),
+      pushOptions: (message, options, sender = "bot", messageType, id) =>
+        set((state) => ({
+          messages: [
+            ...state.messages,
+            { sender, content: { type: "options", message, options }, messageType: messageType, id },
+          ],
+        })),
+      resetMessages: () => set({ messages: [] }),
+      fillMessages: (messages) => set({ messages }),
+      setResume: (id, resume) =>
+        set((state) => ({
+          resumes: { ...state.resumes, [id]: resume },
+        })),
+      getResume: (id) => get().resumes[id],
+      setDesiredRole: (role) => set({ desiredRole: role }),
+      setExperienceLevel: (level) => set({ experienceLevel: level }),
+      pushTyping: (message = "I'm working on your request...", sender = "bot") =>
+        set((state) => ({
+          messages: [
+            ...state.messages.filter((msg: any) => !msg.isTyping),
+            {
+              sender,
+              content: { type: "text", message },
+              isTyping: true,
+              id: `typing-${Date.now()}-${Math.random()}`,
+            },
+          ],
+        })),
+      removeTyping: () =>
+        set((state) => ({
+          messages: state.messages.filter((msg: any) => !msg.isTyping),
+        })),
+      removeMessageById: (id: string) =>
+        set((state) => ({
+          messages: state.messages.filter((msg: any) => msg.id !== id),
+        })),
+    }),
+    {
+      name: "chatbot-storage",
+      partialize: (state) => ({
+        messages: state.messages,
+        resumes: state.resumes,
+        desiredRole: state.desiredRole,
+        experienceLevel: state.experienceLevel,
+      }),
+    }
+  )
+);

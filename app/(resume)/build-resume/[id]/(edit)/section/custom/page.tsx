@@ -24,6 +24,11 @@ const Page = () => {
     return <HeaderSkeleton />;
   }
 
+  
+  let sectionArray: any[] = [];
+  resume?.sections?.map((item) => item.type === "custom" && sectionArray.push(item.content));
+  console.log("Section arry",sectionArray)
+
   return (
     <div className="my-10 md:my-24 mx-4 md:mx-16">
       <SectionInfo
@@ -34,7 +39,7 @@ const Page = () => {
       <CustomForm
         resumeId={resumeId as Id<"resumes">}
         styles={"sadf"}
-        item={"asdf"}
+        item={sectionArray}
       />
     </div>
   );

@@ -1,136 +1,111 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { parseStringToArray } from "@/lib/utils";
 
-function isArrayOfStrings(value: any): boolean {
-  return (
-    Array.isArray(value) && value.every((item) => typeof item === "string")
-  );
-}
-
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
-    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    const { role, companyName, jobDescription } = await req.json();
-
-    let basePrompt = `You are an expert ATS resume writer. Your task is to write or improve job experience descriptions that will score highly in ATS systems while remaining clear and impactful for human readers.
-
-Key requirements:
-- Create exactly 3 separate bullet points
-- Each point must start with a strong action verb
-- Include specific metrics and quantifiable achievements (%, numbers, scales)
-- Highlight technical skills, tools, and methodologies used
-- Focus on impact and results, not just responsibilities
-- Keep each point between 1-2 lines
-- Use industry-standard terminology
-- Return ONLY a JSON array with exactly 3 strings (one for each bullet point)
-- No text before or after the array
-
-Example response format:
-["Led cross-functional team of 8 engineers to deliver cloud migration project 2 months ahead of schedule, reducing infrastructure costs by 35%",
-"Implemented automated CI/CD pipeline using Jenkins and Docker, decreasing deployment time by 75% and eliminating manual errors",
-"Mentored 5 junior developers and established best practices documentation, improving team productivity by 40% over 6 months"]`;
-
-    let specificPrompt = "";
-
-    if (!jobDescription) {
-      // Handle case with no job description
-      specificPrompt = `Generate exactly 3 ATS-optimized bullet points ${role ? `for the role "${role}"` : ""}${
-        role && companyName ? " at " : ""
-      }${companyName ? `"${companyName}"` : ""} that showcase impactful achievements and responsibilities. Return only a JSON array with exactly 3 strings.
-
-Consider:
-- Technical skills and industry-standard tools
-- Measurable impacts and KPIs
-- Project delivery and team collaboration
-- Leadership and process improvements`;
-    } else if (isArrayOfStrings(jobDescription)) {
-      // Handle array of bullet points
-      specificPrompt = `Rewrite the following ${jobDescription.length} experience points${role ? ` for "${role}"` : ""}${
-        role && companyName ? " at " : ""
-      }${companyName ? `"${companyName}"` : ""} to be more ATS-optimized while preserving the core achievements. Return only a JSON array with exactly 3 strings.
-
-Original points:
-${jobDescription.map((point: any, index: number) => `${index + 1}. ${point}`).join("\n")}
-
-Enhance each point with:
-- More specific metrics and numbers
-- Technical details and tools used
-- Clear business impact
-- Strong action verbs`;
-    } else {
-      // Handle plain text job description
-      specificPrompt = `Transform this job description${role ? ` for "${role}"` : ""}${
-        role && companyName ? " at " : ""
-      }${companyName ? `"${companyName}"` : ""} into exactly 3 ATS-optimized bullet points. Return only a JSON array with exactly 3 strings.
-
-Original description:
-${jobDescription}
-
-Extract and enhance the key achievements with:
-- Specific metrics and numbers
-- Technical skills and tools used
-- Clear business impact
-- Strong action verbs
-- Leadership and collaboration highlights`;
+    // Validate environment variable
+    if (!process.env.GOOGLE_API_KEY) {
+      console.error("Missing GOOGLE_API_KEY environment variable");
+      return NextResponse.json(
+        { error: "Server configuration error. Please contact support." },
+        { status: 500 }
+      );
     }
 
-    const result = await model.generateContent(basePrompt + specificPrompt);
-    const response = await result.response;
-    let text = response
-      .text()
-      .trim()
-      .replace(/^```json\s*/, "")
-      .replace(/```$/, "")
-      .trim();
-
-    // Ensure the response starts with [ and ends with ]
-    if (!text.startsWith("[") || !text.endsWith("]")) {
-      throw new Error("Invalid response format from API");
-    }
-
-    // Parse the result as a JSON array of strings
-    let textArray;
+    // Parse request body
+    let requestData;
     try {
-      textArray = JSON.parse(text);
-      // Validate the parsed array structure (should be array of strings with exactly 3 items)
-      if (
-        !Array.isArray(textArray) ||
-        textArray.length !== 3 ||
-        !textArray.every((item) => typeof item === "string")
-      ) {
-        throw new Error("Invalid array structure");
-      }
-    } catch (e) {
-      // Fall back to the existing parsing method
-      textArray = parseStringToArray(text);
-
-      // Ensure we have exactly 3 items
-      if (!textArray || textArray.length < 3) {
-        throw new Error("Failed to parse response into valid array structure");
-      }
-
-      // Take exactly 3 items
-      textArray = textArray.slice(0, 3);
+      requestData = await req.json();
+    } catch (parseError) {
+      console.error("JSON parsing error:", parseError);
+      return NextResponse.json(
+        { error: "Invalid request format. Please check your data." },
+        { status: 400 }
+      );
     }
 
-    // Format each item as an HTML list item for dangerouslySetInnerHTML
-    // const formattedArray = textArray.map((item) => `<li>${item}</li>`);
+    const { role, companyName, jobDescription } = requestData;
 
-    // Return an array of objects with a 'content' field
-    const formattedArray = textArray.map((item) => ({ content: item }));
+    // Validate required fields
+    if (!role || !companyName) {
+      return NextResponse.json(
+        { error: "Role and company name are required fields." },
+        { status: 400 }
+      );
+    }
 
-    return NextResponse.json({ textArray: formattedArray }, { status: 200 });
-  } catch (error) {
-    console.error("Error in route handler:", error);
+    // Initialize Google AI
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    // Create prompt
+    const prompt = `You are an expert ATS resume writer. Generate exactly 3 professional job experience bullet points for a ${role} position at ${companyName}.
+
+Requirements:
+- Start each point with a strong action verb
+- Include specific metrics and quantifiable achievements
+- Focus on impact and results
+- Keep each point concise.
+- Use industry-standard terminology
+- Each point must be atleast 1.5 sentences long and maximum 2 sentences.
+- Return ONLY HTML format: <ul><li>point1</li><li>point2</li><li>point3</li></ul>
+
+${jobDescription ? `Base the points on this experience: ${jobDescription}` : "Create impressive accomplishments typical for this role."}
+
+Return only the HTML <ul> block, nothing else. Do not use any other html markdowns like bold italic or anything.`;
+
+    // Generate content
+    let generatedText;
+    try {
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      generatedText = response.text().trim();
+    } catch (aiError) {
+      console.error("Google AI API error:", aiError);
+      return NextResponse.json(
+        { error: "Failed to generate content. Please try again." },
+        { status: 503 }
+      );
+    }
+
+    // Validate and extract HTML
+    const ulStart = generatedText.indexOf("<ul>");
+    const ulEnd = generatedText.lastIndexOf("</ul>");
+
+    if (ulStart === -1 || ulEnd === -1) {
+      console.error("Invalid AI response format:", generatedText);
+      return NextResponse.json(
+        { error: "Generated content format is invalid. Please try again." },
+        { status: 502 }
+      );
+    }
+
+    const htmlContent = generatedText.substring(ulStart, ulEnd + 5);
+
+    // Validate HTML structure
+    const liCount = (htmlContent.match(/<li>/g) || []).length;
+    if (liCount !== 3) {
+      console.error("Incorrect number of bullet points generated:", liCount);
+      return NextResponse.json(
+        {
+          error:
+            "Generated content doesn't meet requirements. Please try again.",
+        },
+        { status: 502 }
+      );
+    }
+
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "An unexpected error occurred",
+        html: htmlContent,
+        success: true,
       },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Unexpected error in generateJD route:", error);
+    return NextResponse.json(
+      { error: "An unexpected server error occurred. Please try again." },
       { status: 500 }
     );
   }

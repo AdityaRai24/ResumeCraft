@@ -54,7 +54,10 @@ const Timeline = () => {
   }, []);
 
   let sectionArray: string[] = [];
-  resume?.sections?.map((item) => {
+  resume?.sections
+    ?.slice()
+    .sort((a, b) => (a.orderNumber ?? 9999) - (b.orderNumber ?? 9999))
+    .forEach((item) => {
     item.type !== "custom" && sectionArray.push(item.type);
   });
   sectionArray.push("custom");

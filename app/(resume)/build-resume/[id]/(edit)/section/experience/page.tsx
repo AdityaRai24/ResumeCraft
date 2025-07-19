@@ -14,7 +14,9 @@ const Page = () => {
   const resumeId = params.id as Id<"resumes">;
   const resume = useQuery(api.resume.getTemplateDetails, { id: resumeId });
   const firstTimeRef = useRef(false);
-  const { pushText } = useChatBotStore((state) => state);
+  const { pushText, pushTyping, removeTyping } = useChatBotStore(
+    (state) => state
+  );
 
   if (resume === null) {
     return <div>Template not found</div>;
@@ -25,36 +27,26 @@ const Page = () => {
   }
 
   const experienceText = [
-    "💼 Time to flex your experience! Let’s make your work history shine like a polished LinkedIn profile.",
+    "💼 Time to flex your experience! Let's make your work history shine like a polished LinkedIn profile.",
 
-    "🧠 The Experience section is where the magic happens. Let’s show them what you’ve *actually* done!",
+    "🧠 The Experience section is where the magic happens. Let's show them what you've *actually* done!",
 
     "🚀 Buckle up! This is where your resume gets powerful. Good experiences = great impressions.",
 
-    "📈 Let’s turn your past jobs into career gold. The Experience section is a big deal — and I’ve got your back!",
+    "📈 Let's turn your past jobs into career gold. The Experience section is a big deal — and I've got your back!",
 
-    "💪 Your resume’s core strength lies here. Ready to show off your experience like a boss?",
+    "💪 Your resume's core strength lies here. Ready to show off your experience like a boss?",
 
-    "🛠️ This is where skills meet stories. Let’s craft a work history that says ‘hire me now!’",
+    "🛠️ This is where skills meet stories. Let's craft a work history that says 'hire me now!'",
 
-    "📂 Experience makes the difference. Let’s transform those roles into results.",
+    "📂 Experience makes the difference. Let's transform those roles into results.",
 
-    "💥 Time to tell the world what you’ve built, fixed, shipped, or slayed at work.",
+    "💥 Time to tell the world what you've built, fixed, shipped, or slayed at work.",
 
-    "🎤 Spotlight’s on your experience — and we’re here to make it unforgettable.",
+    "🎤 Spotlight's on your experience — and we're here to make it unforgettable.",
 
-    "👔 Whether it's internships or 10 years in the game — every role counts. Let’s show them why!",
+    "👔 Whether it's internships or 10 years in the game — every role counts. Let's show them why!",
   ];
-
-  setTimeout(() => {
-    if (!firstTimeRef.current) {
-      pushText(
-        experienceText[Math.floor(Math.random() * experienceText.length)],
-        "bot"
-      );
-      firstTimeRef.current = true;
-    }
-  }, 2000);
 
   return (
     <>

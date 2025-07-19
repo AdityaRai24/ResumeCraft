@@ -6,6 +6,12 @@ import { useQuery, useMutation } from "convex/react";
 import { useRouter } from "nextjs-toploader/app";
 import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
+import {
+  ArrowLeftToLine,
+  ArrowRightToLine,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 import LiveResumePreview from "@/components/LiveResumePreview";
 import VerticalTimeline from "@/components/VerticalTimeline";
@@ -23,7 +29,7 @@ import { ResumeTemplate } from "@/types/templateTypes";
 import { Button } from "@/components/ui/button";
 import { premiumTemplates } from "@/templates/templateStructures";
 import Chatbot from "@/components/Chatbot";
-import ChatBotAssistModal from "@/components/ChatBotAssistModa";
+import ChatBotAssistModal from "@/components/ChatBotAssistModal";
 import { useChatBotStore } from "@/store";
 
 // Types
@@ -63,6 +69,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
   const pathname = usePathname();
   const isMobile = useMobile();
   const [showOnboardingModal, setShowOnboardingModal] = useState(false);
+  const [isPreviewCollapsed, setIsPreviewCollapsed] = useState(false);
 
   const resumeId = params.id as Id<"resumes">;
   const resumeQuery = useQuery(api.resume.getTemplateDetails, { id: resumeId });
@@ -74,16 +81,17 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
     resumeId: resumeId,
   });
 
-  const { setResume, resume } = useChatBotStore();
+  const { setResume, getResume } = useChatBotStore();
+  const resume = getResume(resumeId);
   const updateResume = useMutation(api.resume.updateResume);
   const prevResumeRef = useRef<string | null>(null);
 
   // Sync DB -> Store on first load
   useEffect(() => {
     if (resumeQuery && !resume) {
-      setResume(resumeQuery as any);
+      setResume(resumeId, resumeQuery as any);
     }
-  }, [resumeQuery, resume, setResume]);
+  }, [resumeQuery, resume, setResume, resumeId]);
 
   // Sync Store -> DB whenever store resume changes
   useEffect(() => {
@@ -119,7 +127,10 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
     return null;
   }
 
-  const sectionArray: Section[] = resumeQuery.sections.map((item) => item.type);
+  const sectionArray: Section[] = resumeQuery.sections
+    .slice()
+    .sort((a, b) => (a.orderNumber ?? 9999) - (b.orderNumber ?? 9999))
+    .map((item) => item.type);
   sectionArray.push("custom");
   sectionArray.push("final");
 
@@ -178,6 +189,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
     ? handleSearchParamNavigation(sectionArray, sec)
     : handlePathNavigation(sectionArray, pathname);
 
+
   return (
     <>
       <div className="flex shrink-0 z-100000! bg-primary w-full md:hidden">
@@ -202,8 +214,10 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
           </div>
           <div
             className={cn(
-              "grow overflow-y-auto overflow-x-hidden no-scrollbar max-w-[80%] mx-auto",
-              geologicaFont.className
+              "grow overflow-y-auto overflow-x-hidden no-scrollbar mx-auto transition-all duration-300 ease-in-out",
+              geologicaFont.className,
+              // Adjust width based on preview state
+              isPreviewCollapsed ? "max-w-[85%]" : "max-w-[80%]"
             )}
           >
             {children}
@@ -224,8 +238,49 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
             )}
           </div>
         </div>
-        <div className="hidden md:flex w-[30vw]">
-          <LiveResumePreview />
+
+        {/* Collapsible Preview Section */}
+        <div
+          className={cn(
+            "hidden md:flex relative transition-all duration-300 ease-in-out",
+            isPreviewCollapsed ? "w-12" : "w-[30vw]"
+          )}
+        >
+          {/* Toggle Button */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            onClick={() => setIsPreviewCollapsed(!isPreviewCollapsed)}
+            className="absolute top-4 z-10 bg-white p-3 rounded-full shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300"
+          >
+            {isPreviewCollapsed ? (
+              <ArrowLeftToLine className="text-primary" />
+            ) : (
+              <ArrowRightToLine className="text-primary" />
+            )}
+          </motion.div>
+
+          {/* Preview Content */}
+          <div
+            className={cn(
+              "w-full transition-all duration-300 ease-in-out",
+              isPreviewCollapsed
+                ? "opacity-0 pointer-events-none"
+                : "opacity-100"
+            )}
+          >
+            <LiveResumePreview isCollapsed={isPreviewCollapsed} />
+          </div>
+
+          {/* Collapsed State Indicator */}
+          {isPreviewCollapsed && (
+            <div className="flex items-center justify-center w-full h-full bg-gray-50 border-l border-gray-200">
+              <div className="transform -rotate-90 text-sm text-gray-500 whitespace-nowrap">
+                Resume Preview
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

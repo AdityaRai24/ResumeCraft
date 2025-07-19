@@ -75,6 +75,14 @@ export const pushMessage = mutation({
         content: v.object({
           type: v.literal("text"),
           message: v.string(),
+          messageType: v.optional(
+            v.union(
+              v.literal("success"),
+              v.literal("info"),
+              v.literal("option"),
+              v.literal("error")
+            )
+          ),
         }),
         sender: v.union(v.literal("user"), v.literal("bot")),
       }),
@@ -83,15 +91,26 @@ export const pushMessage = mutation({
           type: v.literal("options"),
           message: v.string(),
           options: v.array(optionSchema),
+          messageType: v.optional(
+            v.union(
+              v.literal("success"),
+              v.literal("info"),
+              v.literal("option"),
+              v.literal("error")
+            )
+          ),
         }),
         sender: v.literal("bot"),
       })
     ),
-    mode : v.union(v.literal("ask"), v.literal("agent")),
   },
   handler: async (ctx, args) => {
     console.log(args);
-    const pushMessage = await ctx.db.query("chatMessages").filter(q => q.eq(q.field("userId"),args.userId)).filter(q => q.eq(q.field("resumeId"),args.resumeId)).collect();
+    const pushMessage = await ctx.db
+      .query("chatMessages")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .filter((q) => q.eq(q.field("resumeId"), args.resumeId))
+      .collect();
     const pushMessageData = pushMessage[0];
     pushMessageData.content.push(args.message);
     await ctx.db.patch(pushMessageData._id, pushMessageData);

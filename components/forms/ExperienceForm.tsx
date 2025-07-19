@@ -16,13 +16,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { XIcon } from "lucide-react";
-import { pushMessage } from "@/convex/chatBot";
 import { useChatBotStore } from "@/store";
-import ChatBotModal from "../ChatBotModal";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ModifyModal from "../ModifyModal";
-import { jobDescription } from "@/lib/utils";
+import { useUser } from "@clerk/nextjs";
 
 interface ExperienceItem {
   companyName: string;
@@ -63,13 +61,24 @@ const ExperienceForm = ({
   const [experience, setExperience] = useState<ExperienceContent>({
     experience: [],
   });
-  const [showExperienceModal, setShowExperienceModal] = useState(false);
   const [showModifyModal, setShowModifyModal] = useState(false);
-  const [isGeneratingExperience, setIsGeneratingExperience] = useState(false);
-  const [generatedExperiences, setGeneratedExperiences] = useState<any[]>([]);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { user } = useUser();
 
-  const { pushText, pushOptions, resume, setResume } = useChatBotStore((state) => state);
+  const {
+    pushText,
+    pushTyping,
+    removeTyping,
+    desiredRole,
+    experienceLevel,
+    setResume,
+    getResume,
+    pushOptions,
+    removeMessageById,
+  } = useChatBotStore((state) => state);
+
+  const resume = getResume(resumeId);
 
   const firstTimeRef = useRef(false);
 
@@ -87,11 +96,11 @@ const ExperienceForm = ({
             ? { ...section, content: newExperience }
             : section
         );
-        setResume({ ...resume, sections: updatedSections });
+        setResume(resumeId, { ...resume, sections: updatedSections });
       }
       pendingChangesRef.current = false;
     }, 400);
-  }, [resume, setResume]);
+  }, [resume, setResume, resumeId]);
 
   const handleChange = useCallback(
     (index: number) =>
@@ -137,7 +146,6 @@ const ExperienceForm = ({
     },
     [debouncedUpdate]
   );
-
   const months = [
     "Jan",
     "Feb",
@@ -145,101 +153,169 @@ const ExperienceForm = ({
     "Apr",
     "May",
     "Jun",
-    "July",
+    "Jul",
     "Aug",
-    "Sept",
+    "Sep",
     "Oct",
     "Nov",
     "Dec",
   ];
+
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 30 }, (_, i) =>
     (currentYear - i).toString()
   );
 
-  const closeModal = () => {
-    setShowExperienceModal(false);
+  const closeModifyModal = () => {
+    setShowModifyModal(false);
     setTargetIndex(null);
   };
 
-  const closeModifyModal = () => {
-    setShowModifyModal(false);
-  };
-
   const generateExperience = async (index: number) => {
+    const currentExp = experience.experience[index];
+
+    if (!currentExp.companyName || !currentExp.role) {
+      toast.error(
+        "Please fill in Company Name and Role before generating experience."
+      );
+      return;
+    }
+
+    if (!desiredRole || !experienceLevel) {
+      toast.error("Onboarding incomplete! Please complete your profile setup.");
+      return;
+    }
+
     setShowModifyModal(true);
     setTargetIndex(index);
   };
 
   const handleGenerateFromRough = async (roughExperience: string) => {
-    if (!roughExperience.trim() || targetIndex === null) return;
+    if (targetIndex === null) {
+      toast.error("Target index not set. Please try again.");
+      return;
+    }
 
+    const currentExp = experience.experience[targetIndex];
+
+    if (!currentExp.companyName || !currentExp.role) {
+      toast.error("Company name and role are required.");
+      return;
+    }
+
+    setIsGenerating(true);
     setShowModifyModal(false);
-    setShowExperienceModal(true);
-    setIsGeneratingExperience(true);
+
+    // Show typing indicator
+    pushTyping("Generating professional experience descriptions...");
 
     try {
-      const response = await axios.post("/api/generateJD", {
-        role: useChatBotStore.getState().onboardingData.desiredRole,
-        companyName: experience.experience[targetIndex].companyName,
-        jobDescription: roughExperience,
+      // Determine intent based on whether the experience item at targetIndex has a description
+      let intent: "edit" | "generate" = "generate";
+      if (
+        typeof targetIndex === "number" &&
+        experience.experience[targetIndex] &&
+        experience.experience[targetIndex].jobDescription &&
+        experience.experience[targetIndex].jobDescription.trim() !== ""
+      ) {
+        intent = "edit";
+      }
+
+      const chatbotRequest = {
+        message: {
+          sender: "user",
+          content: { type: "text", message: roughExperience }
+        },
+        userId: user?.id,
+        resumeId: resumeId as Id<"resumes">,
+        resume: resume,
+        desiredRole: desiredRole,
+        experienceLevel: experienceLevel,
+        intent,
+        section:'experience'
+      };
+
+      const response = await axios.post("/api/chatbot", chatbotRequest, {
+        timeout: 30000, // 30 second timeout
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
-      console.log(response.data);
-      setGeneratedExperiences(response.data.textArray);
-      setIsGeneratingExperience(false);
-    } catch (error) {
-      console.log(error);
-      setIsGeneratingExperience(false);
-      toast.error("Failed to generate experiences. Please try again.");
-    }
-  };
 
-  const selectExperience = (generatedContent: { content: string }) => {
-    if (targetIndex !== null) {
-      // Get the current job description HTML
-      const currentJobDescription = experience.experience[targetIndex].jobDescription || "";
+      removeTyping();
 
-      // Append the selected point as an <li> element to the current job description
-      // We need to handle cases where the current content is empty or not a proper list
-      let newJobDescription;
-      if (currentJobDescription.includes('<li>') && currentJobDescription.includes('</li>')) {
-        // If it looks like an existing list, find the closing </ul> and insert before it
-        const closingUlIndex = currentJobDescription.lastIndexOf('</ul>');
-        if (closingUlIndex !== -1) {
-           newJobDescription = currentJobDescription.substring(0, closingUlIndex) + `<li>${generatedContent.content}</li></ul>`;
-        } else {
-           // Fallback if </ul> not found but <li> exists
-           newJobDescription = `${currentJobDescription}<li>${generatedContent.content}</li>`;
-        }
-      } else if (currentJobDescription.trim() !== '') {
-          // If there's existing text but not in list format, start a new list
-          newJobDescription = `<ul><li>${currentJobDescription}</li><li>${generatedContent.content}</li></ul>`;
-      }
-      else {
-        // If empty, start a new list with the selected point
-        newJobDescription = `<ul><li>${generatedContent.content}</li></ul>`;
+      // Check if response is successful and contains updatedResume
+      if (response.status !== 200 || !response.data?.updatedResume) {
+        throw new Error(
+          response.data?.error || `Server responded with status: ${response.status}`
+        );
       }
 
-      handleChange(targetIndex)("jobDescription", newJobDescription);
-      // closeModal(); // Keep modal open to allow selecting multiple points
-      pushText(
-        `✅ Relevant experience point added! Select another or close the modal.`,
-        "bot"
+      // Find the updated experience section and update the job description for the relevant index
+      const updatedSection = response.data.updatedResume.sections.find(
+        (section: any) => section.type === "experience"
       );
+      if (updatedSection && updatedSection.content?.experience?.[targetIndex]) {
+        const updatedExp = updatedSection.content.experience[targetIndex];
+        handleChange(targetIndex)("jobDescription", updatedExp.jobDescription);
+      }
+      // Optionally, update the whole resume in your store if needed
+      setResume(resumeId, response.data.updatedResume);
+
+      pushText(
+        "✅ Professional experience descriptions have been generated and added to your resume!",
+        "bot",
+        { messageType: "success" }
+      );
+
+      toast.success("Experience generated successfully!");
+    } catch (error) {
+      removeTyping();
+      console.error("Error generating experience:", error);
+
+      // Handle different types of errors
+      if (axios.isAxiosError(error)) {
+        if (error.code === "ECONNABORTED") {
+          toast.error("Request timed out. Please try again.");
+        } else if (error.response?.status === 400) {
+          toast.error(
+            error.response.data?.error ||
+              "Invalid request. Please check your input."
+          );
+        } else if (error.response?.status === 500) {
+          toast.error("Server error. Please try again later.");
+        } else if (error.response?.status === 503) {
+          toast.error("Service temporarily unavailable. Please try again.");
+        } else {
+          toast.error(
+            error.response?.data?.error ||
+              "Network error. Please check your connection."
+          );
+        }
+      } else {
+        toast.error("Failed to generate experience. Please try again.");
+      }
+
+      pushText(
+        "❌ Sorry, I couldn't generate the experience description. Please try again or write it manually.",
+        "bot",
+        { messageType: "error" }
+      );
+    } finally {
+      setIsGenerating(false);
+      setTargetIndex(null);
     }
   };
-
-  const noReplies = [
-    "No problem. Writing it in your own words adds a personal touch. 😊",
-    "That's totally fine. You know your experience best!",
-    "Got it! Let me know if you need help polishing it later.",
-    "Fair enough! I'm here if you ever change your mind. 😉",
-  ];
 
   return (
     <>
       {experience.experience.map((exp, index) => {
-        if (exp.companyName && exp.role && !firstTimeRef.current) {
+        if (
+          exp.companyName &&
+          exp.role &&
+          !firstTimeRef.current &&
+          (exp.jobDescription === undefined || exp.jobDescription.trim() === "")
+        ) {
           const experienceText = [
             "Nice! Let's turn your role at this company into something impressive on your resume. Want help writing the job description?",
             `Got it — you've been working as a ${exp.role} at ${exp.companyName}! Want me to help generate a description for this experience?`,
@@ -247,6 +323,15 @@ const ExperienceForm = ({
             `Looks great so far. Want help turning your work at ${exp.companyName} into a standout bullet list?`,
           ];
 
+          const noReplies = [
+            "No problem. Writing it in your own words adds a personal touch. 😊",
+            "That's totally fine. You know your experience best!",
+            "Got it! Let me know if you need help polishing it later.",
+            "Fair enough! I'm here if you ever change your mind. 😉",
+          ];
+
+          // Generate a unique id for the options message
+          const optionId = `exp-option-${index}-${Date.now()}-${Math.random()}`;
           pushOptions(
             experienceText[Math.floor(Math.random() * experienceText.length)],
             [
@@ -254,6 +339,7 @@ const ExperienceForm = ({
                 label: "Yes, please!",
                 value: "yes",
                 onClick: () => {
+                  removeMessageById(optionId);
                   generateExperience(index);
                 },
               },
@@ -261,13 +347,20 @@ const ExperienceForm = ({
                 label: "No, thanks",
                 value: "no",
                 onClick: () => {
+                  removeMessageById(optionId);
                   pushText(
                     noReplies[Math.floor(Math.random() * noReplies.length)],
-                    "bot"
+                    "bot",
+                    {
+                      messageType: "info",
+                    }
                   );
                 },
               },
-            ]
+            ],
+            "bot",
+            "info",
+            optionId
           );
           firstTimeRef.current = true;
         }
@@ -384,6 +477,7 @@ const ExperienceForm = ({
           </motion.form>
         );
       })}
+
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -393,30 +487,24 @@ const ExperienceForm = ({
           ease: [0, 0.71, 0.2, 1.01],
         }}
       >
-        <Button onClick={addExperience} className="mt-4 md:mb-8">
+        <Button
+          onClick={addExperience}
+          className="mt-4 md:mb-8"
+          disabled={isGenerating}
+        >
           Add Another Experience
         </Button>
       </motion.div>
 
       <AnimatePresence>
-        {showExperienceModal && (
-          <ChatBotModal
-            isGenerating={isGeneratingExperience}
-            generatedContent={generatedExperiences}
-            selectOption={selectExperience}
-            closeModal={closeModal}
-            title="Experience Options"
-            loadingText="Crafting experience options..."
-          />
-        )}
         {showModifyModal && (
           <ModifyModal
             heading="Experience Generator"
-            text="Write a rough description of your experience, and we'll generate professional versions for you."
-            label="Write your experience roughly"
+            text="Write a rough description of your experience, and we'll generate professional bullet points for you."
+            label="Describe your experience"
             buttonText="Generate Professional Experience"
             closeModal={closeModifyModal}
-            placeholder="E.g., I worked on building websites for 3 years, handling mostly frontend work with React"
+            placeholder="E.g., I worked on building websites for 3 years, handling mostly frontend work with React and collaborated with design teams"
             onGenerate={handleGenerateFromRough}
           />
         )}

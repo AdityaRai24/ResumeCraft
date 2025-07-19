@@ -18,6 +18,8 @@ import ModifyModal from "../ModifyModal";
 import axios from "axios";
 import toast from "react-hot-toast";
 import ChatBotModal from "../ChatBotModal";
+import { useUser } from "@clerk/nextjs";
+
 const SkillsForm = ({
   item,
   resumeId,
@@ -31,16 +33,13 @@ const SkillsForm = ({
   const [currentFormat, setCurrentFormat] = useState("paragraph");
   const pendingChangesRef = useRef(false);
 
-  const { pushText, pushOptions, resume, setResume } = useChatBotStore((state) => state);
-  const { onboardingData } = useChatBotStore((state) => state);
+  const { setResume, getResume, desiredRole, experienceLevel } = useChatBotStore((state) => state);
+  const resume = getResume(resumeId);
   const [showModifyModal, setShowModifyModal] = useState(false);
-  const [showSkillsModal, setShowSkillsModal] = useState(false);
-  const [isGeneratingSkills, setIsGeneratingSkills] = useState(false);
-  const [generatedSkills, setGeneratedSkills] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const firstTimeRef = useRef(false);
-
-  const onBoardData = useChatBotStore((state) => state.onboardingData);
+  const { user } = useUser();
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
@@ -57,11 +56,11 @@ const SkillsForm = ({
               ? { ...section, content: { description: newSkills } }
               : section
           );
-          setResume({ ...resume, sections: updatedSections });
+          setResume(resumeId, { ...resume, sections: updatedSections });
         }
         pendingChangesRef.current = false;
       }, 400),
-    [resume, setResume]
+    [resume, setResume, resumeId]
   );
 
   const handleChange = useCallback(
@@ -168,64 +167,77 @@ const SkillsForm = ({
     setShowModifyModal(true);
   };
 
+  const closeModifyModal = () => {
+    setShowModifyModal(false);
+  };
+
   const handleGenerateFromRough = async (roughSkills: string) => {
     if (!roughSkills.trim()) return;
 
     setShowModifyModal(false);
-    setShowSkillsModal(true);
-    setIsGeneratingSkills(true);
+    setIsGenerating(true);
 
     try {
-      const response = await axios.post("/api/generateSkills", {
-
-        desiredRole: onboardingData.desiredRole,
-        experienceLevel: onboardingData.experienceLevel,
-        roughSkills: roughSkills,
+      // Prepare chatbot request
+      const resume = getResume(resumeId);
+      const { desiredRole, experienceLevel } = useChatBotStore.getState();
+      const chatbotRequest = {
+        message: {
+          sender: "user",
+          content: { type: "text", message: roughSkills }
+        },
+        userId: user?.id,
+        resumeId: resumeId,
+        resume: resume,
+        desiredRole: desiredRole,
+        experienceLevel: experienceLevel,
+        intent: "generate",
+        section: 'skills'
+      };
+      const response = await axios.post("/api/chatbot", chatbotRequest, {
+        timeout: 30000,
+        headers: { "Content-Type": "application/json" },
       });
-      console.log(response.data.generatedSkills);
-      setGeneratedSkills(response.data.skillsContent);
-      setIsGeneratingSkills(false);
-    } catch (error) {
-      console.log(error);
-      setIsGeneratingSkills(false);
-      toast.error("Failed to generate skills. Please try again.");
-    }
-  };
-
-  useEffect(() => {
-    if (!firstTimeRef.current) {
-      pushOptions(
-        `💡 Skills are your secret weapon! Based on your role as a ${onboardingData.desiredRole} and your experience level as a ${onboardingData.experienceLevel}, would you like some skill suggestions to stand out?.`,
-        [
-          {
-            label: "Yes, please!",
-            value: "yes",
-            onClick: () => {
-              generateSkills();
-            },
-          },
-          {
-            label: "No, thanks",
-            value: "no",
-            onClick: () => {
-              pushText(
-                noSkillReplies[
-                  Math.floor(Math.random() * noSkillReplies.length)
-                ],
-                "bot"
-              );
-            },
-          },
-        ]
+      if (response.status !== 200 || !response.data?.updatedResume) {
+        throw new Error(
+          response.data?.error || `Server responded with status: ${response.status}`
+        );
+      }
+      // Find the updated skills section and update the description
+      const updatedSection = response.data.updatedResume.sections.find(
+        (section: any) => section.type === "skills"
       );
-      firstTimeRef.current = true;
+      if (updatedSection && updatedSection.content?.description) {
+        handleChange(updatedSection.content.description);
+      }
+      setResume(resumeId, response.data.updatedResume);
+      toast.success("Skills generated successfully!");
+    } catch (error) {
+      console.error("Error generating skills:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.code === "ECONNABORTED") {
+          toast.error("Request timed out. Please try again.");
+        } else if (error.response?.status === 400) {
+          toast.error(
+            error.response.data?.error ||
+              "Invalid request. Please check your input."
+          );
+        } else if (error.response?.status === 500) {
+          toast.error("Server error. Please try again later.");
+        } else if (error.response?.status === 503) {
+          toast.error("Service temporarily unavailable. Please try again.");
+        } else {
+          toast.error(
+            error.response?.data?.error ||
+              "Network error. Please check your connection."
+          );
+        }
+      } else {
+        toast.error("Failed to generate skills. Please try again.");
+      }
+    } finally {
+      setIsGenerating(false);
     }
-  }, [onboardingData.desiredRole, onboardingData.experienceLevel, pushOptions, pushText, noSkillReplies]);
-
-  const selectSkills = (option: { title: string; content: string }) => {
-    setSkillDescription(option.content);
-    setShowSkillsModal(false);
-    pushText(`✅ Appropriate skills has been added to your resume!`, "bot");
   };
 
   return (
@@ -329,18 +341,8 @@ const SkillsForm = ({
             label="Write your skills roughly"
             buttonText="Generate Professional Skills"
             placeholder="React JS, cloud engineering, and mobile app development"
-            closeModal={() => setShowModifyModal(false)}
+            closeModal={closeModifyModal}
             onGenerate={handleGenerateFromRough}
-          />
-        )}
-        {showSkillsModal && (
-          <ChatBotModal
-            loadingText="Generating skills..."
-            title="Skills"
-            selectOption={selectSkills}
-            isGenerating={isGeneratingSkills}
-            generatedContent={generatedSkills}
-            closeModal={() => setShowSkillsModal(false)}
           />
         )}
       </AnimatePresence>

@@ -2,30 +2,25 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Loader2, XIcon } from "lucide-react";
 
-const ModifyModal = ({
-  closeModal,
-  onGenerate,
-  heading,
-  text,
-  label,
-  buttonText,
-  placeholder,
-}: {
+interface ActionConfirmationModalProps {
   closeModal: () => void;
-  onGenerate: (roughDescription: string) => void;
+  onConfirm: () => void;
   heading: string;
-  text: string;
-  label: string;
+  description: string;
   buttonText: string;
-  placeholder: string;
-}) => {
-  const [roughDescription, setRoughDescription] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+  isProcessing: boolean;
+}
 
-  const handleGenerate = async () => {
-    if (!roughDescription.trim()) return;
-    setIsGenerating(true);
-    onGenerate(roughDescription);
+const ActionConfirmationModal: React.FC<ActionConfirmationModalProps> = ({
+  closeModal,
+  onConfirm,
+  heading,
+  description,
+  buttonText,
+  isProcessing,
+}) => {
+  const handleConfirm = async () => {
+    await onConfirm();
   };
 
   return (
@@ -54,31 +49,31 @@ const ModifyModal = ({
 
         <div className="p-6">
           <div className="mb-6">
-            <label className="block text-gray-700 mb-2 font-medium">
-              {label}
-            </label>
-            <textarea
-              value={roughDescription}
-              onChange={(e) => setRoughDescription(e.target.value)}
-              placeholder={placeholder}
-              className="w-full border border-gray-300 rounded-md p-3 h-32 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
-            />
-            <p className="text-gray-500 text-sm mt-2">{text}</p>
+            <p className="text-gray-600 whitespace-pre-line">{description}</p>
           </div>
 
-          <div className="flex justify-end mb-6">
+          <div className="flex justify-end gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleGenerate}
-              disabled={!roughDescription.trim() || isGenerating}
+              onClick={closeModal}
+              disabled={isProcessing}
+              className="px-4 py-2 rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 font-medium"
+            >
+              Cancel
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleConfirm}
+              disabled={isProcessing}
               className={`px-4 py-2 rounded-md text-white font-medium flex items-center gap-2 ${
-                !roughDescription.trim() || isGenerating
+                isProcessing
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-primary hover:bg-primary/90 cursor-pointer"
               }`}
             >
-              {isGenerating && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isProcessing && <Loader2 className="w-4 h-4 animate-spin" />}
               {buttonText}
             </motion.button>
           </div>
@@ -88,4 +83,4 @@ const ModifyModal = ({
   );
 };
 
-export default ModifyModal;
+export default ActionConfirmationModal; 

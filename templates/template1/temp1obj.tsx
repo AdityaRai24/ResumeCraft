@@ -35,7 +35,7 @@ const temp1Obj: ResumeTemplate = {
           "<p><strong>Frontend :</strong> HTML5, CSS3, JavaScript (ES6+), TypeScript, React.js, Next.js, Redux, Tailwind CSS, Bootstrap, Responsive Design, Flexbox, CSS Grid, Webpack, Babel.</p><p><strong>Backend :</strong> Node.js, Express.js, REST APIs, GraphQL, Authentication (JWT, OAuth), MongoDB, Mongoose, PostgreSQL, WebSockets (Socket.io), Real-Time Data.</p><p><strong>DevOps:</strong> Docker, Kubernetes, AWS (S3, EC2, Lambda), DigitalOcean, CI/CD Pipelines (GitHub Actions, Jenkins), Nginx, Apache, PM2.</p><p><strong>Version Control &amp; Tools: </strong>Git, GitHub, GitLab, Postman, Insomnia, Swagger, VS Code, WebStorm. Testing: Jest, Mocha, Chai, Cypress, Selenium.</p>",
       },
       isVisible: true,
-      orderNumber: 1,
+      orderNumber: 2,
       style: {},
     },
     {
@@ -59,7 +59,7 @@ const temp1Obj: ResumeTemplate = {
         ],
       },
       isVisible: true,
-      orderNumber: 2,
+      orderNumber: 1,
       style: {},
     },
     {
@@ -135,6 +135,8 @@ const temp1Obj: ResumeTemplate = {
     primaryColor: "#C026D3",
     photo: false,
     columns: 2,
+    margin: "md",
+    textSize: "md",
   },
 };
 

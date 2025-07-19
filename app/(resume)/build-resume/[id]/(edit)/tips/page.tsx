@@ -40,16 +40,6 @@ const Page = () => {
   resume?.sections?.map((item) => sectionArray.push(item.type));
   const currentTips = tipsData.find((item) => item.sec === sec);
 
-  // setTimeout(() => {
-  //   if (sec == "header" && !firstTimeRef.current) {
-  //     pushText(
-  //       `👋 Hi ${user?.firstName}! I'm CraftBot, your personal AI assistant. I'm here to guide you through building a job-winning resume – step by step.`,
-  //       "bot"
-  //     );
-  //     firstTimeRef.current = true;
-  //   }
-  // }, 2000);
-
   return (
     <div className="flex items-center justify-start w-full md:max-w-[95%] px-4 md:px-16">
       <motion.div

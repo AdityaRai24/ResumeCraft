@@ -9,8 +9,6 @@ import React, {
 } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { debounce } from "lodash";
 import { Button } from "../ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,9 +18,8 @@ import { XIcon } from "lucide-react";
 import { useChatBotStore } from "@/store";
 import axios from "axios";
 import toast from "react-hot-toast";
-import ChatBotModal from "../ChatBotModal";
 import ModifyModal from "../ModifyModal";
-import ChatBotProject from "../ChatBotProject";
+import { useUser } from "@clerk/nextjs";
 
 interface ProjectType {
   name: string;
@@ -36,8 +33,8 @@ interface ProjectContent {
 }
 
 const ProjectForm = ({
-  resumeId,
   item,
+  resumeId,
 }: {
   resumeId: Id<"resumes">;
   item: ProjectSection;
@@ -51,14 +48,18 @@ const ProjectForm = ({
 
   const [projects, setProjects] = useState<ProjectContent>({ projects: [] });
   const pendingChangesRef = useRef(false);
-  const update = useMutation(api.resume.updateProjects);
-  const firstTimeRef = useRef(false);
-  const { pushOptions, pushText, resume, setResume } = useChatBotStore();
+  const {
+    pushText,
+    pushTyping,
+    removeTyping,
+    setResume,
+    getResume,
+  } = useChatBotStore();
+  const resume = getResume(resumeId);
   const [showModifyModal, setShowModifyModal] = useState(false);
-  const [showProjectModal, setShowProjectModal] = useState(false);
-  const [isGeneratingProject, setIsGeneratingProject] = useState(false);
-  const [generatedProjects, setGeneratedProjects] = useState<any[]>([]);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { user } = useUser();
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
@@ -74,11 +75,11 @@ const ProjectForm = ({
             ? { ...section, content: newProject }
             : section
         );
-        setResume({ ...resume, sections: updatedSections });
+        setResume(resumeId, { ...resume, sections: updatedSections });
       }
       pendingChangesRef.current = false;
     }, 400);
-  }, [resume, setResume]);
+  }, [resume, setResume, resumeId]);
 
   const handleChange = useCallback(
     (index: number) =>
@@ -129,57 +130,117 @@ const ProjectForm = ({
       toast.error("Project Title is required to generate a description.");
       return;
     }
-
     setShowModifyModal(true);
     setTargetIndex(index);
   };
 
-  const closeModal = () => {
-    setShowProjectModal(false);
+  const closeModifyModal = () => {
+    setShowModifyModal(false);
     setTargetIndex(null);
   };
 
-  const closeModifyModal = () => {
-    setShowModifyModal(false);
-  };
-
   const handleGenerateFromRough = async (roughProject: string) => {
-    if (!roughProject.trim() || targetIndex === null) return;
-
+    if (targetIndex === null) {
+      toast.error("Target index not set. Please try again.");
+      return;
+    }
+    const project = projects.projects[targetIndex];
+    if (!project.name.trim()) {
+      toast.error("Project Title is required.");
+      return;
+    }
+    setIsGenerating(true);
     setShowModifyModal(false);
-    setShowProjectModal(true);
-    setIsGeneratingProject(true);
-
+    pushTyping("Generating professional project description...");
     try {
-      const response = await axios.post("/api/generateProject", {
-        desiredRole: useChatBotStore.getState().onboardingData.desiredRole,
-        experienceLevel: useChatBotStore.getState().onboardingData.experienceLevel,
-        projectName: projects.projects[targetIndex].name,
-        roughProject: roughProject,
+      // Determine intent based on whether the project at targetIndex has a description
+      let intent: "edit" | "generate" = "generate";
+      if (
+        typeof targetIndex === "number" &&
+        projects.projects[targetIndex] &&
+        projects.projects[targetIndex].description &&
+        projects.projects[targetIndex].description.trim() !== ""
+      ) {
+        intent = "edit";
+      }
+
+      // Prepare chatbot request
+      const resume = getResume(resumeId);
+      // Get desiredRole and experienceLevel from the store (like ExperienceForm)
+      const { desiredRole, experienceLevel } = useChatBotStore.getState();
+      const chatbotRequest = {
+        message: {
+          sender: "user",
+          content: { type: "text", message: roughProject }
+        },
+        userId: user?.id,
+        resumeId: resumeId,
+        resume: resume,
+        desiredRole: desiredRole,
+        experienceLevel: experienceLevel,
+        intent,
+        section: 'projects'
+      };
+
+      const response = await axios.post("/api/chatbot", chatbotRequest, {
+        timeout: 30000,
+        headers: { "Content-Type": "application/json" },
       });
-      setGeneratedProjects(response.data.generatedProjects);
-      setIsGeneratingProject(false);
+      removeTyping();
+      if (response.status !== 200 || !response.data?.updatedResume) {
+        throw new Error(
+          response.data?.error || `Server responded with status: ${response.status}`
+        );
+      }
+      // Find the updated projects section and update the description for the relevant index
+      const updatedSection = response.data.updatedResume.sections.find(
+        (section: any) => section.type === "projects"
+      );
+      if (updatedSection && updatedSection.content?.projects?.[targetIndex]) {
+        const updatedProj = updatedSection.content.projects[targetIndex];
+        handleChange(targetIndex)(updatedProj.description, "description");
+      }
+      setResume(resumeId, response.data.updatedResume);
+      pushText(
+        "✅ Professional project description has been generated and added to your resume!",
+        "bot",
+        { messageType: "success" }
+      );
+      toast.success("Project description generated successfully!");
     } catch (error) {
-      console.log(error);
-      setIsGeneratingProject(false);
-      toast.error("Failed to generate project descriptions. Please try again.");
+      removeTyping();
+      console.error("Error generating project description:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.code === "ECONNABORTED") {
+          toast.error("Request timed out. Please try again.");
+        } else if (error.response?.status === 400) {
+          toast.error(
+            error.response.data?.error ||
+              "Invalid request. Please check your input."
+          );
+        } else if (error.response?.status === 500) {
+          toast.error("Server error. Please try again later.");
+        } else if (error.response?.status === 503) {
+          toast.error("Service temporarily unavailable. Please try again.");
+        } else {
+          toast.error(
+            error.response?.data?.error ||
+              "Network error. Please check your connection."
+          );
+        }
+      } else {
+        toast.error("Failed to generate project description. Please try again.");
+      }
+      pushText(
+        "❌ Sorry, I couldn't generate the project description. Please try again or write it manually.",
+        "bot",
+        { messageType: "error" }
+      );
+    } finally {
+      setIsGenerating(false);
+      setTargetIndex(null);
     }
   };
-
-  const selectProject = (projectText: string, title: string) => {
-    if (targetIndex !== null) {
-      handleChange(targetIndex)(projectText, "description");
-      closeModal();
-      pushText(`✅ "${title}" project description has been added to your resume!`, "bot");
-    }
-  };
-
-  const noReplies = [
-    "No problem. Writing it in your own words adds a personal touch. 😊",
-    "That's totally fine. You know your project best!",
-    "Got it! Let me know if you need help polishing it later.",
-    "Fair enough! I'm here if you ever change your mind. 😉",
-  ];
 
   return (
     <>
@@ -229,39 +290,30 @@ const ProjectForm = ({
                 />
               </div>
             </form>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: 0.4,
-                delay: 0.5,
-                ease: [0, 0.71, 0.2, 1.01],
-              }}
-            >
-              <Button onClick={addProject} className="my-4">
-                Add Another Project
-              </Button>
-            </motion.div>
           </div>
         );
       })}
 
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.4,
+          delay: 0.5,
+          ease: [0, 0.71, 0.2, 1.01],
+        }}
+      >
+        <Button onClick={addProject} className="my-4" disabled={isGenerating}>
+          Add Another Project
+        </Button>
+      </motion.div>
+
       <AnimatePresence>
-        {showProjectModal && (
-          <ChatBotProject
-            isGenerating={isGeneratingProject}
-            generatedContent={generatedProjects}
-            selectOption={selectProject}
-            closeModal={closeModal}
-            title="Project Description Options"
-            loadingText="Crafting project description options..."
-          />
-        )}
         {showModifyModal && (
           <ModifyModal
             heading="Project Description Generator"
-            text="Write a rough description of your project, and we'll generate professional versions for you."
-            label="Write your project description roughly"
+            text="Write a rough description of your project, and we'll generate professional bullet points for you."
+            label="Describe your project"
             buttonText="Generate Professional Description"
             closeModal={closeModifyModal}
             placeholder="E.g., I built a full-stack e-commerce website with React and Node.js"

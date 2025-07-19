@@ -18,6 +18,11 @@ import { EducationSection } from "@/types/templateTypes";
 import { Checkbox } from "../ui/checkbox";
 import { XIcon } from "lucide-react";
 import { Button } from "../ui/button";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useUser } from "@clerk/nextjs";
+import ModifyModal from "../ModifyModal";
+import { AnimatePresence } from "framer-motion";
 
 interface EducationItem {
   courseName: string;
@@ -57,7 +62,11 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
     education: [],
   });
   const pendingChangesRef = useRef(false);
-  const { resume, setResume } = useChatBotStore((state) => state);
+  const [showModifyModal, setShowModifyModal] = useState(false);
+  const [targetIndex, setTargetIndex] = useState<number | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { user } = useUser();
+  const { pushText, pushTyping, removeTyping, setResume, getResume } = useChatBotStore();
 
   useEffect(() => {
     if (!pendingChangesRef.current) {
@@ -67,17 +76,18 @@ const EducationForm: React.FC<EducationFormProps> = ({ item, resumeId }) => {
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newEducation: EducationContent) => {
+      const resume = getResume(resumeId);
       if (resume) {
         const updatedSections = resume.sections.map((section: any) =>
           section.type === "education"
             ? { ...section, content: newEducation }
             : section
         );
-        setResume({ ...resume, sections: updatedSections });
+        setResume(resumeId, { ...resume, sections: updatedSections });
       }
       pendingChangesRef.current = false;
     }, 400);
-  }, [resume, setResume]);
+  }, [getResume, setResume, resumeId]);
 
   const handleChange = useCallback(
     (index: number) => (name: keyof EducationItem, value: string | boolean) => {

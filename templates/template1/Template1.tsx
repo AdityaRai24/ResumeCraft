@@ -88,6 +88,8 @@ const Template1 = ({ obj, size, textSize = size, marginSize = size }: TemplateTy
   );
 
   const renderSection = (section : any, index : any) => {
+
+
     switch (section.type) {
       case "header":
         const headerContent = section.content as HeaderContent;

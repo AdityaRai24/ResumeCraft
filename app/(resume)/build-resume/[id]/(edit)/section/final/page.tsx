@@ -44,7 +44,7 @@ const Page = () => {
   const [initialTextColor, setInitialTextColor] = useState<string | null>(null);
   const [initialColor, setInitialColor] = useState<string | null>(null);
 
-  const params = useParams();
+  const params : any = useParams();
   const resumeId = params.id;
   const reorder = useMutation(api.resume.reorderSections);
   const update = useMutation(api.resume.updateColor);
@@ -57,7 +57,8 @@ const Page = () => {
     id: resumeId as Id<"resumes">,
   });
 
-  const { resume: zustandResume, setResume } = useChatBotStore((state) => state);
+  const { getResume, setResume } = useChatBotStore((state) => state);
+  const zustandResume = getResume(resumeId);
 
   const [currentFont, setCurrentFont] = useState(
     zustandResume?.globalStyles?.fontFamily || "Inter"
@@ -137,7 +138,7 @@ const Page = () => {
         })
       );
       if (zustandResume) {
-        setResume({ ...zustandResume, sections: updatedSections });
+        setResume(resumeId, { ...zustandResume, sections: updatedSections });
       }
       reorder({
         id: resumeId as Id<"resumes">,
@@ -157,7 +158,7 @@ const Page = () => {
         })
       );
       if (zustandResume) {
-        setResume({
+        setResume(resumeId, {
           ...zustandResume,
           sections: [...headerObj, ...updatedSections, ...rightSections],
         });
@@ -180,7 +181,7 @@ const Page = () => {
         })
       );
       if (zustandResume) {
-        setResume({
+        setResume(resumeId, {
           ...zustandResume,
           sections: [...headerObj, ...leftSections, ...updatedSections],
         });
@@ -197,7 +198,7 @@ const Page = () => {
     return debounce((color: any) => {
       setPrimaryTextColor(color);
       if (zustandResume) {
-        setResume({
+        setResume(resumeId, {
           ...zustandResume,
           globalStyles: {
             ...zustandResume.globalStyles,
@@ -213,7 +214,7 @@ const Page = () => {
     return debounce((color: any) => {
       setPrimaryColor(color);
       if (zustandResume) {
-        setResume({
+        setResume(resumeId, {
           ...zustandResume,
           globalStyles: {
             ...zustandResume.globalStyles,
@@ -227,7 +228,7 @@ const Page = () => {
 
   const handleChosePrimaryColor = (color: string) => {
     if (zustandResume) {
-      setResume({
+      setResume(resumeId, {
         ...zustandResume,
         globalStyles: {
           ...zustandResume.globalStyles,
@@ -240,7 +241,7 @@ const Page = () => {
 
   const handleChosePrimaryTextColor = (color: string) => {
     if (zustandResume) {
-      setResume({
+      setResume(resumeId, {
         ...zustandResume,
         globalStyles: {
           ...zustandResume.globalStyles,
@@ -254,7 +255,7 @@ const Page = () => {
   const handleFontChange = (font: string) => {
     setCurrentFont(font);
     if (zustandResume) {
-      setResume({
+      setResume(resumeId, {
         ...zustandResume,
         globalStyles: {
           ...zustandResume.globalStyles,
@@ -269,7 +270,7 @@ const Page = () => {
   const handleFontSizeChange = (size: string) => {
     setCurrentFontSize(size);
     if (zustandResume) {
-      setResume({
+      setResume(resumeId, {
         ...zustandResume,
         globalStyles: {
           ...zustandResume.globalStyles,
@@ -284,7 +285,7 @@ const Page = () => {
   const handleMarginChange = (margin: string) => {
     setCurrentMargin(margin);
     if (zustandResume) {
-      setResume({
+      setResume(resumeId, {
         ...zustandResume,
         globalStyles: {
           ...zustandResume.globalStyles,

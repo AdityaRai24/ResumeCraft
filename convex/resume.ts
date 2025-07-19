@@ -227,6 +227,7 @@ export const updateCustomSection = mutation({
       sectionDescription: v.string(),
       sectionNumber: v.number(),
       sectionDirection: v.optional(v.string()),
+      sectionType: v.optional(v.string()),
     }),
   },
   handler: async (ctx, args) => {
@@ -281,6 +282,7 @@ export const updateCustomSection = mutation({
           sectionDescription: args.content.sectionDescription,
           sectionNumber: args.content.sectionNumber,
           sectionDirection: args.content.sectionDirection,
+          sectionType: args.content.sectionType,
         },
         orderNumber: maxNumber + 1,
         isVisible: true,
@@ -329,7 +331,8 @@ export const removeCustomSection = mutation({
     const orderNumberRemoved = currentCustomSection?.orderNumber;
 
     if (!orderNumberRemoved) {
-      throw new Error("Something went wrong");
+      // Section not found, possibly already removed; treat as success
+      return;
     }
 
     const updatedCustomSections = resumeSections.filter(
@@ -805,4 +808,30 @@ export const updateResume = mutation({
     await ctx.db.patch(args.id, args.data);
     return true;
   }
+});
+
+export const updateResumeSections = mutation({
+  args: {
+    id: v.id("resumes"),
+    sections: v.any(),
+  },
+  handler: async (ctx, args) => {
+    const resume = await ctx.db.get(args.id);
+    if (!resume) {
+      throw new Error("Resume not found");
+    }
+
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    if (identity.subject !== resume.userId) {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.patch(args.id, {
+      sections: args.sections,
+    });
+  },
 });

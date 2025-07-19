@@ -80,19 +80,18 @@ const HeaderForm = ({
     []
   );
   const [showSummaryModal, setShowSummaryModal] = useState(false);
-  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
   const [userPoints, setUserPoints] = useState<string[]>([]);
   const [showPointsInput, setShowPointsInput] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { pushText, pushOptions, resume, setResume } = useChatBotStore((state) => state);
+  const { pushText, pushOptions, setResume, getResume, pushTyping, removeTyping, removeMessageById, messages } =
+    useChatBotStore((state) => state);
 
   const firstTimeRef = useRef(false);
-  const hasPhoto = resume?.globalStyles?.photo || false;
+  const hasPhoto = getResume(resumeId)?.globalStyles?.photo || false;
   const { user } = useUser();
 
-  const { onboardingData } = useChatBotStore((state) => state);
-
+  const { desiredRole, experienceLevel } = useChatBotStore((state) => state);
   const pendingChangesRef = useRef(false);
 
   useEffect(() => {
@@ -103,17 +102,18 @@ const HeaderForm = ({
 
   const debouncedUpdate = useMemo(() => {
     return debounce((newHeader: HeaderContent) => {
+      const resume = getResume(resumeId);
       if (resume) {
         const updatedSections = resume.sections.map((section: any) =>
           section.type === "header"
             ? { ...section, content: newHeader }
             : section
         );
-        setResume({ ...resume, sections: updatedSections });
+        setResume(resumeId, { ...resume, sections: updatedSections });
       }
       pendingChangesRef.current = false;
     }, 400);
-  }, [resume, setResume]);
+  }, [getResume, setResume, resumeId]);
 
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement> | string) => {
@@ -241,56 +241,37 @@ const HeaderForm = ({
   ];
 
   const generateSummary = async () => {
-    if (!onboardingData?.desiredRole || !onboardingData?.experienceLevel) {
-      toast.error("Please select your desired role and experience level from the chatbot first!");
-      pushText("To generate a professional summary, I'll need to know your desired role and experience level. Please use the chatbot to provide this information!", "bot");
+    if (!desiredRole || !experienceLevel) {
+      toast.error("On boarding incomplete !");
       return;
     }
 
-    if (!showPointsInput) {
-      setShowPointsInput(true);
-      pushText("Please provide a few key points about your experience, skills, and achievements. This will help me create a more personalized summary for you!", "bot");
-      return;
-    }
-
-    if (userPoints.length === 0) {
-      toast.error("Please add at least one point about yourself!");
-      return;
-    }
-
-    // Hide points input modal and show summary generation modal
-    setShowPointsInput(false);
-    setShowSummaryModal(true);
-    setIsGeneratingSummary(true);
+    // Show typing indicator
+    pushTyping("Generating summary...");
 
     try {
       const response = await axios.post("/api/generateSummary", {
-        desiredRole: onboardingData.desiredRole,
-        experienceLevel: onboardingData.experienceLevel,
-        userPoints: userPoints,
+        desiredRole: desiredRole,
+        experienceLevel: experienceLevel,
       });
-
-      setGeneratedSummaries(response.data.summaryOptions || []);
-      setIsGeneratingSummary(false);
-      setUserPoints([]);
+      console.log(response.data)
+      removeTyping();
+      const summary = response.data.summary;
+      if (summary) {
+        handleChange(summary);
+        pushText(
+          "✅ Professional summary has been generated and added to your resume!",
+          "bot",
+          { messageType: "success" }
+        );
+      } else {
+        toast.error("Failed to generate summary. Please try again.");
+      }
     } catch (error) {
+      removeTyping();
       console.log(error);
-      setIsGeneratingSummary(false);
-      setShowSummaryModal(false);
       toast.error("Failed to generate summaries. Please try again.");
     }
-  };
-
-  const handleAddPoint = () => {
-    const input = document.getElementById('userPoint') as HTMLInputElement;
-    if (input && input.value.trim()) {
-      setUserPoints([...userPoints, input.value.trim()]);
-      input.value = '';
-    }
-  };
-
-  const handleRemovePoint = (index: number) => {
-    setUserPoints(userPoints.filter((_, i) => i !== index));
   };
 
   const closeModal = () => {
@@ -303,7 +284,8 @@ const HeaderForm = ({
     closeModal();
     pushText(
       `✅ "${summary.title}" professional summary has been added to your resume!`,
-      "bot"
+      "bot",
+      { messageType: "success" }
     );
   };
 
@@ -312,43 +294,48 @@ const HeaderForm = ({
     setUserPoints([]);
   };
 
-  setTimeout(() => {
-    if (
-      header.email &&
-      header.firstName &&
-      header.lastName &&
-      header.phone &&
-      !firstTimeRef.current
-    ) {
-      pushText(
-        `Great job! You've got your basic info all set. Now, let's add some social links like Github and LinkedIn to make your profile pop!`,
-        "bot"
-      );
-      firstTimeRef.current = true;
-    }
-  }, 2000);
-
   const summaryFocus = () => {
-    pushOptions(
-      `Want help with your professional summary?`,
-      [
-        {
-          label: "✍️ Write Summary For Me",
-          value: "write-summary",
-          onClick: () => {
-            generateSummary();
+    if (header.summary && header.summary.trim() !== "") return;
+    pushTyping("Let me help you with your summary options...");
+    setTimeout(() => {
+      removeTyping();
+      // Push options and get the id of the new option message
+      const optionId = `option-${Date.now()}-${Math.random()}`;
+      pushOptions(
+        `Want help with your professional summary?`,
+        [
+          {
+            label: "✍️ Write Summary For Me",
+            value: "write-summary",
+            onClick: () => {
+              removeMessageById(optionId);
+              generateSummary();
+            },
           },
-        },
-        {
-          label: "🛠 Improve My Summary",
-          value: "improve-summary",
-          onClick: () => {
-            pushText("Improve Summary", "bot");
+          {
+            label: "🛠 I will do it myself.",
+            value: "do-myself",
+            onClick: () => {
+              removeMessageById(optionId);
+              pushTyping("No problem, you can do it yourself!");
+              setTimeout(() => {
+                removeTyping();
+                pushText(
+                  "Sounds good — I'm here if you need help later!",
+                  "bot",
+                  {
+                    messageType: "info",
+                  }
+                );
+              }, 1500);
+            },
           },
-        },
-      ],
-      "bot"
-    );
+        ],
+        "bot",
+        "option",
+        optionId
+      );
+    }, 1500);
   };
 
   return (
@@ -412,12 +399,6 @@ const HeaderForm = ({
             name="email"
             value={header.email}
             onChange={handleChange}
-            onFocus={() =>
-              pushText(
-                `Skip the funky emails from high school 😅 — go for something simple and clear!`,
-                "bot"
-              )
-            }
             placeholder="johndoe@gmail.com"
             type="email"
             required
@@ -500,7 +481,6 @@ const HeaderForm = ({
               placeholder="Write something about yourself..."
               value={header.summary}
               magicWrite={() => generateSummary()}
-              onFocus={() => summaryFocus()}
               onChange={(content) => handleChange(content)}
             />
           </div>
@@ -508,7 +488,7 @@ const HeaderForm = ({
       </motion.form>
 
       {/* User Points Input Modal */}
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {showPointsInput && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -522,11 +502,15 @@ const HeaderForm = ({
               exit={{ scale: 0.9 }}
               className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4"
             >
-              <h3 className="text-xl font-semibold mb-4">Add Your Key Points</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                Add Your Key Points
+              </h3>
               <p className="text-gray-600 mb-4">
-                Please add a few points about your experience, skills, and achievements. These will help create a more personalized summary.
+                Please add a few points about your experience, skills, and
+                achievements. These will help create a more personalized
+                summary.
               </p>
-              
+
               <div className="space-y-4">
                 <div className="flex gap-2">
                   <Input
@@ -534,7 +518,7 @@ const HeaderForm = ({
                     placeholder="Add a point about yourself..."
                     className="flex-1"
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
+                      if (e.key === "Enter") {
                         e.preventDefault();
                         handleAddPoint();
                       }
@@ -550,7 +534,10 @@ const HeaderForm = ({
 
                 <div className="space-y-2">
                   {userPoints.map((point, index) => (
-                    <div key={index} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 bg-gray-50 p-2 rounded"
+                    >
                       <span className="flex-1">{point}</span>
                       <button
                         onClick={() => handleRemovePoint(index)}
@@ -580,10 +567,10 @@ const HeaderForm = ({
             </motion.div>
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
       {/* Summary Options Modal */}
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {showSummaryModal && (
           <ChatBotModal
             isGenerating={isGeneratingSummary}
@@ -594,7 +581,7 @@ const HeaderForm = ({
             loadingText="Crafting professional summaries tailored to your experience..."
           />
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
     </>
   );
 };

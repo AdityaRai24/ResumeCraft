@@ -24,23 +24,33 @@ import { templateComponents } from "@/templates/templateStructures";
 import toast from "react-hot-toast";
 import { useChatBotStore } from "@/store";
 
-const LiveResumePreview = () => {
+interface LiveResumePreviewProps {
+  isCollapsed?: boolean;
+}
+
+const LiveResumePreview: React.FC<LiveResumePreviewProps> = ({
+  isCollapsed = false,
+}) => {
   const params = useParams();
-  const templateDetails = useChatBotStore((state) => state.resume);
+  const getResume = useChatBotStore((state) => state.getResume);
+  const templateDetails = getResume(params.id as string);
   const pathname = usePathname();
   const sectionType = pathname.split("/section/")[1];
 
   let sectionArray: string[] = [];
   templateDetails?.sections?.map((item: any) => sectionArray.push(item.type));
   let currentIndex = sectionArray.findIndex((item) => item === sectionType);
-  console.log(templateDetails)
+
   if (templateDetails === null) {
+    console.log("Template not found")
     return <div>Template not found</div>;
   }
 
   if (templateDetails === undefined) {
-    return <ResumeSkeleton />;
+    console.log("template details undefined.")
+    return <ResumeSkeleton isCollapsed={isCollapsed} />;
   }
+
   const backLocation = `/build-resume/${params.id}/tips?sec=${sectionArray[currentIndex]}`;
   const nextLocation =
     sectionType === "custom"
@@ -58,9 +68,18 @@ const LiveResumePreview = () => {
     return <div>Error: Template not found</div>;
   }
 
+
+  // Don't render content when collapsed
+  if (isCollapsed) {
+    return null;
+  }
+
+
+
+
   return (
     <>
-      <div className="overflow-hidden  w-full fixed h-[100%] mt-8 ">
+      <div className="overflow-hidden w-full fixed h-[100%] mt-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -85,8 +104,18 @@ const LiveResumePreview = () => {
           <TemplateComponent
             obj={templateDetails as ResumeTemplate}
             size="md"
-            textSize={(templateDetails?.globalStyles?.textSize || "md") as "sm" | "md" | "lg"}
-            marginSize={(templateDetails?.globalStyles?.margin || "md") as "sm" | "md" | "lg"}
+            textSize={
+              (templateDetails?.globalStyles?.textSize || "md") as
+                | "sm"
+                | "md"
+                | "lg"
+            }
+            marginSize={
+              (templateDetails?.globalStyles?.margin || "md") as
+                | "sm"
+                | "md"
+                | "lg"
+            }
             isPreview
           />
         </motion.div>
@@ -129,9 +158,19 @@ const LiveResumePreview = () => {
   );
 };
 
-const ResumeSkeleton = () => {
+interface ResumeSkeletonProps {
+  isCollapsed?: boolean;
+}
+
+const ResumeSkeleton: React.FC<ResumeSkeletonProps> = ({
+  isCollapsed = false,
+}) => {
+  if (isCollapsed) {
+    return null;
+  }
+
   return (
-    <div className="overflow-hidden w-full h-[80%] mt-8 ">
+    <div className="overflow-hidden w-full h-[80%] mt-8">
       <Skeleton className="h-full bg-slate-500/20 w-[80%]" />
     </div>
   );
