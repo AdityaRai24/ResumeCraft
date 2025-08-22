@@ -75,13 +75,11 @@ export const pushMessage = mutation({
         content: v.object({
           type: v.literal("text"),
           message: v.string(),
-          messageType: v.optional(
-            v.union(
-              v.literal("success"),
-              v.literal("info"),
-              v.literal("option"),
-              v.literal("error")
-            )
+          messageType: v.union(
+            v.literal("success"),
+            v.literal("info"),
+            v.literal("option"),
+            v.literal("error")
           ),
         }),
         sender: v.union(v.literal("user"), v.literal("bot")),
@@ -112,7 +110,30 @@ export const pushMessage = mutation({
       .filter((q) => q.eq(q.field("resumeId"), args.resumeId))
       .collect();
     const pushMessageData = pushMessage[0];
-    pushMessageData.content.push(args.message);
+    
+    // Ensure the message structure matches the schema
+    if (args.message.content.type === "text") {
+      const textMessage = {
+        content: {
+          type: "text" as const,
+          message: args.message.content.message,
+          messageType: args.message.content.messageType
+        },
+        sender: args.message.sender
+      };
+      pushMessageData.content.push(textMessage);
+    } else if (args.message.content.type === "options") {
+      const optionsMessage = {
+        content: {
+          type: "options" as const,
+          message: args.message.content.message,
+          options: args.message.content.options,
+          messageType: args.message.content.messageType || "info"
+        },
+        sender: "bot" as const
+      };
+      pushMessageData.content.push(optionsMessage);
+    }
     await ctx.db.patch(pushMessageData._id, pushMessageData);
     return true;
   },

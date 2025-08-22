@@ -161,7 +161,7 @@ const ChatBotAssistModal: React.FC<ChatBotAssistModalProps> = ({
                 Welcome to ResumeCraft!
               </h2>
               <p className="text-gray-600 text-sm">
-                Let's personalize your resume building experience
+                Let&apos;s personalize your resume building experience
               </p>
             </div>
 

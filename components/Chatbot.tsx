@@ -693,16 +693,16 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
                           Example queries:
                           <ul className="list-disc pl-6">
                             <li>
-                              "How can I improve my summary for a Product
-                              Manager role?"
+                              &ldquo;How can I improve my summary for a Product
+                              Manager role?&rdquo;
                             </li>
                             <li>
-                              "What skills am I missing for a Data Scientist
-                              position?"
+                              &ldquo;What skills am I missing for a Data Scientist
+                              position?&rdquo;
                             </li>
                             <li>
-                              "Rewrite my experience section to better match a
-                              Software Engineer job."
+                              &ldquo;Rewrite my experience section to better match a
+                              Software Engineer job.&rdquo;
                             </li>
                           </ul>
                         </li>
@@ -711,14 +711,14 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
                           you! It can edit, add, or remove sections, rewrite
                           content, and more. Example commands:
                           <ul className="list-disc pl-6">
-                            <li>"Add a new project about machine learning."</li>
+                            <li>&ldquo;Add a new project about machine learning.&rdquo;</li>
                             <li>
-                              "Update my skills to include React and
-                              TypeScript."
+                              &ldquo;Update my skills to include React and
+                              TypeScript.&rdquo;
                             </li>
                             <li>
-                              "Tailor my resume for the attached job
-                              description."
+                              &ldquo;Tailor my resume for the attached job
+                              description.&rdquo;
                             </li>
                           </ul>
                         </li>

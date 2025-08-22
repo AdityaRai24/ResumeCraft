@@ -31,6 +31,7 @@ import { useChatBotStore } from "@/store";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import ChatBotModal from "../ChatBotModal";
+import Image from "next/image";
 
 interface SocialLink {
   type: string;
@@ -357,9 +358,11 @@ const HeaderForm = ({
               >
                 {header.photo ? (
                   <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary">
-                    <img
+                    <Image
                       src={header.photo}
                       alt="Profile"
+                      width={80}
+                      height={80}
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

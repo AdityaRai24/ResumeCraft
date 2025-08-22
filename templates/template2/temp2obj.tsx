@@ -134,5 +134,7 @@ export const temp2Obj: ResumeTemplate = {
     photo: false,
     primaryColor: "#000",
     primaryTextColor: "#000",
+    textSize: "medium",
+    margin: "normal",
   },
 };
