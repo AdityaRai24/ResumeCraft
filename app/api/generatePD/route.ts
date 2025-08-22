@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite-preview-06-17" });
 
     // Prompt
     const prompt = `You are an expert ATS resume writer. Generate exactly 3 professional project description bullet points for a project titled "${projectTitle}".

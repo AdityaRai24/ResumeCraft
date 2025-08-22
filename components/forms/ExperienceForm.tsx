@@ -11,7 +11,6 @@ import React, {
 } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import QuillExpEditor from "../QuillEditors/QuillExp";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
@@ -21,6 +20,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import ModifyModal from "../ModifyModal";
 import { useUser } from "@clerk/nextjs";
+import QuillEditorComponent from "../QuillEditors/QuillEditorComponent";
 
 interface ExperienceItem {
   companyName: string;
@@ -224,7 +224,7 @@ const ExperienceForm = ({
       const chatbotRequest = {
         message: {
           sender: "user",
-          content: { type: "text", message: roughExperience }
+          content: { type: "text", message: roughExperience },
         },
         userId: user?.id,
         resumeId: resumeId as Id<"resumes">,
@@ -232,7 +232,7 @@ const ExperienceForm = ({
         desiredRole: desiredRole,
         experienceLevel: experienceLevel,
         intent,
-        section:'experience'
+        section: "experience",
       };
 
       const response = await axios.post("/api/chatbot", chatbotRequest, {
@@ -247,7 +247,8 @@ const ExperienceForm = ({
       // Check if response is successful and contains updatedResume
       if (response.status !== 200 || !response.data?.updatedResume) {
         throw new Error(
-          response.data?.error || `Server responded with status: ${response.status}`
+          response.data?.error ||
+            `Server responded with status: ${response.status}`
         );
       }
 
@@ -463,15 +464,18 @@ const ExperienceForm = ({
               </motion.div>
             </div>
             <div className="mt-8 w-full md:w-[85%]">
-              <QuillExpEditor
+              <QuillEditorComponent
+                sectionType="experience"
+                fullDescription={item.description}
                 label="Job Description"
-                companyName={exp.companyName}
-                role={exp.role}
                 value={exp.jobDescription}
-                magicWrite={() => generateExperience(index)}
-                onChange={(content) =>
+                onChange={(content: string) =>
                   handleChange(index)("jobDescription", content)
                 }
+                placeholder="E.g., I worked on building websites for 3 years, handling mostly frontend work with React and collaborated with design teams"
+                magicWrite={() => generateExperience(index)}
+                requiredFieldLabel="Company Name"
+                requiredFieldValue={exp.companyName}
               />
             </div>
           </motion.form>

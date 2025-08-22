@@ -12,7 +12,6 @@ import { Input } from "../ui/input";
 import { debounce } from "lodash";
 import { Button } from "../ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import QuillProjectEditor from "../QuillEditors/QuillProject";
 import { ProjectSection } from "@/types/templateTypes";
 import { XIcon } from "lucide-react";
 import { useChatBotStore } from "@/store";
@@ -20,6 +19,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import ModifyModal from "../ModifyModal";
 import { useUser } from "@clerk/nextjs";
+import QuillEditorComponent from "../QuillEditors/QuillEditorComponent";
 
 interface ProjectType {
   name: string;
@@ -279,14 +279,16 @@ const ProjectForm = ({
                 />
               </div>
               <div className="mt-8 w-full  md:w-[85%]">
-                <QuillProjectEditor
+                <QuillEditorComponent
                   label="Project Description"
                   value={item.description}
-                  projectTitle={item.name}
+                  itemIndex={index}
                   magicWrite={() => generateProject(index)}
-                  onChange={(content) =>
-                    handleChange(index)(content, "description")
-                  }
+                  onChange={(content: string) => handleChange(index)(content, "description")}
+                  requiredFieldLabel="Project Title"
+                  requiredFieldValue={item.name}
+                  sectionType="projects"
+                  fullDescription={item.description}
                 />
               </div>
             </form>

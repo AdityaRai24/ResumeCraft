@@ -10,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import QuillEditorComponent from "../QuillEditors/QuillEditor";
+import QuillEditorComponent from "../QuillEditors/QuillEditorComponent";
 import { motion, AnimatePresence } from "framer-motion";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -478,6 +478,8 @@ const HeaderForm = ({
           <div className="mt-8 w-full md:w-[85%]">
             <QuillEditorComponent
               label="Summary"
+              sectionType="header"
+              fullDescription={header.summary}
               placeholder="Write something about yourself..."
               value={header.summary}
               magicWrite={() => generateSummary()}

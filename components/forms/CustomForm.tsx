@@ -2,7 +2,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import QuillCustomEditor from "../QuillEditors/QuillCustom";
+import QuillEditorComponent from "../QuillEditors/QuillEditorComponent";
 import { Button } from "../ui/button";
 import { debounce } from "lodash";
 import { useMutation, useQuery } from "convex/react";
@@ -46,7 +46,7 @@ const CustomForm = ({
   const resume = getResume(resumeId);
   const isTwoColumn = resume?.globalStyles.columns === 2;
   const removeSectionUpdate = useMutation(api.resume.removeCustomSection);
-  
+
   // Magic write states
   const [showModifyModal, setShowModifyModal] = useState(false);
   const [showTypeSelector, setShowTypeSelector] = useState(false);
@@ -168,14 +168,14 @@ const CustomForm = ({
     const removedSection = sectionsContent.find(
       (section) => section.sectionNumber === index
     );
-    
+
     if (!removedSection) {
       console.warn("Section not found for removal:", index);
       return;
     }
 
     const toRemoveSectionNumber = removedSection.sectionNumber;
-    
+
     // Remove the section from local state
     const filteredContent = sectionsContent.filter(
       (section) => section.sectionNumber !== toRemoveSectionNumber
@@ -207,7 +207,7 @@ const CustomForm = ({
       toast.error("Section Title is required to generate content.");
       return;
     }
-    
+
     setTargetIndex(index);
     setSelectedSectionType(section.sectionType || "other");
     setShowTypeSelector(true);
@@ -267,7 +267,7 @@ const CustomForm = ({
       const chatbotRequest = {
         message: {
           sender: "user",
-          content: { type: "text", message: roughDescription }
+          content: { type: "text", message: roughDescription },
         },
         userId: user?.id,
         resumeId: resumeId,
@@ -275,7 +275,7 @@ const CustomForm = ({
         desiredRole: desiredRole,
         experienceLevel: experienceLevel,
         intent: "generate",
-        section: 'custom'
+        section: "custom",
       };
       const response = await axios.post("/api/chatbot", chatbotRequest, {
         timeout: 30000,
@@ -284,15 +284,21 @@ const CustomForm = ({
       removeTyping();
       if (response.status !== 200 || !response.data?.updatedResume) {
         throw new Error(
-          response.data?.error || `Server responded with status: ${response.status}`
+          response.data?.error ||
+            `Server responded with status: ${response.status}`
         );
       }
       // Find the updated custom section and update the description
       const updatedSection = response.data.updatedResume.sections.find(
-        (section: any) => section.type === "custom" && section.content.sectionNumber === section.sectionNumber
+        (section: any) =>
+          section.type === "custom" &&
+          section.content.sectionNumber === section.sectionNumber
       );
       if (updatedSection && updatedSection.content?.sectionDescription) {
-        handleDescriptionChange(targetIndex, updatedSection.content.sectionDescription);
+        handleDescriptionChange(
+          targetIndex,
+          updatedSection.content.sectionDescription
+        );
       }
       setResume(resumeId, response.data.updatedResume);
       pushText(
@@ -405,13 +411,18 @@ const CustomForm = ({
               onChange={(e) => handleTitleChange(index, e.target.value)}
             />
             <div className="mt-4 w-full">
-              <QuillCustomEditor
+              <QuillEditorComponent
+                fullDescription={section.sectionDescription}
+                sectionType="custom"
                 magicWrite={() => generateCustomSection(index)}
                 value={section.sectionDescription}
-                onChange={(value) => handleDescriptionChange(index, value)}
+                onChange={(value: string) =>
+                  handleDescriptionChange(index, value)
+                }
                 label="Section Description"
-                sectionTitle={section.sectionTitle}
                 placeholder={getPlaceholderByType(section.sectionType)}
+                requiredFieldLabel="Section Title"
+                requiredFieldValue={section.sectionTitle}
               />
             </div>
             {isTwoColumn && (
@@ -421,7 +432,9 @@ const CustomForm = ({
             )}
             {section.sectionType && section.sectionType !== "other" && (
               <p className="text-sm mt-1 text-gray-600">
-                Type: {section.sectionType.charAt(0).toUpperCase() + section.sectionType.slice(1)}
+                Type:{" "}
+                {section.sectionType.charAt(0).toUpperCase() +
+                  section.sectionType.slice(1)}
               </p>
             )}
           </div>

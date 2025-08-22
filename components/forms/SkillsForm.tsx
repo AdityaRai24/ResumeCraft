@@ -9,7 +9,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { debounce, set } from "lodash";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import QuillEditorComponent from "../QuillEditors/QuillEditor";
+import QuillEditorComponent from "../QuillEditors/QuillEditorComponent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "../ui/button";
 import { useChatBotStore } from "@/store";
@@ -247,7 +247,8 @@ const SkillsForm = ({
           value={skillDescription}
           onChange={handleChange}
           magicWrite={()=>generateSkills()}
-          currentFormat={currentFormat}
+          fullDescription={skillDescription}
+          sectionType="skills"
           label="Skills Description"
           placeholder="Write Something about your skills"
         />

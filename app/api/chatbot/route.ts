@@ -144,18 +144,15 @@ function extractResumeInsights(resume: any) {
     urgentFixes: [] as string[],
   };
 
-  // Count projects and experience entries
-  const projectsSection = resume.sections.find(
-    (s: any) => s.type === "projects"
-  );
-  if (projectsSection?.data) {
-    insights.projectCount = Array.isArray(projectsSection.data)
-      ? projectsSection.data.length
+  // Projects Section
+  const projectsSection = resume.sections.find((s: any) => s.type === "projects");
+  if (projectsSection?.content?.projects) {
+    insights.projectCount = Array.isArray(projectsSection.content.projects)
+      ? projectsSection.content.projects.length
       : 0;
 
-    // Analyze project content quality
-    if (projectsSection.data.length > 0) {
-      const hasMetrics = projectsSection.data.some((project: any) =>
+    if (insights.projectCount > 0) {
+      const hasMetrics = projectsSection.content.projects.some((project: any) =>
         project.description?.match(
           /\d+%|\$[\d,]+|\d+[xX]|increased|decreased|improved|reduced|saved|generated/i
         )
@@ -167,22 +164,20 @@ function extractResumeInsights(resume: any) {
     }
   }
 
-  const experienceSection = resume.sections.find(
-    (s: any) => s.type === "experience"
-  );
-  if (experienceSection?.data) {
-    insights.experienceCount = Array.isArray(experienceSection.data)
-      ? experienceSection.data.length
+  // Experience Section
+  const experienceSection = resume.sections.find((s: any) => s.type === "experience");
+  if (experienceSection?.content?.experience) {
+    insights.experienceCount = Array.isArray(experienceSection.content.experience)
+      ? experienceSection.content.experience.length
       : 0;
 
-    // Analyze experience quality
-    if (experienceSection.data.length > 0) {
-      const totalDescLength = experienceSection.data.reduce(
-        (sum: number, exp: any) => sum + (exp.description?.length || 0),
+    if (insights.experienceCount > 0) {
+      const totalDescLength = experienceSection.content.experience.reduce(
+        (sum: number, exp: any) => sum + (exp.jobDescription?.length || 0),
         0
       );
       insights.contentQuality.averageDescriptionLength = Math.round(
-        totalDescLength / experienceSection.data.length
+        totalDescLength / insights.experienceCount
       );
 
       if (insights.experienceCount >= 2)
@@ -195,11 +190,10 @@ function extractResumeInsights(resume: any) {
     }
   }
 
-  // Count skill categories and analyze skills
+  // Skills Section
   const skillsSection = resume.sections.find((s: any) => s.type === "skills");
-  if (skillsSection?.description) {
-    const strongTags = (skillsSection.description.match(/<strong>/g) || [])
-      .length;
+  if (skillsSection?.content?.description) {
+    const strongTags = (skillsSection.content.description.match(/<strong>/g) || []).length;
     insights.skillCategories = strongTags;
 
     if (insights.skillCategories >= 4) {
@@ -253,7 +247,6 @@ function extractResumeInsights(resume: any) {
 
   return insights;
 }
-
 
 function generateAdvicePrompt(
   questionType: string,
@@ -578,7 +571,9 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash-lite-preview-06-17",
+    });
 
     let detectedSection = section;
     let userIntent = intent;
@@ -589,7 +584,7 @@ export async function POST(req: NextRequest) {
       detectedSection = detectedSection || detection.section;
       if (!detectedSection) {
         const lowerMsg = msg.toLowerCase();
-        console.log("infered")
+        console.log("infered");
         if (lowerMsg.includes("project")) detectedSection = "projects";
         else if (lowerMsg.includes("experience"))
           detectedSection = "experience";
@@ -660,14 +655,15 @@ export async function POST(req: NextRequest) {
 
       const response = await model.generateContent(advicePrompt);
       let advice = response.response.text().trim();
-      advice = advice.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>'); // bold
+      advice = advice.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"); // bold
       if (/^\d+\. /m.test(advice)) {
-        advice = '<ul>' + advice.replace(/^(\d+)\. (.*)$/gm, '<li>$2</li>') + '</ul>';
+        advice =
+          "<ul>" + advice.replace(/^(\d+)\. (.*)$/gm, "<li>$2</li>") + "</ul>";
       }
       if (/^- /m.test(advice)) {
-        advice = '<ul>' + advice.replace(/^- (.*)$/gm, '<li>$1</li>') + '</ul>';
+        advice = "<ul>" + advice.replace(/^- (.*)$/gm, "<li>$1</li>") + "</ul>";
       }
-      advice = advice.replace(/\n/g, '<br>');
+      advice = advice.replace(/\n/g, "<br>");
       return NextResponse.json({ advice }, { status: 200 });
     }
 
@@ -758,14 +754,18 @@ You are a helpful resume assistant. The user just made a change to their '${dete
 
 Write a short, positive confirmation message (max 2 sentences, similar in length to: 'Perfect! I've updated your resume based on your request. The changes have been applied successfully!').
 Do not use markdown. Respond in plain text only.`;
-      const confirmationResponse = await model.generateContent(confirmationPrompt);
+      const confirmationResponse =
+        await model.generateContent(confirmationPrompt);
       let confirmationMsg = confirmationResponse.response.text().trim();
       // Remove markdown if any
-      confirmationMsg = confirmationMsg.replace(/\*\*(.*?)\*\*/g, '$1');
-      confirmationMsg = confirmationMsg.replace(/\*/g, '');
-      confirmationMsg = confirmationMsg.replace(/`/g, '');
-      confirmationMsg = confirmationMsg.replace(/_/g, '');
-      return NextResponse.json({ updatedResume, confirmationMsg }, { status: 200 });
+      confirmationMsg = confirmationMsg.replace(/\*\*(.*?)\*\*/g, "$1");
+      confirmationMsg = confirmationMsg.replace(/\*/g, "");
+      confirmationMsg = confirmationMsg.replace(/`/g, "");
+      confirmationMsg = confirmationMsg.replace(/_/g, "");
+      return NextResponse.json(
+        { updatedResume, confirmationMsg },
+        { status: 200 }
+      );
     }
   } catch (error) {
     console.error("Chatbot error:", error);

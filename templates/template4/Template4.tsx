@@ -1,5 +1,5 @@
 "use client";
-import { cn, marginSizes, textSizes } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { ResumeTemplate } from "@/types/templateTypes";
 import {
   Github,
@@ -13,7 +13,6 @@ import {
 import React from "react";
 import TemplateWrapper from "@/providers/TemplateWrapper";
 import Link from "next/link";
-import Image from "next/image";
 
 export interface TemplateType {
   obj: ResumeTemplate;
@@ -21,6 +20,50 @@ export interface TemplateType {
   textSize?: "sm" | "md" | "lg";
   marginSize?: "sm" | "md" | "lg";
 }
+
+const textSizes = {
+  sm: {
+    name: "text-[33px]", // 30px
+    sectionHeader: "text-[16px]", // 16px
+    content: "text-[14px]", // 14px
+    description: "text-[12px]", // 12px
+  },
+  md: {
+    name: "text-[36px]", // 36px
+    sectionHeader: "text-[17px]", // 18px
+    content: "text-[15px]", // 16px
+    description: "text-[13px]", // 14px
+  },
+  lg: {
+    name: "text-[38px]", // 48px
+    sectionHeader: "text-[18px]", // 20px
+    content: "text-[16px]", // 18px
+    description: "text-[14px]", // 16px
+  },
+} as const;
+
+const marginSizes = {
+  xs: {
+    section: "mt-0.5", // 4px between sections
+    content: "mt-1", // 8px for content blocks
+    headerContent: "mt-0.5", // 4px for header content
+  },
+  sm: {
+    section: "mt-1", // 4px between sections
+    content: "mt-2", // 8px for content blocks
+    headerContent: "mt-1", // 4px for header content
+  },
+  md: {
+    section: "mt-2", // 8px between sections
+    content: "mt-3", // 12px for content blocks
+    headerContent: "mt-2", // 8px for header content
+  },
+  lg: {
+    section: "mt-3", // 16px between sections
+    content: "mt-4", // 20px for content blocks
+    headerContent: "mt-3", // 12px for header content
+  },
+} as const;
 
 const Template4 = ({ obj, size, textSize = size, marginSize = size }: TemplateType) => {
   const headerLogoMap: any = {
@@ -208,7 +251,7 @@ const Template4 = ({ obj, size, textSize = size, marginSize = size }: TemplateTy
                         textSize={currentTextSize}
                       />
                       <div
-                        className="quill-content text-sm tracking-wider"
+                        className={cn("quill-content tracking-wider", currentTextSize.description)}
                         dangerouslySetInnerHTML={{
                           __html: item.content.sectionDescription,
                         }}
@@ -403,11 +446,11 @@ const LeftSectionHeader = ({
 }: {
   title: string;
   primaryTextColor: string;
-  textSize: any;
+  textSize: (typeof textSizes)[keyof typeof textSizes];
 }) => {
   return (
     <h2
-      className={cn("font-bold text-[16px] mb-2 tracking-[2px] uppercase", textSize.sectionHeader)}
+      className={cn("font-bold mb-2 tracking-[2px] uppercase", textSize.sectionHeader)}
       style={{ color: primaryTextColor }}
     >
       {title}
@@ -422,12 +465,12 @@ const RightSectionHeader = ({
 }: {
   title: string;
   primaryTextColor: string;
-  textSize: any;
+  textSize: (typeof textSizes)[keyof typeof textSizes];
 }) => {
   return (
     <div>
       <h1
-        className={cn("text-2xl tracking-[2px] font-bold uppercase", textSize.name)}
+        className={cn("tracking-[2px] font-bold uppercase", textSize.sectionHeader)}
         style={{ color: primaryTextColor }}
       >
         {title}

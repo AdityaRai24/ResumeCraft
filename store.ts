@@ -17,7 +17,7 @@ export type OptionMessage = {
 };
 
 type ChatMessage = {
-  id?: string;
+  id: string; // Make id required
   sender: "user" | "bot";
   content: TextMessage | OptionMessage;
   messageType?: "success" | "info" | "option" | "error";
@@ -57,6 +57,15 @@ type ChatBotState = {
   pushTyping: (message?: string, sender?: "bot") => void;
   removeTyping: () => void;
   removeMessageById: (id: string) => void;
+  taggedText: string | null;
+  setTaggedText: (text: string) => void;
+  clearTaggedText: () => void;
+  taggedTag: { text: string; section: string; description: string; index?: number } | null;
+  setTaggedTag: (tagObj: { text: string; section: string; description: string; index?: number }) => void;
+  clearTaggedTag: () => void;
+  resumeCheckpoints: { [messageId: string]: any };
+  saveCheckpoint: (messageId: string, resume: any) => void;
+  restoreCheckpoint: (messageId: string, resumeId: string) => void;
 };
 
 export const useChatBotStore = create<ChatBotState>()(
@@ -73,6 +82,7 @@ export const useChatBotStore = create<ChatBotState>()(
             {
               sender,
               content: { type: "text", message },
+              id: options.id || `msg-${Date.now()}-${Math.random()}`,
               ...options,
             },
           ],
@@ -81,11 +91,16 @@ export const useChatBotStore = create<ChatBotState>()(
         set((state) => ({
           messages: [
             ...state.messages,
-            { sender, content: { type: "options", message, options }, messageType: messageType, id },
+            { sender, content: { type: "options", message, options }, messageType: messageType, id: id || `msg-${Date.now()}-${Math.random()}` },
           ],
         })),
       resetMessages: () => set({ messages: [] }),
-      fillMessages: (messages) => set({ messages }),
+      fillMessages: (messages) => set({
+        messages: messages.map((msg) => ({
+          ...msg,
+          id: msg.id || `msg-${Date.now()}-${Math.random()}`,
+        })),
+      }),
       setResume: (id, resume) =>
         set((state) => ({
           resumes: { ...state.resumes, [id]: resume },
@@ -113,6 +128,33 @@ export const useChatBotStore = create<ChatBotState>()(
         set((state) => ({
           messages: state.messages.filter((msg: any) => msg.id !== id),
         })),
+      taggedText: null,
+      setTaggedText: (text) => set({ taggedText: text }),
+      clearTaggedText: () => set({ taggedText: null }),
+      taggedTag: null, // { text, section, description }
+      setTaggedTag: (tagObj) => set({ taggedTag: tagObj }),
+      clearTaggedTag: () => set({ taggedTag: null }),
+      resumeCheckpoints: {},
+      saveCheckpoint: (messageId, resume) => {
+        set((state) => ({
+          resumeCheckpoints: {
+            ...state.resumeCheckpoints,
+            [messageId]: JSON.parse(JSON.stringify(resume)), // deep copy
+          },
+        }));
+      },
+      restoreCheckpoint: (messageId, resumeId) => {
+        const { resumeCheckpoints, setResume, messages, fillMessages } = get();
+        const checkpointResume = resumeCheckpoints[messageId];
+        if (checkpointResume) {
+          setResume(resumeId, checkpointResume);
+          // Truncate chat history after the checkpoint
+          const idx = messages.findIndex((msg) => msg.id === messageId);
+          if (idx !== -1) {
+            fillMessages(messages.slice(0, idx + 1));
+          }
+        }
+      },
     }),
     {
       name: "chatbot-storage",
@@ -121,6 +163,7 @@ export const useChatBotStore = create<ChatBotState>()(
         resumes: state.resumes,
         desiredRole: state.desiredRole,
         experienceLevel: state.experienceLevel,
+        resumeCheckpoints: state.resumeCheckpoints,
       }),
     }
   )

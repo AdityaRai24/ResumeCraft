@@ -28,9 +28,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "./ui/dialog";
 import axios from "axios";
 import ActionConfirmationModal from "./ActionConfirmationModal";
+import { v4 as uuidv4 } from "uuid";
 
 interface ChatbotProps {
   isOnboardingModalOpen?: boolean;
@@ -50,6 +52,13 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
     pushTyping,
     removeTyping,
     pushText,
+    taggedText,
+    clearTaggedText,
+    taggedTag,
+    clearTaggedTag,
+    resumeCheckpoints,
+    saveCheckpoint,
+    restoreCheckpoint,
   } = useChatBotStore((state) => state);
   const resumeFromStore = getResume(params.id as string);
   const [isExpanded, setIsExpanded] = useState(true);
@@ -72,6 +81,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
   const [jobDescription, setJobDescription] = useState("");
   const [isJDLoading, setIsJDLoading] = useState(false);
   const [jdError, setJDError] = useState("");
+  const [restoreDialogOpen, setRestoreDialogOpen] = useState(false);
+  const [pendingRestoreId, setPendingRestoreId] = useState<string | null>(null);
 
   const chatBotData = useQuery(api.chatBot.getChatbotData, {
     userId: user?.id || "",
@@ -85,15 +96,17 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
       chatBotData.chatInitialized &&
       Array.isArray(chatBotData.content)
     ) {
-      fillMessages(chatBotData.content);
+      const messagesWithId = chatBotData.content.map((msg: any) => ({
+        ...msg,
+        id: msg.id || `msg-${Date.now()}-${Math.random()}`,
+      }));
+      fillMessages(messagesWithId);
       setIsInitialized(true);
     }
   }, [chatBotData, fillMessages]);
 
   useEffect(() => {
-    // Detect onboarding modal close (from open to closed)
     if (prevOnboardingRef.current && !isOnboardingModalOpen) {
-      // Wait 1.5s, show typing, then after 1.5s show welcome message
       setTimeout(() => {
         pushTyping("Setting up your personalized AI assistant...");
         setTimeout(() => {
@@ -111,16 +124,68 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
     if (!user || !user.id) return;
     if (message.trim() === "") return;
 
-    const userMessage = message;
+    const messageId = uuidv4();
+
+    if (taggedTag) {
+      setMessage("");
+      inputRef.current?.focus();
+      pushText(message, "user", { messageType: "info", id: messageId });
+      saveCheckpoint(messageId, resumeFromStore);
+      pushTyping("Updating the tagged text in your resume...");
+      setIsBotLoading(true);
+
+      try {
+        const response = await axios.post(`/api/replace-tagged-text`, {
+          resume: resumeFromStore,
+          section: taggedTag.section,
+          taggedText: taggedTag.text,
+          description: message,
+          index : taggedTag.index
+        });
+        if (response.data && response.data.updatedResume) {
+          setIsBotLoading(false);
+          setResume(params.id as string, response.data.updatedResume);
+          removeTyping();
+          pushText(
+            response.data.confirmationMsg ||
+              "✨ The tagged text has been updated as requested!",
+            "bot",
+            { messageType: "info" }
+          );
+        } else {
+          setIsBotLoading(false);
+          removeTyping();
+          pushText(
+            response.data?.error ||
+              "Sorry, I couldn't update the tagged text. Please try again.",
+            "bot",
+            { messageType: "error" }
+          );
+        }
+      } catch (error) {
+        setIsBotLoading(false);
+        removeTyping();
+        pushText(
+          "I apologize, but I encountered an error while updating the tagged text. Please try again.",
+          "bot",
+          { messageType: "error" }
+        );
+      }
+      clearTaggedTag();
+      return;
+    }
+
+    // If no tag, proceed as before
+    let userMessage = message;
     setMessage("");
     inputRef.current?.focus();
 
-    pushText(userMessage, "user", { messageType: "info" });
+    pushText(userMessage, "user", { messageType: "info", id: messageId });
+    saveCheckpoint(messageId, resumeFromStore);
 
     pushTyping("I'm working on your request...");
     setIsBotLoading(true);
 
-    // Get last 3 non-typing messages for history
     const last5 = storeMessages
       .filter(m => !m.isTyping)
       .slice(-5)
@@ -129,9 +194,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
         content: m.content.message,
         type: m.content.type,
       }));
-
-    try {
       console.log(resumeFromStore)
+    try {
       const response = await axios.post(`http://localhost:3000/api/chatbot`, {
         userId: user.id,
         resumeId: resumeId as Id<"resumes">,
@@ -515,6 +579,47 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
             </motion.div>
           </motion.div>
         )}
+        {/* Restore Checkpoint Confirmation Dialog */}
+        <Dialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Restore Checkpoint</DialogTitle>
+            </DialogHeader>
+            <DialogDescription>
+              <div className="space-y-3">
+                <p>
+                  <b>Are you sure you want to restore to this checkpoint?</b>
+                </p>
+                <ul className="list-disc pl-6 text-sm text-gray-700">
+                  <li>This will revert your resume to the state it was in when you sent this message.</li>
+                  <li>All chat messages after this point will be <b>permanently deleted</b>.</li>
+                  <li>This action cannot be undone.</li>
+                </ul>
+                <p className="text-red-600 font-medium">Warning: Any unsaved changes after this checkpoint will be lost.</p>
+              </div>
+            </DialogDescription>
+            <DialogFooter>
+              <button
+                className="px-4 py-2 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium"
+                onClick={() => setRestoreDialogOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded-md bg-primary text-white hover:bg-primary/90 font-medium"
+                onClick={() => {
+                  if (pendingRestoreId) {
+                    restoreCheckpoint(pendingRestoreId, params.id as string);
+                  }
+                  setRestoreDialogOpen(false);
+                  setPendingRestoreId(null);
+                }}
+              >
+                Yes, Restore
+              </button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
         {!isExpanded && (
           <motion.div
             initial="hidden"
@@ -736,7 +841,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
                                 className="bg-amber-900/80 mt-2 cursor-pointer text-white px-2 py-1 rounded-full shadow block ml-auto gap-1 text-xs font-medium"
                                 title="Restore to this checkpoint"
                                 onClick={() => {
-                                  /* Placeholder for restore action */
+                                  setPendingRestoreId(msg.id);
+                                  setRestoreDialogOpen(true);
                                 }}
                                 type="button"
                                 style={{ zIndex: 2 }}
@@ -780,19 +886,89 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
           >
             <div className="flex gap-2">
               <motion.div className="flex-1 relative">
-                <motion.textarea
-                  ref={inputRef}
-                  value={message}
-                  rows={3}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Type your message here..."
-                  className="w-full px-4 py-3 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm transition-all duration-200"
-                  whileFocus={{
-                    boxShadow: "0 0 0 2px rgba(var(--color-primary), 0.2)",
-                  }}
-                  disabled={isBotLoading}
-                />
+                {/* Tag pill above input, fixed in input area */}
+                <div style={{ width: "100%" }}>
+                  {taggedTag && (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "flex-start",
+                        marginBottom: 6,
+                        background: "#fffbe6",
+                        color: "#222",
+                        border: "1.5px solid #ffe066",
+                        borderRadius: "16px",
+                        fontWeight: 500,
+                        fontSize: "10px",
+                        padding: "3px 5px",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+                        gap: "10px",
+                        maxWidth: 340,
+                        minWidth: 60,
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          background: "#ffe066",
+                          color: "#b48a00",
+                          borderRadius: "8px",
+                          fontWeight: 700,
+                          width: 28,
+                          height: 28,
+                          marginRight: 8,
+                        }}
+                      >
+                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                          <rect x="2" y="2" width="16" height="12" rx="4" fill="#ffe066" />
+                          <text x="6" y="12" fontSize="10" fill="#b48a00" fontWeight="bold">@</text>
+                        </svg>
+                      </span>
+                      <span
+                        style={{
+                          maxWidth: 160,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {taggedTag.text.length > 28
+                          ? taggedTag.text.substring(0, 28) + "…"
+                          : taggedTag.text}
+                      </span>
+                      <span
+                        style={{
+                          marginLeft: "12px",
+                          fontSize: "18px",
+                          color: "#b48a00",
+                          cursor: "pointer",
+                          fontWeight: 700,
+                          lineHeight: 1,
+                        }}
+                        onClick={clearTaggedTag}
+                        title="Remove tag"
+                      >
+                        ×
+                      </span>
+                    </div>
+                  )}
+                  <motion.textarea
+                    ref={inputRef}
+                    value={message}
+                    rows={3}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type your message here..."
+                    className="w-full px-4 py-3 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 shadow-sm transition-all duration-200"
+                    whileFocus={{
+                      boxShadow: "0 0 0 2px rgba(var(--color-primary), 0.2)",
+                    }}
+                    disabled={isBotLoading}
+                  />
+                </div>
                 <MessageSquare
                   size={16}
                   className="absolute left-3 top-3.5 text-gray-400"

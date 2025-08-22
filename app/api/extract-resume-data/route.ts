@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 export const runtime = 'edge'
 
 const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash",
+  model: "gemini-2.5-flash-lite-preview-06-17",
   maxRetries: 2,
 });
 
