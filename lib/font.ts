@@ -14,7 +14,8 @@ export type FontName =
   | "OpenSans"
   | "Poppins"
   | "Raleway"
-  | "Geologica";
+  | "Geologica"
+  | "TimesNewRoman";
 
 export const interFont = Inter({ subsets: ["latin"] });
 export const montserratFont = Montserrat({ subsets: ["latin"] });
@@ -40,4 +41,29 @@ export const fontOptions = [
   "Poppins",
   "Montserrat",
   "Geologica",
+  "TimesNewRoman",
 ];
+
+// Utility function to get font class based on font name
+export const getFontClass = (fontName?: string): string => {
+  switch (fontName) {
+    case "Inter":
+      return interFont.className;
+    case "Montserrat":
+      return montserratFont.className;
+    case "OpenSans":
+      return openSansFont.className;
+    case "Poppins":
+      return poppinsFont.className;
+    case "Geologica":
+      return geologicaFont.className;
+    case "Raleway":
+      return ralewayFont.className;
+    case "Roboto":
+      return robotoFont.className;
+    case "TimesNewRoman":
+      return "font-times-new-roman";
+    default:
+      return ""; // No font class applied
+  }
+};

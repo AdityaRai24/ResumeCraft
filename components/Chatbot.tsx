@@ -987,7 +987,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
                 <Send size={16} />
               </motion.button>
             </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            {/* <div className="mt-2 grid grid-cols-2 gap-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -1006,7 +1006,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOnboardingModalOpen = false }) => {
               >
                 Match Job Description
               </Button>
-            </div>
+            </div> */}
           </motion.div>
         </div>
       </motion.div>

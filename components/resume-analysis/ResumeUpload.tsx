@@ -194,6 +194,7 @@ const ResumeUpload: React.FC = ({
       setParsedData(response.data.parsedResume);
       setAnalysis(response.data.analysis);
     } catch (error) {
+      console.log(error)
       router.push("/resume-analysis");
       toast.error("Model Overloaded. Please Try again.");
     } finally {

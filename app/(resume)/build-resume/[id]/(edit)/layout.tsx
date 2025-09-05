@@ -8,9 +8,7 @@ import React, { useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import {
   ArrowLeftToLine,
-  ArrowRightToLine,
-  ChevronLeft,
-  ChevronRight,
+  ArrowRightToLine, Eye
 } from "lucide-react";
 
 import LiveResumePreview from "@/components/LiveResumePreview";
@@ -21,16 +19,16 @@ import { Id } from "@/convex/_generated/dataModel";
 import { geologicaFont } from "@/lib/font";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { item } from "@/lib/motion";
 import useMobile from "@/lib/useMobile";
 import MobilePreviewButton from "@/components/MobilePreviewButton";
 import PreviewModal from "@/components/PreviewModal";
 import { ResumeTemplate } from "@/types/templateTypes";
 import { Button } from "@/components/ui/button";
-import { premiumTemplates } from "@/templates/templateStructures";
 import Chatbot from "@/components/Chatbot";
 import ChatBotAssistModal from "@/components/ChatBotAssistModal";
 import { useChatBotStore } from "@/store";
+import { usePreview } from "@/lib/use-preview";
+import ResumeBuilderSkeleton from "@/components/ResumeBuilderSkeleton";
 
 // Types
 type Section =
@@ -85,6 +83,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
   const resume = getResume(resumeId);
   const updateResume = useMutation(api.resume.updateResume);
   const prevResumeRef = useRef<string | null>(null);
+  const preview = usePreview();
 
   // Sync DB -> Store on first load
   useEffect(() => {
@@ -119,9 +118,13 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
     }
   }, [chatBotData, user, resumeId]);
 
-  if (resumeQuery === undefined) return null;
+  // Show loading skeleton while data is being fetched
+  if (!isLoaded || resumeQuery === undefined || isPremiumMember === undefined || chatBotData === undefined) {
+    return <ResumeBuilderSkeleton />;
+  }
+
   if (resumeQuery === null) return <div>Template not found</div>;
-  if (isLoaded && resumeQuery?.userId !== user?.id) {
+  if (resumeQuery?.userId !== user?.id) {
     toast.error("Not authenticated");
     router.push("/");
     return null;
@@ -252,7 +255,7 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
             animate="visible"
             exit="hidden"
             onClick={() => setIsPreviewCollapsed(!isPreviewCollapsed)}
-            className="absolute top-4 z-10 bg-white p-3 rounded-full shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300"
+            className="absolute top-4 left-0 z-10 bg-white p-3 rounded-full shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300"
           >
             {isPreviewCollapsed ? (
               <ArrowLeftToLine className="text-primary" />
@@ -260,6 +263,18 @@ const ResumeBuilderLayout: React.FC<ResumeBuilderLayoutProps> = ({
               <ArrowRightToLine className="text-primary" />
             )}
           </motion.div>
+          
+          {!isPreviewCollapsed && (
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              onClick={() => preview.onOpen(resumeQuery as ResumeTemplate, 'live-preview')}
+              className="absolute top-4 right-12 cursor-pointer z-10 bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <Eye className="text-primary" />
+            </motion.div>
+          )}
 
           {/* Preview Content */}
           <div

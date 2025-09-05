@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite-preview-06-17" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
     // Prepare prompt for Gemini
     const prompt = `You are an expert resume writer and ATS optimization specialist. Your task is to tailor the provided resume sections to best match the following job description for the target role.

@@ -1,32 +1,19 @@
 "use client";
 import { useParams, useSearchParams } from "next/navigation";
-import React, { useRef, useState } from "react";
-import Template1 from "@/templates/template1/Template1";
+import React, { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { ResumeTemplate } from "@/types/templateTypes";
-import Template2 from "@/templates/template2/Template2";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 import {
   CheckCircle,
-  Download,
-  DownloadCloud,
-  Loader,
-  Loader2,
+  Download, Loader2
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
-import {
-  geologicaFont,
-  interFont,
-  montserratFont,
-  openSansFont,
-  poppinsFont,
-  ralewayFont,
-  robotoFont,
-} from "@/lib/font";
+import { geologicaFont, getFontClass } from "@/lib/font";
 import useMobile from "@/lib/useMobile";
 import { templateComponents } from "@/templates/templateStructures";
 
@@ -176,20 +163,7 @@ const LiveResumePreview = () => {
           <div
             className={cn(
               "w-full h-full",
-              templateDetails?.globalStyles?.fontFamily === "Inter" &&
-                interFont.className,
-              templateDetails?.globalStyles?.fontFamily === "Montserrat" &&
-                montserratFont.className,
-              templateDetails?.globalStyles?.fontFamily === "OpenSans" &&
-                openSansFont.className,
-              templateDetails?.globalStyles?.fontFamily === "Poppins" &&
-                poppinsFont.className,
-              templateDetails?.globalStyles?.fontFamily === "Geologica" &&
-                geologicaFont.className,
-              templateDetails?.globalStyles?.fontFamily === "Raleway" &&
-                ralewayFont.className,
-              templateDetails?.globalStyles?.fontFamily === "Roboto" &&
-                robotoFont.className
+              getFontClass(templateDetails?.globalStyles?.fontFamily)
             )}
             id="pdf"
           >

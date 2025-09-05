@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 
     const model = new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_API_KEY!,
-      modelName: "gemini-2.5-flash-lite-preview-06-17",
+      modelName: "gemini-2.5-flash-lite",
     });
 
     const promptTemplate = PromptTemplate.fromTemplate(`

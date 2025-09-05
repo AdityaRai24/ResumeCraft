@@ -15,7 +15,13 @@ import { ChevronDown, Eye, EyeOff } from "lucide-react";
 import SortableList, { SortableItem } from "react-easy-sort";
 import { arrayMoveImmutable } from "array-move";
 import { fontOptions } from "@/lib/font";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useChatBotStore } from "@/store";
 
 const Page = () => {
@@ -33,18 +39,18 @@ const Page = () => {
   const fontSizeOptions = [
     { label: "Small", value: "sm" },
     { label: "Medium", value: "md" },
-    { label: "Large", value: "lg" }
+    { label: "Large", value: "lg" },
   ];
   const marginOptions = [
     { label: "Extra Small", value: "xs" },
     { label: "Small", value: "sm" },
     { label: "Medium", value: "md" },
-    { label: "Large", value: "lg" }
+    { label: "Large", value: "lg" },
   ];
   const [initialTextColor, setInitialTextColor] = useState<string | null>(null);
   const [initialColor, setInitialColor] = useState<string | null>(null);
 
-  const params : any = useParams();
+  const params: any = useParams();
   const resumeId = params.id;
   const reorder = useMutation(api.resume.reorderSections);
   const update = useMutation(api.resume.updateColor);
@@ -71,7 +77,8 @@ const Page = () => {
   );
 
   const headerObj =
-    zustandResume?.sections?.filter((item: any) => item.type === "header") || [];
+    zustandResume?.sections?.filter((item: any) => item.type === "header") ||
+    [];
 
   useEffect(() => {
     if (!zustandResume) return;
@@ -540,8 +547,8 @@ const Page = () => {
                   transition={{ duration: 0.2, ease: "easeInOut" }}
                   onClick={() => handleChosePrimaryColor(initialColor)}
                   className={`w-10 h-10 relative ${
-                    zustandResume?.globalStyles?.primaryColor === initialColor &&
-                    "ring-2 ring-offset-2 ring-gray-800"
+                    zustandResume?.globalStyles?.primaryColor ===
+                      initialColor && "ring-2 ring-offset-2 ring-gray-800"
                   } rounded-full cursor-pointer shadow-sm hover:shadow-md transition-shadow`}
                   style={{ backgroundColor: initialColor }}
                 >
@@ -624,7 +631,10 @@ const Page = () => {
                   Font Size
                 </h3>
                 <div className="relative">
-                  <Select value={currentFontSize} onValueChange={handleFontSizeChange}>
+                  <Select
+                    value={currentFontSize}
+                    onValueChange={handleFontSizeChange}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select font size" />
                     </SelectTrigger>
@@ -644,7 +654,10 @@ const Page = () => {
                   Page Margins
                 </h3>
                 <div className="relative">
-                  <Select value={currentMargin} onValueChange={handleMarginChange}>
+                  <Select
+                    value={currentMargin}
+                    onValueChange={handleMarginChange}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select margin size" />
                     </SelectTrigger>
@@ -658,6 +671,13 @@ const Page = () => {
                   </Select>
                 </div>
               </div>
+            </div>
+
+            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-800">
+                💡 <strong>Tip:</strong> Use the full screen preview (eye icon)
+                to see font and sizes and preview of your resume properly
+              </p>
             </div>
           </div>
         </div>

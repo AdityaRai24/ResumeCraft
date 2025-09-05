@@ -1,25 +1,12 @@
 "use client";
 import { useParams, usePathname } from "next/navigation";
 import React from "react";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
 import { motion } from "framer-motion";
 import ContineBtn from "./ContineBtn";
 import { Skeleton } from "./ui/skeleton";
 import { ResumeTemplate } from "@/types/templateTypes";
-import Template1 from "@/templates/template1/Template1";
-import Template2 from "@/templates/template2/Template2";
 import { cn } from "@/lib/utils";
-import {
-  geologicaFont,
-  interFont,
-  montserratFont,
-  openSansFont,
-  poppinsFont,
-  ralewayFont,
-  robotoFont,
-} from "@/lib/font";
+import { getFontClass } from "@/lib/font";
 import { templateComponents } from "@/templates/templateStructures";
 import toast from "react-hot-toast";
 import { useChatBotStore } from "@/store";
@@ -85,20 +72,7 @@ const LiveResumePreview: React.FC<LiveResumePreviewProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, delay: 0.5, ease: [0, 0.71, 0.2, 1.01] }}
           className={cn(
-            templateDetails?.globalStyles?.fontFamily === "Inter" &&
-              interFont.className,
-            templateDetails?.globalStyles?.fontFamily === "Montserrat" &&
-              montserratFont.className,
-            templateDetails?.globalStyles?.fontFamily === "OpenSans" &&
-              openSansFont.className,
-            templateDetails?.globalStyles?.fontFamily === "Poppins" &&
-              poppinsFont.className,
-            templateDetails?.globalStyles?.fontFamily === "Geologica" &&
-              geologicaFont.className,
-            templateDetails?.globalStyles?.fontFamily === "Raleway" &&
-              ralewayFont.className,
-            templateDetails?.globalStyles?.fontFamily === "Roboto" &&
-              robotoFont.className
+            getFontClass(templateDetails?.globalStyles?.fontFamily)
           )}
         >
           <TemplateComponent
@@ -119,6 +93,7 @@ const LiveResumePreview: React.FC<LiveResumePreviewProps> = ({
             isPreview
           />
         </motion.div>
+        
       </div>
 
       {sectionType && (

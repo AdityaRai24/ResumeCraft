@@ -19,6 +19,7 @@ import PreviewModal from "./PreviewModal";
 import React from "react";
 import { useRouter } from "nextjs-toploader/app";
 import TemplateContainer from "./TemplateContainer";
+import { getFontClass } from "@/lib/font";
 
 const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
   const createUserResume = useMutation(api.resume.createUserResume);
@@ -113,7 +114,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
             premium={premiumTemplates.includes(item.templateName)}
             key={index}
           >
-            <div className="w-full h-full">
+            <div className={`w-full h-full ${getFontClass(item?.globalStyles?.fontFamily)}`}>
               <TemplateComponent
                 obj={item as ResumeTemplate}
                 size="sm"
@@ -133,7 +134,7 @@ const ChooseTemplates = ({ myResumes = false }: { myResumes?: boolean }) => {
               bg-black/60"
             >
               <Button
-                onClick={() => preview.onOpen(item as ResumeTemplate)}
+                onClick={() => preview.onOpen(item as ResumeTemplate, myResumes ? 'my-resumes' : 'templates')}
                 className="w-[50%] md:w-full flex items-center justify-center gap-2"
               >
                 <p className="hidden md:block">Preview</p>{" "}
